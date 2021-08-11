@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <record id="view_job_titles_tree" model="ir.ui.view">
+            <field name="name">hr_china.job_titles.tree</field>
+            <field name="model">hr_china.job_titles</field>
+            <field name="arch" type="xml">
+                <tree string="Job Titles" create="1" editable="bottom">
+                    <field name="name"/>
+                    <field name="department" widget="selection"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_job_titles" model="ir.actions.act_window">
+            <field name="name">Job Titles</field>
+            <field name="res_model">hr_china.job_titles</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_job_titles_tree"/>
+        </record>
+
+    </data>
+</odoo>

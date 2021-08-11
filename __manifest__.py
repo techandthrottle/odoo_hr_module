@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "HR China",
+
+    'summary': """
+        China's HR Module""",
+
+    'description': """
+        Long description of module's purpose
+    """,
+
+    'author': "1000 Miles",
+    'website': "http://www.1000miles.biz",
+
+    # Categories can be used to filter modules in modules listing
+    # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
+    # for the full list
+    'category': 'Uncategorized',
+    'version': '0.1',
+
+    # any module necessary for this one to work correctly
+    'depends': ['base', 'calendar', 'hr', 'hr_attendance', 'hr_holidays', 'zulu_attendance'],
+
+    'css': [
+            'static/src/lib/jquery.timepicker.css',
+        ],
+
+    'js': [
+        'static/src/lib/jquery.timepicker.js',
+        'static/src/js/web_widget_timepicker.js',
+    ],
+    # always loaded
+    'data': [
+        # 'security/ir.model.access.csv',
+        'views/time_setup.xml',
+        'views/contract_setup.xml',
+        'views/company_setup.xml',
+        'views/employee.xml',
+        'views/employee_contract.xml',
+        'views/views.xml',
+        'views/templates.xml',
+    ],
+    # only loaded in demonstration mode
+    'demo': [
+        'demo/demo.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

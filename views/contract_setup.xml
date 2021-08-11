@@ -1,0 +1,128 @@
+<odoo>
+    <data>
+        <record id="view_benefits_tree" model="ir.ui.view">
+            <field name="name">hr_china.benefits.tree</field>
+            <field name="model">hr_china.benefits</field>
+            <field name="arch" type="xml">
+                <tree string="Benefits" create="1" editable="bottom">
+                    <field name="name"/>
+                    <field name="benefit_type"/>
+                    <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                    <field name="currency"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_benefits" model="ir.actions.act_window">
+            <field name="name">Benefits Template</field>
+            <field name="res_model">hr_china.benefits</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_benefits_tree"/>
+        </record>
+
+        <record id="view_deductions_tree" model="ir.ui.view">
+            <field name="name">hr_china.deductions.tree</field>
+            <field name="model">hr_china.deductions</field>
+            <field name="arch" type="xml">
+                <tree string="Deduction" create="1" editable="bottom">
+                    <field name="name"/>
+                    <field name="deduction_type"/>
+                    <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                    <field name="currency"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_deductions" model="ir.actions.act_window">
+            <field name="name">Deduction Template</field>
+            <field name="res_model">hr_china.deductions</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_deductions_tree"/>
+        </record>
+
+        <record id="view_contracts_template_tree" model="ir.ui.view">
+            <field name="name">hr_china.contracts_template.tree</field>
+            <field name="model">hr_china.contracts_template</field>
+            <field name="arch" type="xml">
+                <tree string="Contract Template">
+                    <field name="name"/>
+                    <field name="wage_type"/>
+                    <field name="monthly_fee" widget="monetary"/>
+                    <field name="weekday_daily_fee" widget="monetary"/>
+                    <field name="weekday_overtime_fee" widget="monetary"/>
+                    <field name="weekends_fee" widget="monetary"/>
+                    <field name="holiday_fee" widget="monetary"/>
+                    <field name="dayoff_deduction" widget="monetary"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_china_contracts_template_form" model="ir.ui.view">
+        <field name="name">view.contracts_template.form</field>
+        <field name="model">hr_china.contracts_template</field>
+        <field name="arch" type="xml">
+            <form string="Contract Template">
+                <sheet>
+                    <h1 style="width:50%%"><field name="name"/></h1>
+                    <group style="width:50%%">
+                        <field name="wage_type" />
+                        <field name="holiday_fee" />
+                        <field name="dayoff_deduction" />
+                    </group>
+                    <group style="width:50%%">
+                        <field name="monthly_fee" widget="monetary"/>
+                        <field name="weekday_daily_fee" widget="monetary"/>
+                        <field name="weekday_overtime_fee" widget="monetary"/>
+                        <field name="weekends_fee" widget="monetary"/>
+                    </group>
+                    <notebook>
+                        <page string="WORKING TIME">
+                            <field name="working_time">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="dayofweek" />
+                                    <field name="hour_from" />
+                                    <field name="hour_to" />
+                                    <field name="date_from" />
+                                    <field name="date_to" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="BENEFITS">
+                            <field name="benefits_id" mode="tree">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="benefit_type" />
+                                    <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="DEDUCTIONS">
+                            <field name="deductions_id" mode="tree">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="deduction_type" />
+                                    <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="OTHER INFORMATION">
+                            <group>
+                                <field name="other_info" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+        <record id="action_view_hr_china_contracts_template" model="ir.actions.act_window">
+            <field name="name">Contracts Template</field>
+            <field name="res_model">hr_china.contracts_template</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_contracts_template_tree"/>
+        </record>
+
+    </data>
+</odoo>

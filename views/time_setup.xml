@@ -1,0 +1,42 @@
+<odoo>
+  <data>
+
+    <record id="view_special_working_days_tree" model="ir.ui.view">
+        <field name="name">hr_china.special_working_days.tree</field>
+        <field name="model">hr_china.special_working_days</field>
+        <field name="arch" type="xml">
+            <tree string="Special Working Days">
+                <field name="name"/>
+                <field name="start_date" widget="date"/>
+                <field name="end_date" widget="date"/>
+                <field name="total_days" class="oe_read_only"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_china_special_working_days_form" model="ir.ui.view">
+        <field name="name">view.special_working_days.form</field>
+        <field name="model">hr_china.special_working_days</field>
+        <field name="arch" type="xml">
+            <form string="Special Working Days">
+                <sheet>
+                    <group style="width:50%%">
+                        <field name="name"/>
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="total_days" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_hr_china_special_working_days" model="ir.actions.act_window">
+        <field name="name">Special Working Days Template</field>
+        <field name="res_model">hr_china.special_working_days</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="view_special_working_days_tree"/>
+    </record>
+
+  </data>
+</odoo>
