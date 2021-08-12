@@ -152,17 +152,17 @@
                     </page>
                 </xpath>
 
-<!--                <xpath expr="//form/sheet/div/button[2]" position="replace">-->
-<!--                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"-->
-<!--                            icon="fa-calendar" string="Attendance"-->
-<!--                    />-->
-<!--                </xpath>-->
+                <xpath expr="//form/sheet/div/button[2]" position="replace">
+                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"
+                            icon="fa-calendar" string="Attendance"
+                    />
+                </xpath>
 
-<!--                <xpath expr="//form/sheet/div/button[3]" position="before">-->
-<!--                    <button class="oe_stat_button" type="action" icon="fa-calendar">-->
-<!--                        <field string="Working Time" name="calendar_id" widget="statinfo"/>-->
-<!--                    </button>-->
-<!--                </xpath>-->
+                <xpath expr="//form/sheet/div/button[3]" position="before">
+                    <button class="oe_stat_button" type="action" icon="fa-calendar">
+                        <field string="Working Time" name="calendar_id" widget="statinfo"/>
+                    </button>
+                </xpath>
 
             </field>
         </record>
