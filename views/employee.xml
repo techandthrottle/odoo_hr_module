@@ -1,172 +1,171 @@
 <odoo>
     <data>
-<!--        <record model="ir.ui.view" id="view_hr_china_employee_form">-->
-<!--            <field name="name">hr_china.view_employee_form</field>-->
-<!--            <field name="model">hr.employee</field>-->
-<!--            <field name="inherit_id" ref="hr.view_employee_form" />-->
-<!--            <field name="sequence">100</field>-->
-<!--            <field name="type">form</field>-->
-<!--            <field name="arch" type="xml">-->
+        <record model="ir.ui.view" id="view_hr_china_employee_form">
+            <field name="name">hr_china.view_employee_form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form" />
+            <field name="sequence">100</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
 
-<!--                <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">-->
-<!--                    <page name="public" string="PUBLIC INFORMATION">-->
-<!--                        <group string="Position">-->
-<!--                            <field name="department_id"/>-->
-<!--                            <field name="job_id"/>-->
-<!--                            <field name="parent_id"/>-->
-<!--                            <field name="calendar_id"/>-->
-<!--                        </group>-->
-<!--                    </page>-->
-<!--                </xpath>-->
+                <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">
+                    <page name="public" string="PUBLIC INFORMATION">
+                        <group string="Position">
+                            <field name="department_id"/>
+                            <field name="job_id"/>
+                            <field name="parent_id"/>
+                            <field name="calendar_id"/>
+                        </group>
+                    </page>
+                </xpath>
 
-<!--                <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="replace">-->
-<!--                    <page name="personal_information" string="PERSONAL INFORMATION">-->
-<!--                        <group>-->
-<!--                            <group string="Personal Information">-->
-<!--                                <field name="first_name" />-->
-<!--                                <field name="second_name" />-->
-<!--                                <field name="middle_name" />-->
-<!--                                <field name="nick_name" />-->
-<!--                            </group>-->
-<!--                            <group string="Contact Information">-->
-<!--                                <field name="contact_number" />-->
-<!--                                <field name="emergency_contact_number" />-->
-<!--                                <field name="emergency_contact_name" />-->
-<!--                                <field name="emergency_contact_relation" />-->
-<!--                            </group>-->
-<!--                        </group>-->
-<!--                        <group>-->
-<!--                            <group string="Citizenship">-->
-<!--                                <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>-->
-<!--                                <field name="identification_id" groups="hr.group_hr_user"/>-->
-<!--                                <field name="passport_id" groups="hr.group_hr_user"/>-->
-<!--                                <field name="bank_account_id" context="{'default_partner_id': address_home_id}"/>-->
-<!--                                <field name="citizenship" />-->
-<!--                            </group>-->
-<!--                            <group string="Bank Information">-->
-<!--                                <field name="bank_name" />-->
-<!--                                <field name="bank_branch" />-->
-<!--                                <field name="account_name" />-->
-<!--                                <field name="account_number" />-->
-<!--                            </group>-->
-<!--                        </group>-->
-<!--                        <group>-->
-<!--                            <group string="Birth">-->
-<!--                                <field name="birthday"/>-->
-<!--                                <field name="place_of_birth" />-->
-<!--                            </group>-->
-<!--                            <group string="Identification">-->
-<!--                                <field name="identification_image" widget="image"/>-->
-<!--                            </group>-->
-<!--                        </group>-->
-<!--                        <group string="Status">-->
-<!--                            <field name="gender"/>-->
-<!--                            <field name="marital"/>-->
-<!--                            <field name="children" />-->
-<!--                        </group>-->
-<!--                    </page>-->
-<!--                </xpath>-->
+                <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="replace">
+                    <page name="personal_information" string="PERSONAL INFORMATION">
+                        <group>
+                            <group string="Personal Information">
+                                <field name="first_name" />
+                                <field name="second_name" />
+                                <field name="middle_name" />
+                                <field name="nick_name" />
+                            </group>
+                            <group string="Contact Information">
+                                <field name="contact_number" />
+                                <field name="emergency_contact_number" />
+                                <field name="emergency_contact_name" />
+                                <field name="emergency_contact_relation" />
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Citizenship">
+                                <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                <field name="identification_id" groups="hr.group_hr_user"/>
+                                <field name="passport_id" groups="hr.group_hr_user"/>
+                                <field name="bank_account_id" context="{'default_partner_id': address_home_id}"/>
+                                <field name="citizenship" />
+                            </group>
+                            <group string="Bank Information">
+                                <field name="bank_name" />
+                                <field name="bank_branch" />
+                                <field name="account_name" />
+                                <field name="account_number" />
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Birth">
+                                <field name="birthday"/>
+                                <field name="place_of_birth" />
+                            </group>
+                            <group string="Identification">
+                                <field name="identification_image" widget="image"/>
+                            </group>
+                        </group>
+                        <group string="Status">
+                            <field name="gender"/>
+                            <field name="marital"/>
+                            <field name="children" />
+                        </group>
+                    </page>
+                </xpath>
 
-<!--                <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">-->
-<!--                    <page name="contract" string="CONTRACT">-->
-<!--                        <form>-->
-<!--                            <group>-->
-<!--                                <h1>-->
-<!--                                    <field name="contract_name"/>-->
-<!--                                </h1>-->
-<!--                                <h1>-->
-<!--                                    <field name="contract_template_id" />-->
-<!--                                </h1>-->
-<!--                            </group>-->
-<!--                            <group style="width:50%%">-->
-<!--                                <field name="c_wage_type" />-->
-<!--                                <field name="c_holiday_fee" />-->
-<!--                                <field name="c_dayoff_deduction" />-->
-<!--                                <field name="start_date" widget="date"/>-->
-<!--                                <field name="end_date" widget="date"/>-->
-<!--                                <field name="is_contract_active"/>-->
-<!--                            </group>-->
-<!--                            <group style="width:50%%">-->
-<!--                                <field name="c_monthly_fee" widget="monetary"/>-->
-<!--                                <field name="c_weekday_daily_fee" widget="monetary"/>-->
-<!--                                <field name="c_weekday_overtime_fee" widget="monetary"/>-->
-<!--                                <field name="c_weekends_fee" widget="monetary"/>-->
-<!--                            </group>-->
-<!--                            <notebook>-->
-<!--                                <page string="WORKING TIME">-->
-<!--                                    <field name="employee_working_time">-->
-<!--                                        <tree>-->
-<!--                                            <field name="name" />-->
-<!--                                            <field name="dayofweek" />-->
-<!--                                            <field name="hour_from" />-->
-<!--                                            <field name="hour_to" />-->
-<!--                                            <field name="date_from" />-->
-<!--                                            <field name="date_to" />-->
-<!--                                        </tree>-->
-<!--                                    </field>-->
-<!--                                </page>-->
-<!--                                <page string="BENEFITS">-->
-<!--                                    <field name="employee_benefit" mode="tree">-->
-<!--                                        <tree>-->
-<!--                                            <field name="benefits_id" />-->
-<!--                                            <field name="benefit_type" />-->
-<!--                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>-->
-<!--                                        </tree>-->
-<!--                                    </field>-->
-<!--                                </page>-->
-<!--                                <page string="DEDUCTIONS">-->
-<!--                                    <field name="employee_deduction" mode="tree">-->
-<!--                                        <tree>-->
-<!--                                            <field name="deductions_id" />-->
-<!--                                            <field name="deduction_type" />-->
-<!--                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>-->
-<!--                                        </tree>-->
-<!--                                    </field>-->
-<!--                                </page>-->
-<!--                                <page string="OTHER INFORMATION">-->
-<!--                                    <group>-->
-<!--                                        <field name="c_other_info" />-->
-<!--                                    </group>-->
-<!--                                </page>-->
-<!--                                <page string="CONTRACTS">-->
-<!--                                    <field name="all_contracts" mode="tree" >-->
-<!--                                        <tree>-->
-<!--                                            <field name="name" />-->
-<!--                                            <field name="start_date" widget="date" />-->
-<!--                                            <field name="end_date" widget="date" />-->
-<!--                                            <field name="active" string="Is Active" />-->
-<!--                                        </tree>-->
-<!--                                    </field>-->
-<!--                                </page>-->
-<!--                            </notebook>-->
-<!--                        </form>-->
-<!--                    </page>-->
+                <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">
+                    <page name="contract" string="CONTRACT">
 
-<!--                    <page name="others" string="OTHERS">-->
-<!--                        <group string="Status">-->
-<!--                            <field name="company_id" on_change="1" can_create="true" can_write="true" invisible="1" modifiers="{'invisible': true}"/>-->
-<!--                            <field name="user_id" string="Related User" options="{'no_create_edit': True, 'no_create': True}"/>-->
-<!--                            <field name="barcode" modifiers="{}"/>-->
-<!--                            <field name="pin" modifiers="{}"/>-->
-<!--                            <field name="manual_attendance" modifiers="{}"/>-->
-<!--                        </group>-->
-<!--                    </page>-->
-<!--                </xpath>-->
+                            <group>
+                                <h1>
+                                    <field name="contract_name"/>
+                                </h1>
+                                <h1>
+                                    <field name="contract_template_id" />
+                                </h1>
+                            </group>
+                            <group style="width:50%%">
+                                <field name="c_wage_type" />
+                                <field name="c_holiday_fee" />
+                                <field name="c_dayoff_deduction" />
+                                <field name="start_date" widget="date"/>
+                                <field name="end_date" widget="date"/>
+                                <field name="is_contract_active"/>
+                            </group>
+                            <group style="width:50%%">
+                                <field name="c_monthly_fee" widget="monetary"/>
+                                <field name="c_weekday_daily_fee" widget="monetary"/>
+                                <field name="c_weekday_overtime_fee" widget="monetary"/>
+                                <field name="c_weekends_fee" widget="monetary"/>
+                            </group>
+                            <notebook>
+                                <page string="WORKING TIME">
+                                    <field name="employee_working_time">
+                                        <tree>
+                                            <field name="name" />
+                                            <field name="dayofweek" />
+                                            <field name="hour_from" />
+                                            <field name="hour_to" />
+                                            <field name="date_from" />
+                                            <field name="date_to" />
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="BENEFITS">
+                                    <field name="employee_benefit" mode="tree">
+                                        <tree>
+                                            <field name="benefits_id" />
+                                            <field name="benefit_type" />
+                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="DEDUCTIONS">
+                                    <field name="employee_deduction" mode="tree">
+                                        <tree>
+                                            <field name="deductions_id" />
+                                            <field name="deduction_type" />
+                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="OTHER INFORMATION">
+                                    <group>
+                                        <field name="c_other_info" />
+                                    </group>
+                                </page>
+                                <page string="CONTRACTS">
+                                    <field name="all_contracts" mode="tree" >
+                                        <tree>
+                                            <field name="name" />
+                                            <field name="start_date" widget="date" />
+                                            <field name="end_date" widget="date" />
+                                            <field name="active" string="Is Active" />
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                    </page>
 
-<!--                <xpath expr="//form/sheet/div/button[2]" position="replace">-->
-<!--                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"-->
-<!--                            icon="fa-calendar" string="Attendance"-->
-<!--                    />-->
-<!--                </xpath>-->
+                    <page name="others" string="OTHERS">
+                        <group string="Status">
+                            <field name="company_id" on_change="1" can_create="true" can_write="true" invisible="1" modifiers="{'invisible': true}"/>
+                            <field name="user_id" string="Related User" options="{'no_create_edit': True, 'no_create': True}"/>
+                            <field name="barcode" modifiers="{}"/>
+                            <field name="pin" modifiers="{}"/>
+                            <field name="manual_attendance" modifiers="{}"/>
+                        </group>
+                    </page>
+                </xpath>
 
-<!--                <xpath expr="//form/sheet/div/button[3]" position="before">-->
-<!--                    <button class="oe_stat_button" type="action" icon="fa-calendar">-->
-<!--                        <field string="Working Time" name="calendar_id" widget="statinfo"/>-->
-<!--                    </button>-->
-<!--                </xpath>-->
+                <xpath expr="//form/sheet/div/button[2]" position="replace">
+                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"
+                            icon="fa-calendar" string="Attendance"
+                    />
+                </xpath>
 
-<!--            </field>-->
-<!--        </record>-->
+                <xpath expr="//form/sheet/div/button[3]" position="before">
+                    <button class="oe_stat_button" type="action" icon="fa-calendar">
+                        <field string="Working Time" name="calendar_id" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
 
     </data>
 </odoo>
