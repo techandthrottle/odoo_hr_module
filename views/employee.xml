@@ -4,9 +4,19 @@
             <field name="name">hr_china.view_employee_form</field>
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form" />
-            <field name="sequence">100</field>
+            <field name="priority">100</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div/button[2]" position="replace">
+                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"
+                            icon="fa-calendar" string="Attendance" />
+                </xpath>
+
+                <xpath expr="//form/sheet/div/button[3]" position="before">
+                    <button class="oe_stat_button" type="action" icon="fa-calendar">
+                        <field string="Working Time" name="calendar_id" widget="statinfo"/>
+                    </button>
+                </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">
                     <page name="public" string="PUBLIC INFORMATION">
@@ -69,76 +79,75 @@
 
                 <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">
                     <page name="contract" string="CONTRACT">
-
-                            <group>
-                                <h1>
-                                    <field name="contract_name"/>
-                                </h1>
-                                <h1>
-                                    <field name="contract_template_id" />
-                                </h1>
-                            </group>
-                            <group style="width:50%%">
-                                <field name="c_wage_type" />
-                                <field name="c_holiday_fee" />
-                                <field name="c_dayoff_deduction" />
-                                <field name="start_date" widget="date"/>
-                                <field name="end_date" widget="date"/>
-                                <field name="is_contract_active"/>
-                            </group>
-                            <group style="width:50%%">
-                                <field name="c_monthly_fee" widget="monetary"/>
-                                <field name="c_weekday_daily_fee" widget="monetary"/>
-                                <field name="c_weekday_overtime_fee" widget="monetary"/>
-                                <field name="c_weekends_fee" widget="monetary"/>
-                            </group>
-                            <notebook>
-                                <page string="WORKING TIME">
-                                    <field name="employee_working_time">
-                                        <tree>
-                                            <field name="name" />
-                                            <field name="dayofweek" />
-                                            <field name="hour_from" />
-                                            <field name="hour_to" />
-                                            <field name="date_from" />
-                                            <field name="date_to" />
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="BENEFITS">
-                                    <field name="employee_benefit" mode="tree">
-                                        <tree>
-                                            <field name="benefits_id" />
-                                            <field name="benefit_type" />
-                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="DEDUCTIONS">
-                                    <field name="employee_deduction" mode="tree">
-                                        <tree>
-                                            <field name="deductions_id" />
-                                            <field name="deduction_type" />
-                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="OTHER INFORMATION">
-                                    <group>
-                                        <field name="c_other_info" />
-                                    </group>
-                                </page>
-                                <page string="CONTRACTS">
-                                    <field name="all_contracts" mode="tree" >
-                                        <tree>
-                                            <field name="name" />
-                                            <field name="start_date" widget="date" />
-                                            <field name="end_date" widget="date" />
-                                            <field name="active" string="Is Active" />
-                                        </tree>
-                                    </field>
-                                </page>
-                            </notebook>
+                        <group>
+                            <h1>
+                                <field name="contract_name"/>
+                            </h1>
+                            <h1>
+                                <field name="contract_template_id" />
+                            </h1>
+                        </group>
+                        <group style="width:50%%">
+                            <field name="c_wage_type" />
+                            <field name="c_holiday_fee" />
+                            <field name="c_dayoff_deduction" />
+                            <field name="start_date" widget="date"/>
+                            <field name="end_date" widget="date"/>
+                            <field name="is_contract_active"/>
+                        </group>
+                        <group style="width:50%%">
+                            <field name="c_monthly_fee" widget="monetary"/>
+                            <field name="c_weekday_daily_fee" widget="monetary"/>
+                            <field name="c_weekday_overtime_fee" widget="monetary"/>
+                            <field name="c_weekends_fee" widget="monetary"/>
+                        </group>
+                        <notebook>
+                            <page string="WORKING TIME">
+                                <field name="employee_working_time">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="dayofweek" />
+                                        <field name="hour_from" />
+                                        <field name="hour_to" />
+                                        <field name="date_from" />
+                                        <field name="date_to" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="BENEFITS">
+                                <field name="employee_benefit" mode="tree">
+                                    <tree>
+                                        <field name="benefits_id" />
+                                        <field name="benefit_type" />
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="DEDUCTIONS">
+                                <field name="employee_deduction" mode="tree">
+                                    <tree>
+                                        <field name="deductions_id" />
+                                        <field name="deduction_type" />
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="OTHER INFORMATION">
+                                <group>
+                                    <field name="c_other_info" />
+                                </group>
+                            </page>
+                            <page string="CONTRACTS">
+                                <field name="all_contracts" mode="tree" >
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="start_date" widget="date" />
+                                        <field name="end_date" widget="date" />
+                                        <field name="active" string="Is Active" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </page>
 
                     <page name="others" string="OTHERS">
@@ -150,18 +159,6 @@
                             <field name="manual_attendance" modifiers="{}"/>
                         </group>
                     </page>
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[2]" position="replace">
-                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"
-                            icon="fa-calendar" string="Attendance"
-                    />
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[3]" position="before">
-                    <button class="oe_stat_button" type="action" icon="fa-calendar">
-                        <field string="Working Time" name="calendar_id" widget="statinfo"/>
-                    </button>
                 </xpath>
 
             </field>
