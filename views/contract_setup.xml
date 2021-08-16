@@ -57,6 +57,25 @@
             </field>
         </record>
 
+        <record id="hr_china_templ_working_time_form" model="ir.ui.view">
+            <field name="name">view.templ_working_time.form</field>
+            <field name="model">hr_china.template_working_time</field>
+            <field name="arch" type="xml">
+                <form string="Benefits">
+                    <sheet>
+                        <group style="width:50%%">
+                            <field name="name" />
+                            <field name="dayofweek" />
+                            <field name="date_from" widget="date"/>
+                            <field name="date_to" widget="date"/>
+                            <field name="hour_from" />
+                            <field name="hour_to" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
         <record id="hr_china_contracts_template_form" model="ir.ui.view">
         <field name="name">view.contracts_template.form</field>
         <field name="model">hr_china.contracts_template</field>
@@ -78,7 +97,8 @@
                     <notebook>
                         <page string="WORKING TIME">
                             <field name="working_time">
-                                <tree>
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle" />
                                     <field name="name" />
                                     <field name="dayofweek" />
                                     <field name="hour_from" />
@@ -117,12 +137,60 @@
         </field>
     </record>
 
-        <record id="action_view_hr_china_contracts_template" model="ir.actions.act_window">
-            <field name="name">Contracts Template</field>
-            <field name="res_model">hr_china.contracts_template</field>
-            <field name="view_type">form</field>
-            <field name="view_id" ref="view_contracts_template_tree"/>
-        </record>
+    <record id="action_view_hr_china_contracts_template" model="ir.actions.act_window">
+        <field name="name">Contracts Template</field>
+        <field name="res_model">hr_china.contracts_template</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="view_contracts_template_tree"/>
+    </record>
+
+    <record id="hr_china_holiday_tree" model="ir.ui.view">
+        <field name="name">hr_china.holiday.tree</field>
+        <field name="model">hr_china.holiday</field>
+        <field name="arch" type="xml">
+            <tree string="Holiday">
+                <field name="name"/>
+                <field name="start_date" widget="date"/>
+                <field name="end_date" widget="date"/>
+                <field name="total_days"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_china_holiday_calendar" model="ir.ui.view">
+        <field name="name">hr_china.holiday.calendar</field>
+        <field name="model">hr_china.holiday</field>
+        <field name="arch" type="xml">
+            <calendar string="Holiday" mode="month" date_start="start_date" date_stop="end_date">
+                <field name="name"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="hr_china_holiday_form" model="ir.ui.view">
+        <field name="name">hr_china.holiday.form</field>
+        <field name="model">hr_china.holiday</field>
+        <field name="arch" type="xml">
+            <form string="Holiday">
+                <sheet>
+                    <group style="width:50%%">
+                        <field name="name"/>
+                        <field name="start_date" widget="date"/>
+                        <field name="end_date" widget="date"/>
+                        <field name="total_days" class="oe_read_only"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_china_action_holiday" model="ir.actions.act_window">
+        <field name="name">Holiday</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr_china.holiday</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,calendar,form</field>
+    </record>
 
     </data>
 </odoo>

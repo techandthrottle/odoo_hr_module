@@ -19,7 +19,7 @@ class SpecialWorkingDays(models.Model):
 
                 time_delta = to_dt - from_dt
                 tot_time = math.ceil(time_delta.days + float(time_delta.seconds) / 86400)
-            item.total_days = tot_time
+            item.total_days = tot_time - 1
 
     name = fields.Char(string='Name')
     start_date = fields.Datetime('Start Date')
@@ -27,11 +27,35 @@ class SpecialWorkingDays(models.Model):
     total_days = fields.Integer('Total Days', compute=_compute_total_days)
 
 
+class HRChinaHoliday(models.Model):
+    _name = 'hr_china.holiday'
+    _description = 'Employee Management (Holiday)'
+    _order = 'start_date asc'
+
+    name = fields.Char('Holiday')
+    start_date = fields.Datetime('Start Date')
+    end_date = fields.Datetime('End Date')
+
+    @api.multi
+    def _compute_total_days(self):
+        for item in self:
+            tot_time = 0
+            if item.start_date and item.end_date:
+                from_dt = fields.Datetime.from_string(item.start_date)
+                to_dt = fields.Datetime.from_string(item.end_date)
+
+                time_delta = to_dt - from_dt
+                tot_time = math.ceil(time_delta.days + float(time_delta.seconds) / 86400)
+            item.total_days = tot_time - 1
+
+    total_days = fields.Integer('Total Days', compute=_compute_total_days)
+
+
 class HRChinaContractTemplateWorkingTime(models.Model):
     _name = 'hr_china.template_working_time'
     _description = 'List of Employee Working Time'
+    _order = 'sequence'
 
-    #employee_id = fields.Many2one('hr.employee', string='Employee')
     name = fields.Char(string='Name')
     dayofweek = fields.Selection([
         ('0', 'Monday'),
@@ -46,6 +70,7 @@ class HRChinaContractTemplateWorkingTime(models.Model):
     date_to = fields.Date(string='End Date')
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
+    sequence = fields.Integer('Sequence')
 
 
 class HRBenefits(models.Model):
@@ -201,6 +226,7 @@ class HREmployee(models.Model):
         self.employee_working_time = working_time_lines
 
         if templ_contract:
+            self.contract_name = self.name + " - " + templ_contract.name
             self.c_wage_type = templ_contract.wage_type
             self.c_monthly_fee = templ_contract.monthly_fee
             self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
@@ -292,14 +318,39 @@ class HREmployee(models.Model):
                     created_contract.deductions_id = deductions_lines
                     created_contract.working_time = working_time_lines
 
-        if 'start_date' in vals and self.active_contract:
-            pass
+        active_cont_dict = {}
+        if 'c_holiday_fee' in vals:
+            active_cont_dict['holiday_fee'] = vals['c_holiday_fee']
+        if 'c_dayoff_deduction' in vals:
+            active_cont_dict['dayoff_deduction'] = vals['c_dayoff_deduction']
+        if 'c_wage_type' in vals:
+            active_cont_dict['wage_type'] = vals['c_wage_type']
+        if 'c_monthly_fee' in vals:
+            active_cont_dict['monthly_fee'] = vals['c_monthly_fee']
+        if 'c_weekday_daily_fee' in vals:
+            active_cont_dict['weekday_daily_fee'] = vals['c_weekday_daily_fee']
+        if 'c_weekday_overtime_fee' in vals:
+            active_cont_dict['weekday_overtime_fee'] = vals['c_weekday_overtime_fee']
+        if 'c_weekends_fee' in vals:
+            active_cont_dict['weekends_fee'] = vals['c_weekends_fee']
+        if 'start_date' in vals:
+            active_cont_dict['start_date'] = vals['start_date']
+        if 'end_date' in  vals:
+            active_cont_dict['end_date'] = vals['end_date']
+        if 'is_contract_active' in vals:
+            active_cont_dict['is_contract_active'] = vals['is_contract_active']
+
+        if len(active_cont_dict) > 0:
+            #self.active_contract.write(active_cont_dict)
+            self.new_contract_id.write(active_cont_dict)
+            # self.all_contracts.write(active_cont_dict)
 
         return ret_val
 
 
 class HRChinaContract(models.Model):
     _name = 'hr_china.contract'
+    _order = 'id'
 
     @api.multi
     def _check_contract_status(self):
@@ -403,6 +454,14 @@ class HRChinaEmployeeBenefits(models.Model):
         if cny:
             return cny.id
 
+    @api.onchange('benefits_id')
+    def onchange_benefits_id(self):
+        if self.benefits_id:
+            self.benefits_id = self.benefits_id.id
+            self.benefit_type = self.benefits_id.benefit_type
+            self.amount = self.benefits_id.amount
+            self.currency = self.benefits_id.currency
+
     employee_id = fields.Many2one('hr.employee', string='Employee')
     contract_id = fields.Many2one('hr_china.contract', string='Contract')
     benefit_type = fields.Selection([('one-time', 'One Time'), ('monthly', 'Monthly'), ('yearly', 'Yearly')],
@@ -421,6 +480,14 @@ class HRChinaEmployeeDeductions(models.Model):
         cny = self.env['res.currency'].search([('name', '=', 'CNY')])
         if cny:
             return cny.id
+
+    @api.onchange('deductions_id')
+    def onchange_deductions_id(self):
+        if self.deductions_id:
+            self.deductions_id = self.deductions_id.id
+            self.deduction_type = self.deductions_id.deduction_type
+            self.amount = self.deductions_id.amount
+            self.currency = self.deductions_id.currency
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
     contract_id = fields.Many2one('hr_china.contract', string='Contract')

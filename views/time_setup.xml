@@ -22,8 +22,8 @@
                 <sheet>
                     <group style="width:50%%">
                         <field name="name"/>
-                        <field name="start_date" />
-                        <field name="end_date" />
+                        <field name="start_date" widget="date"/>
+                        <field name="end_date" widget="date"/>
                         <field name="total_days" />
                     </group>
                 </sheet>

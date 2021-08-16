@@ -14,7 +14,6 @@
                             <field name="department_id"/>
                             <field name="job_id"/>
                             <field name="parent_id"/>
-                            <field name="calendar_id"/>
                         </group>
                     </page>
                 </xpath>
@@ -23,13 +22,13 @@
                     <page name="personal_information" string="PERSONAL INFORMATION">
                         <group>
                             <group string="Personal Information">
-                                <field name="first_name" />
-                                <field name="second_name" />
+                                <field name="first_name" required="1"/>
+                                <field name="second_name" required="1"/>
                                 <field name="middle_name" />
                                 <field name="nick_name" />
                             </group>
                             <group string="Contact Information">
-                                <field name="contact_number" />
+                                <field name="contact_number" required="1"/>
                                 <field name="emergency_contact_number" />
                                 <field name="emergency_contact_name" />
                                 <field name="emergency_contact_relation" />
@@ -40,7 +39,6 @@
                                 <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
                                 <field name="identification_id" groups="hr.group_hr_user"/>
                                 <field name="passport_id" groups="hr.group_hr_user"/>
-                                <field name="bank_account_id" context="{'default_partner_id': address_home_id}"/>
                                 <field name="citizenship" />
                             </group>
                             <group string="Bank Information">
@@ -59,86 +57,84 @@
                                 <field name="identification_image" widget="image"/>
                             </group>
                         </group>
-                        <group string="Status">
+                        <group string="Status" style="width:50%%">
                             <field name="gender"/>
                             <field name="marital"/>
                             <field name="children" />
                         </group>
+
                     </page>
                 </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">
                     <page name="contract" string="CONTRACT">
-
-                            <group>
-                                <h1>
-                                    <field name="contract_name"/>
-                                </h1>
-                                <h1>
-                                    <field name="contract_template_id" />
-                                </h1>
-                            </group>
-                            <group style="width:50%%">
-                                <field name="c_wage_type" />
-                                <field name="c_holiday_fee" />
-                                <field name="c_dayoff_deduction" />
-                                <field name="start_date" widget="date"/>
-                                <field name="end_date" widget="date"/>
-                                <field name="is_contract_active"/>
-                            </group>
-                            <group style="width:50%%">
-                                <field name="c_monthly_fee" widget="monetary"/>
-                                <field name="c_weekday_daily_fee" widget="monetary"/>
-                                <field name="c_weekday_overtime_fee" widget="monetary"/>
-                                <field name="c_weekends_fee" widget="monetary"/>
-                            </group>
-                            <notebook>
-                                <page string="WORKING TIME">
-                                    <field name="employee_working_time">
-                                        <tree>
-                                            <field name="name" />
-                                            <field name="dayofweek" />
-                                            <field name="hour_from" />
-                                            <field name="hour_to" />
-                                            <field name="date_from" />
-                                            <field name="date_to" />
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="BENEFITS">
-                                    <field name="employee_benefit" mode="tree">
-                                        <tree>
-                                            <field name="benefits_id" />
-                                            <field name="benefit_type" />
-                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="DEDUCTIONS">
-                                    <field name="employee_deduction" mode="tree">
-                                        <tree>
-                                            <field name="deductions_id" />
-                                            <field name="deduction_type" />
-                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                        </tree>
-                                    </field>
-                                </page>
-                                <page string="OTHER INFORMATION">
-                                    <group>
-                                        <field name="c_other_info" />
-                                    </group>
-                                </page>
-                                <page string="CONTRACTS">
-                                    <field name="all_contracts" mode="tree" >
-                                        <tree>
-                                            <field name="name" />
-                                            <field name="start_date" widget="date" />
-                                            <field name="end_date" widget="date" />
-                                            <field name="active" string="Is Active" />
-                                        </tree>
-                                    </field>
-                                </page>
-                            </notebook>
+                        <group>
+                            <h1 style="width:50%%">
+                                <field name="contract_name"/>
+                            </h1>
+                        </group>
+                        <group style="width:50%%">
+                            <field name="contract_template_id" required="1"/>
+                            <field name="c_wage_type" />
+                            <field name="c_holiday_fee" />
+                            <field name="c_dayoff_deduction" />
+                            <field name="start_date" widget="date" required="1"/>
+                            <field name="end_date" widget="date" required="1"/>
+                            <field name="is_contract_active"/>
+                        </group>
+                        <group style="width:50%%">
+                            <field name="c_monthly_fee" widget="monetary"/>
+                            <field name="c_weekday_daily_fee" widget="monetary"/>
+                            <field name="c_weekday_overtime_fee" widget="monetary"/>
+                            <field name="c_weekends_fee" widget="monetary"/>
+                        </group>
+                        <notebook>
+                            <page string="WORKING TIME">
+                                <field name="employee_working_time" mode="tree">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="dayofweek" />
+                                        <field name="hour_from" />
+                                        <field name="hour_to" />
+                                        <field name="date_from" />
+                                        <field name="date_to" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="BENEFITS">
+                                <field name="employee_benefit" mode="tree">
+                                    <tree editable="bottom">
+                                        <field name="benefits_id"/>
+                                        <field name="benefit_type" />
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="DEDUCTIONS">
+                                <field name="employee_deduction" mode="tree">
+                                    <tree editable="bottom">
+                                        <field name="deductions_id"/>
+                                        <field name="deduction_type" />
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="OTHER INFORMATION">
+                                <group>
+                                    <field name="c_other_info" />
+                                </group>
+                            </page>
+                            <page string="CONTRACTS">
+                                <field name="all_contracts" mode="tree" >
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="start_date" widget="date" />
+                                        <field name="end_date" widget="date" />
+                                        <field name="active" string="Is Active" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </page>
 
                     <page name="others" string="OTHERS">

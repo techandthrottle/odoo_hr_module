@@ -2,7 +2,7 @@
   <data>
 
     <!-- Top menu item -->
-    <menuitem id="menu_hr_china_root" name="HR China" groups="hr.group_hr_attendance" sequence="95" web_icon="hr_china,static/description/icon.png"/>
+    <menuitem id="menu_hr_china_root" name="HR China" groups="hr.group_hr_attendance" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
 
     <!-- MENU   -->
     <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr.group_hr_attendance" action="hr.open_view_employee_list_my"/>
@@ -14,7 +14,7 @@
         <menuitem id="hr_china.menu_hr_china_configuration_child" name="Configuration" parent="hr_china.menu_hr_china_configuration_main" sequence="0" action="zulu_attendance.action_zulu_attendance_configuration" groups="hr_attendance.group_hr_attendance_manager"/>
         <!--   ZULU ATTENDANCE SETUP MENU AND SUBMENU     -->
         <menuitem id="hr_china.menu_hr_china_time_setup_child" name="Time Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="21" groups="hr_attendance.group_hr_attendance_manager"/>
-            <menuitem id="hr_china.menu_hr_china_holidays" name="Holidays" parent="hr_china.menu_hr_china_time_setup_child" sequence="0" action="zulu_attendance.zulu_attendance_action_holiday" groups="hr_attendance.group_hr_attendance_manager"/>
+            <menuitem id="hr_china.menu_hr_china_holidays" name="Holidays" parent="hr_china.menu_hr_china_time_setup_child" sequence="0" action="hr_china.hr_china_action_holiday" groups="hr_attendance.group_hr_attendance_manager"/>
             <menuitem id="hr_china.menu_hr_china_special_working_days" name="Special Working Days" parent="hr_china.menu_hr_china_time_setup_child" sequence="1" action="hr_china.action_view_hr_china_special_working_days" groups="hr_attendance.group_hr_attendance_manager"/>
 
         <menuitem id="hr_china.menu_hr_china_contract_setup_child" name="Contract Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="22" groups="hr_attendance.group_hr_attendance_manager"/>
