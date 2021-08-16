@@ -4,7 +4,6 @@ import math
 from odoo import models, fields, api, _
 from datetime import datetime
 import time
-from pprint import pprint
 
 class SpecialWorkingDays(models.Model):
     _name = 'hr_china.special_working_days'
