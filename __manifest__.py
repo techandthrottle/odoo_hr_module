@@ -31,7 +31,8 @@
     ],
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'views/time_setup.xml',
         'views/contract_setup.xml',
         'views/company_setup.xml',
