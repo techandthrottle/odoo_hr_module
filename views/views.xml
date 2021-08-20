@@ -1,7 +1,7 @@
 <odoo>
   <data>
 
-      <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
+      <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
 
         <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper" action="hr.open_view_employee_list_my"/>
         <menuitem id="menu_hr_china_my_attendances" name="Attendance" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator" action="hr_attendance.hr_attendance_action_my_attendances"/>
