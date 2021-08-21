@@ -517,3 +517,21 @@ class HRChinaEmployeeWorkingTime(models.Model):
     date_to = fields.Date(string='End Date')
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
+
+
+class HRChinaAttendance(models.Model):
+    _inherit = 'hr.employee'
+
+    def show_emp_attendance(self):
+        return {
+            'name': 'Attendance',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'hr.attendance',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'target': 'self',
+            'context': {
+                'search_default_employee_id': self.id
+            }
+        }

@@ -33,6 +33,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'views/attendance.xml',
         'views/time_setup.xml',
         'views/contract_setup.xml',
         'views/company_setup.xml',

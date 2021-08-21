@@ -149,8 +149,10 @@
                 </xpath>
 
                 <xpath expr="//form/sheet/div/button[2]" position="replace">
-                    <button type="object" groups="hr.group_hr_user" class="oe_stat_button"
+                    <button type="object" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator"
+                            class="oe_stat_button"
                             icon="fa-calendar" string="Attendance"
+                            name="show_emp_attendance"
                     />
                 </xpath>
 

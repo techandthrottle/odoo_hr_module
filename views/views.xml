@@ -1,16 +1,22 @@
 <odoo>
-  <data>
+    <data>
 
-      <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
+        <record id="hr_china_action_my_attendances" model="ir.actions.act_window">
+            <field name="name">Attendance</field>
+            <field name="res_model">hr.attendance</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_china_all_emp_attendance"/>
+        </record>
 
-        <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper" action="hr.open_view_employee_list_my"/>
+        <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
+
+        <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager" action="hr.open_view_employee_list_my"/>
         <menuitem id="menu_hr_china_my_attendances" name="Attendance" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator" action="hr_attendance.hr_attendance_action_my_attendances"/>
         <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_coordinator" action="hr_attendance.hr_attendance_action_my_attendances"/>
         <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager" action="hr_attendance.hr_attendance_action_my_attendances"/>
 
         <menuitem id="hr_china.menu_hr_china_configuration_main" name="Configuration" parent="hr_china.menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager"/>
             <menuitem id="hr_china.menu_hr_china_configuration_child" name="Configuration" parent="hr_china.menu_hr_china_configuration_main" sequence="0" action="zulu_attendance.action_zulu_attendance_configuration" groups="hr_china.group_hr_china_manager"/>
-
 
             <menuitem id="hr_china.menu_hr_china_time_setup_child" name="Time Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="21" groups="hr_china.group_hr_china_manager"/>
                 <menuitem id="hr_china.menu_hr_china_holidays" name="Holidays" parent="hr_china.menu_hr_china_time_setup_child" sequence="0" action="hr_china.hr_china_action_holiday" groups="hr_china.group_hr_china_manager"/>
@@ -25,5 +31,5 @@
                 <menuitem id="hr_china.menu_hr_china_departments" name="Departments" parent="hr_china.menu_hr_china_company_setup_child" sequence="0" action="hr.open_module_tree_department" groups="hr_china.group_hr_china_manager"/>
                 <menuitem id="hr_china.menu_hr_china_job_title" name="Job Title" parent="hr_china.menu_hr_china_company_setup_child" sequence="1" action="hr_china.action_view_hr_china_job_titles" groups="hr_china.group_hr_china_manager"/>
 
-  </data>
+    </data>
 </odoo>

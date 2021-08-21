@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="view_hr_china_all_emp_attendance" model="ir.ui.view">
+            <field name="name">hr_china.view_all_emp_attendance.tree</field>
+            <field name="model">hr.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Attendances">
+                    <field name="employee_id"/>
+                    <field name="check_in" />
+                    <field name="check_out" />
+                    <field name="worked_hours" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_china_employee_attendance" model="ir.ui.view">
+            <field name="name">hr_china.view_employee_attendance</field>
+            <field name="model">hr.attendance</field>
+            <field name="domain_force">[('employee_id', '=', user.id)]</field>
+            <field name="arch" type="xml">
+                <tree string="Attendance">
+                    <field name="check_in" />
+                    <field name="check_out" />
+                    <field name="worked_hours" />
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>
