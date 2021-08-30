@@ -18,7 +18,7 @@ class SpecialWorkingDays(models.Model):
 
                 time_delta = to_dt - from_dt
                 tot_time = math.ceil(time_delta.days + float(time_delta.seconds) / 86400)
-            item.total_days = tot_time - 1
+            item.total_days = tot_time + 1
 
     name = fields.Char(string='Name')
     start_date = fields.Datetime('Start Date')
@@ -45,7 +45,7 @@ class HRChinaHoliday(models.Model):
 
                 time_delta = to_dt - from_dt
                 tot_time = math.ceil(time_delta.days + float(time_delta.seconds) / 86400)
-            item.total_days = tot_time - 1
+            item.total_days = tot_time + 1
 
     total_days = fields.Integer('Total Days', compute=_compute_total_days)
 
@@ -67,8 +67,8 @@ class HRChinaContractTemplateWorkingTime(models.Model):
     ], 'Day of Week', required=True, index=True, default='0')
     date_from = fields.Date(string='Starting Date')
     date_to = fields.Date(string='End Date')
-    hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
-    hour_to = fields.Float(string='Work to', required=True)
+    hour_from = fields.Float(string='Work from (Hour)', required=True, index=True, help="Start and End time of working.")
+    hour_to = fields.Float(string='Work to (Hour)', required=True)
     sequence = fields.Integer('Sequence')
 
 
@@ -104,6 +104,12 @@ class HRDeductions(models.Model):
 class HRContractTemplate(models.Model):
     _name = 'hr_china.contracts_template'
 
+    @api.multi
+    def _get_currency_default(self):
+        cny = self.env['res.currency'].search([('name', '=', 'CNY')])
+        if cny:
+            return cny.id
+
     name = fields.Char('Name')
     wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
                                  string='Wage Type', required=True)
@@ -118,6 +124,7 @@ class HRContractTemplate(models.Model):
     working_time = fields.Many2many('hr_china.template_working_time', string='Working Time')
     benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
     deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
 
 class HRJobTitles(models.Model):
@@ -162,6 +169,8 @@ class HREmployee(models.Model):
     c_dayoff_deduction = fields.Float(string='Day Off Deduction')
     c_other_info = fields.Text(string='Additional Information')
     c_is_contract_active = fields.Boolean()
+
+    job_new_id = fields.Many2one('hr_china.job_titles', string='Job Title')
 
     @api.multi
     def _get_active_contract(self):

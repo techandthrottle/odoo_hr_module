@@ -12,7 +12,7 @@
                     <page name="public" string="PUBLIC INFORMATION">
                         <group string="Position">
                             <field name="department_id"/>
-                            <field name="job_id"/>
+                            <field name="job_new_id"/>
                             <field name="parent_id"/>
                         </group>
                     </page>
@@ -96,8 +96,6 @@
                                         <field name="dayofweek" />
                                         <field name="hour_from" />
                                         <field name="hour_to" />
-                                        <field name="date_from" />
-                                        <field name="date_to" />
                                     </tree>
                                 </field>
                             </page>

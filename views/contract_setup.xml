@@ -66,8 +66,6 @@
                         <group style="width:50%%">
                             <field name="name" />
                             <field name="dayofweek" />
-                            <field name="date_from" widget="date"/>
-                            <field name="date_to" widget="date"/>
                             <field name="hour_from" />
                             <field name="hour_to" />
                         </group>
@@ -85,14 +83,17 @@
                     <h1 style="width:50%%"><field name="name"/></h1>
                     <group style="width:50%%">
                         <field name="wage_type" />
-                        <field name="holiday_fee" />
+                        <field name="currency_id" />
+                        <field name="monthly_fee" widget="monetary"/>
+                        <field name="weekday_daily_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                        <field name="weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                        <field name="weekends_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                        <field name="holiday_fee" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
                         <field name="dayoff_deduction" />
                     </group>
                     <group style="width:50%%">
-                        <field name="monthly_fee" widget="monetary"/>
-                        <field name="weekday_daily_fee" widget="monetary"/>
-                        <field name="weekday_overtime_fee" widget="monetary"/>
-                        <field name="weekends_fee" widget="monetary"/>
+
+
                     </group>
                     <notebook>
                         <page string="WORKING TIME">
@@ -103,8 +104,6 @@
                                     <field name="dayofweek" />
                                     <field name="hour_from" />
                                     <field name="hour_to" />
-                                    <field name="date_from" />
-                                    <field name="date_to" />
                                 </tree>
                             </field>
                         </page>
