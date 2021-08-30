@@ -76,17 +76,19 @@
                         <group style="width:50%%">
                             <field name="contract_template_id" required="1"/>
                             <field name="c_wage_type" />
-                            <field name="c_holiday_fee" />
+                            <field name="currency_id" />
+                            <field name="c_monthly_fee" widget="monetary"/>
+                             <field name="c_weekday_daily_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
+                            <field name="c_weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
+                            <field name="c_weekends_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
+                            <field name="c_holiday_fee" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
                             <field name="c_dayoff_deduction" />
+
+                        </group>
+                        <group style="width:50%%">
                             <field name="start_date" widget="date" required="1"/>
                             <field name="end_date" widget="date" required="1"/>
                             <field name="is_contract_active"/>
-                        </group>
-                        <group style="width:50%%">
-                            <field name="c_monthly_fee" widget="monetary"/>
-                            <field name="c_weekday_daily_fee" widget="monetary"/>
-                            <field name="c_weekday_overtime_fee" widget="monetary"/>
-                            <field name="c_weekends_fee" widget="monetary"/>
                         </group>
                         <notebook>
                             <page string="WORKING TIME">

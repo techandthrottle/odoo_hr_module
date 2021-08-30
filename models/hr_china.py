@@ -138,6 +138,12 @@ class HRJobTitles(models.Model):
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
 
+    @api.multi
+    def _get_currency_default(self):
+        cny = self.env['res.currency'].search([('name', '=', 'CNY')])
+        if cny:
+            return cny.id
+
     first_name = fields.Char('First Name')
     second_name = fields.Char('Second Name')
     middle_name = fields.Char('Middle Name')
@@ -171,6 +177,7 @@ class HREmployee(models.Model):
     c_is_contract_active = fields.Boolean()
 
     job_new_id = fields.Many2one('hr_china.job_titles', string='Job Title')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
     @api.multi
     def _get_active_contract(self):
@@ -235,6 +242,7 @@ class HREmployee(models.Model):
 
         if templ_contract:
             self.contract_name = self.name + " - " + templ_contract.name
+            self.currency_id = templ_contract.currency_id
             self.c_wage_type = templ_contract.wage_type
             self.c_monthly_fee = templ_contract.monthly_fee
             self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
@@ -248,6 +256,7 @@ class HREmployee(models.Model):
             self.c_deductions_id = templ_contract.deductions_id
         else:
             self.contract_name = False
+            self.currency_id = False
             self.start_date = False
             self.end_date = False
             self.c_wage_type = False
@@ -273,6 +282,7 @@ class HREmployee(models.Model):
                     created_contract = self.env['hr_china.contract'].create({
                         'employee_id': self.id,
                         'name': self.contract_name,
+                        'currency_id': self.currency_id,
                         'wage_type': self.contract_template_id.wage_type,
                         'monthly_fee': self.contract_template_id.monthly_fee,
                         'weekday_daily_fee': self.contract_template_id.weekday_daily_fee,
@@ -372,6 +382,12 @@ class HRChinaContract(models.Model):
                     rec.is_contract_active = 'expired'
                     rec.active = False
 
+    @api.multi
+    def _get_currency_default(self):
+        cny = self.env['res.currency'].search([('name', '=', 'CNY')])
+        if cny:
+            return cny.id
+
     employee_id = fields.Many2one('hr.employee', string='Employee')
     active = fields.Boolean(string='Active', default=True)
     start_date = fields.Datetime(string='Start Date')
@@ -396,6 +412,7 @@ class HRChinaContract(models.Model):
                                   string='Benefits')
     deductions_id = fields.One2many('hr_china.contract_deductions', 'contract_id',
                                     string='Deductions')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
 
 class HRChinaContractBenefits(models.Model):
