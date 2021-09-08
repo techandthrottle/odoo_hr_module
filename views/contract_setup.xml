@@ -68,6 +68,7 @@
                             <field name="dayofweek" />
                             <field name="hour_from" />
                             <field name="hour_to" />
+                            <field name="break_hours" />
                         </group>
                     </sheet>
                 </form>
@@ -84,12 +85,15 @@
                     <group style="width:50%%">
                         <field name="wage_type" />
                         <field name="currency_id" />
-                        <field name="monthly_fee" widget="monetary"/>
+                        <field name="monthly_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" />
+                        <field name="hourly_rate" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
                         <field name="weekday_daily_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
                         <field name="weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                        <field name="weekend_overtime_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
                         <field name="weekends_fee" widget="monetary" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
-                        <field name="holiday_fee" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                        <field name="holiday_fee" />
                         <field name="dayoff_deduction" />
+                        <field name="payment_method" />
                     </group>
                     <group style="width:50%%">
 
@@ -104,6 +108,7 @@
                                     <field name="dayofweek" />
                                     <field name="hour_from" />
                                     <field name="hour_to" />
+                                    <field name="break_hours" />
                                 </tree>
                             </field>
                         </page>

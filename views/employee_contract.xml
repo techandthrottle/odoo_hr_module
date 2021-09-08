@@ -18,6 +18,7 @@
                             <field name="monthly_fee" widget="monetary" readonly="1"/>
                             <field name="weekday_daily_fee" widget="monetary" readonly="1"/>
                             <field name="weekday_overtime_fee" widget="monetary" readonly="1"/>
+                            <field name="weekend_overtime_fee" widget="monetary" readonly="1"/>
                             <field name="weekends_fee" widget="monetary" readonly="1"/>
                         </group>
                         <notebook>
@@ -28,6 +29,7 @@
                                         <field name="dayofweek" />
                                         <field name="hour_from"/>
                                         <field name="hour_to" />
+                                        <field name="break_hours" />
                                     </tree>
                                 </field>
                             </page>
@@ -105,6 +107,7 @@
                             <field name="dayofweek" />
                             <field name="hour_from" widget="timepicker"/>
                             <field name="hour_to" widget="timepicker"/>
+                            <field name="break_hours" />
                         </group>
                     </sheet>
                 </form>

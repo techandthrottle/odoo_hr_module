@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_wage_type_config" model="ir.ui.view">
+            <field name="name">hr_china.wage_type.tree</field>
+            <field name="model">hr_china.wage_type</field>
+            <field name="arch" type="xml">
+                <tree string="Wage Type" create="1" editable="bottom">
+                    <field name="name"/>
+                    <field name="wage_type" />
+                    <field name="days"/>
+                    <field name="formula"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_wage_type" model="ir.actions.act_window">
+            <field name="name">Wage Type</field>
+            <field name="res_model">hr_china.wage_type</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_wage_type_config"/>
+        </record>
+
+        <record id="view_payment_method_config" model="ir.ui.view">
+            <field name="name">hr_china.payment_method.tree</field>
+            <field name="model">hr_china.payment_method</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Method" create="1" editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_payment" model="ir.actions.act_window">
+            <field name="name">Payment Method</field>
+            <field name="res_model">hr_china.payment_method</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_payment_method_config"/>
+        </record>
+
+        <record id="view_company_logo_config" model="ir.ui.view">
+            <field name="name">hr_china.company_name_logo.tree</field>
+            <field name="model">hr_china.company_name_logo</field>
+            <field name="arch" type="xml">
+                <tree string="Company Name and Logo">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_company_logo_form" model="ir.ui.view">
+            <field name="name">view.company_name_logo.form</field>
+            <field name="model">hr_china.company_name_logo</field>
+            <field name="arch" type="xml">
+                <form string="Company Name and Logo">
+                    <sheet>
+                        <group style="width:50%%">
+                            <field name="name" />
+                            <field name="logo" widget="image"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_company" model="ir.actions.act_window">
+            <field name="name">Company Name and Logo</field>
+            <field name="res_model">hr_china.company_name_logo</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_company_logo_config" />
+        </record>
+
+        <record id="view_leave_configuration" model="ir.ui.view">
+            <field name="name">hr_china.leave_config.tree</field>
+            <field name="model">hr_china.leave_config</field>
+            <field name="arch" type="xml">
+                <tree string="Leave Configuration" create="1" editable="bottom">
+                    <field name="name" />
+                    <field name="days_allowed" />
+                    <field name="leave_type" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_leave" model="ir.actions.act_window">
+            <field name="name">Leave Configuration</field>
+            <field name="res_model">hr_china.leave_config</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_leave_configuration" />
+        </record>
+
+    </data>
+</odoo>

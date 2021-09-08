@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="hr_china_timesheet_search" model="ir.ui.view">
+            <field name="name">hr_china_timesheet.filter</field>
+            <field name="model">zulu_attendance.timesheet</field>
+            <field name="arch" type="xml">
+                <search string="Timesheet Filter">
+                    <field name="name" string="Employee"/>
+                    <field name="working_time" string="Working Time"/>
+                    <field name="start_date" />
+                    <field name="end_date" />
+                    <field name="state" />
+
+                    <filter name="filter_draft" string="Draft" domain="[('state', 'in', ['draft'])]" />
+                    <filter name="filter_validate" string="Approved" domain="[('state', 'in', ['validate'])]" />
+                    <filter name="filter_month" string="This Month" domain="[
+                        ('create_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')),
+                        ('create_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <filter name="filter_last_month" string="Last Month" domain="[
+                        (‘create_date,'&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),
+                        (‘create_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'name'}"/>
+                        <filter string="Working Time" domain="[]" context="{'group_by':'working_time'}"/>
+                        <filter string="Start Date" domain="[]" context="{'group_by':'start_date'}"/>
+                        <filter string="End Date" domain="[]" context="{'group_by':'end_date'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="zulu_attendance_timesheet_tree" model="ir.ui.view">
+            <field name="name">view.timesheet.tree</field>
+            <field name="model">zulu_attendance.timesheet</field>
+            <field name="arch" type="xml">
+                <tree string="Timesheets">
+                    <field name="employee_id" string="Employee"/>
+                    <field name="working_time" string="Working Time"/>
+                    <field name="start_date" widget="date"/>
+                    <field name="end_date" widget="date"/>
+                    <field name="total_days"/>
+                    <field name="worked_days"/>
+                    <field name="state" invisible="1"/>
+                    <field name="timesheet_state" widget="tree_html"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="zulu_attendance_timesheet_create_form" model="ir.ui.view">
+            <field name="name">view.timesheet_create.form</field>
+            <field name="model">zulu_attendance.timesheet.create</field>
+            <field name="arch" type="xml">
+                <form string="Timesheets">
+                    <sheet>
+                        <div class="oe_edit_only" style="padding-bottom: 50px;">
+                            <label for="total_days" string="Timesheet Period"/>
+                            <field name="start_date" class="oe_inline" required="1"  widget="date"/>
+                            <label string=" to " class="oe_inline"/>
+                            <field name="end_date" class="oe_inline" required="1"  widget="date"/>
+                        </div>
+                        <field name="employee_ids" class="oe_edit_only">
+                            <tree editable="bottom" create="true">
+                                <field name="name" string="Employee"/>
+                                <field name="categ_id" string="Working Time"/>
+                                <field name="job_id" string="Job Title"/>
+                                <field name="department_id" string="Department"/>
+                            </tree>
+                        </field>
+                        <footer>
+                            <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="zulu_attendance_timesheet_form" model="ir.ui.view">
+            <field name="name">view.timesheet.form</field>
+            <field name="model">zulu_attendance.timesheet</field>
+            <field name="arch" type="xml">
+                <form string="Timesheets">
+                    <header>
+                        <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight" />
+                        <button string="Approve" name="action_approve" states="draft,confirm" type="object" class="oe_highlight"/>
+                        <button string="Set as Draft" name="action_draft" states="validate,confirm" type="object" />
+                        <button string="Update timesheet" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
+                    </header>
+                    <sheet>
+                        <!--<div class="oe_button_box" name="button_box">
+                            <button name="action_open_leave" type="object" class="oe_stat_button" icon="fa-calendar">
+                                <field string="Leaves" name="leave_count" widget="statinfo" />
+                            </button>
+                            <button name="action_open_overtime" type="object" class="oe_stat_button" icon="fa-clock-o">
+                                <field string="Overtime" name="overtime_count" widget="statinfo" />
+                            </button>
+                        </div>-->
+                        <div><h1><field name="name"/></h1></div>
+                        <group>
+                            <strong>
+                                <label for="total_days" string="Timesheet Period"/>
+                                <div>
+                                    <field name="x_start" class="oe_inline" widget="date"/>
+                                    <label string="to" class="oe_inline"/>
+                                    <field name="x_end" class="oe_inline" widget="date"/>
+                                </div>
+                            </strong>
+                            <group>
+                                <field name="employee_image" string=" " widget="image" class="oe_avatar"/>
+                            </group>
+                        </group>
+                        <field name="attend" invisible="1"/>
+                        <field name="attendance_trans">
+                            <tree editable="bottom" create="false">
+                                <field name="date" string="Date" widget="date"/>
+                                <field name="date_day" string="Day"/>
+                                <field name="timesheet" invisible="1"/>
+                                <field name="start_time_str" string="First Check In"/>
+                                <field name="end_time_str" string="Last Check Out"/>
+                                <field name="regular_time_str" string="Regular"/>
+                                <field name="break_hrs_str" />
+                                <field name="overtime_hrs_str" />
+                                <field name="weekend" />
+                                <!--<field name="overtime_hr" string="Overtime Hour"/>-->
+                                <field name="holiday_date" string="Holiday"/>
+                                <field name="leave_status" />
+                                <!--<field name="leave_date" string="Leave"/>-->
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+         </record>
+
+
+    </data>
+</odoo>

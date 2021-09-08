@@ -12,11 +12,11 @@
 
         <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager_dropdown" action="hr.open_view_employee_list_my"/>
         <menuitem id="menu_hr_china_attendances" name="Attendance" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" />
-            <menuitem id="hr_china.menu_hr_china_my_attendances" name="Attendances" parent="menu_hr_china_attendances" sequence="0" action="hr_attendance.hr_attendance_action" />
+            <menuitem id="hr_china.menu_hr_china_my_attendances" name="Attendances" parent="menu_hr_china_attendances" sequence="0" action="hr_china.action_view_hr_china_emp_attendance" />
             <menuitem id="hr_china.menu_hr_china_kiosk_mode" name="Kiosk Mode" parent="menu_hr_china_attendances" sequence="1" action="zulu_attendance.zulu_attendance_action_kiosk_mode" />
 
         <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="zulu_attendance.open_zulu_timesheets"/>
-        <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown" action="hr_attendance.hr_attendance_action_my_attendances"/>
+        <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown" action="zulu_attendance.action_view_zulu_attendance_payslip"/>
 
         <menuitem id="hr_china.menu_hr_china_configuration_main" name="Configuration" parent="hr_china.menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager_dropdown"/>
             <menuitem id="hr_china.menu_hr_china_configuration_child" name="Configuration" parent="hr_china.menu_hr_china_configuration_main" sequence="0" action="zulu_attendance.action_zulu_attendance_configuration" groups="hr_china.group_hr_china_manager_dropdown"/>
@@ -24,15 +24,20 @@
             <menuitem id="hr_china.menu_hr_china_time_setup_child" name="Time Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="21" groups="hr_china.group_hr_china_manager_dropdown"/>
                 <menuitem id="hr_china.menu_hr_china_holidays" name="Holidays" parent="hr_china.menu_hr_china_time_setup_child" sequence="0" action="hr_china.hr_china_action_holiday" groups="hr_china.group_hr_china_manager_dropdown"/>
                 <menuitem id="hr_china.menu_hr_china_special_working_days" name="Special Working Days" parent="hr_china.menu_hr_china_time_setup_child" sequence="1" action="hr_china.action_view_hr_china_special_working_days" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_leave" name="Leaves" parent="hr_china.menu_hr_china_time_setup_child" sequence="2" action="hr_china.action_view_hr_china_leave" groups="hr_china.group_hr_china_manager_dropdown"/>
 
             <menuitem id="hr_china.menu_hr_china_contract_setup_child" name="Contract Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="22" groups="hr_china.group_hr_china_manager_dropdown"/>
                 <menuitem id="hr_china.menu_hr_china_benefits" name="Benefits" parent="hr_china.menu_hr_china_contract_setup_child" sequence="0" action="hr_china.action_view_hr_china_benefits" groups="hr_china.group_hr_china_manager_dropdown"/>
                 <menuitem id="hr_china.menu_hr_china_deduction" name="Deduction" parent="hr_china.menu_hr_china_contract_setup_child" sequence="1" action="hr_china.action_view_hr_china_deductions" groups="hr_china.group_hr_china_manager_dropdown"/>
-                <menuitem id="hr_china.menu_hr_china_contracts_template" name="Contracts Template" parent="hr_china.menu_hr_china_contract_setup_child" sequence="2" action="hr_china.action_view_hr_china_contracts_template" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_payment_method" name="Payment Method" parent="hr_china.menu_hr_china_contract_setup_child" sequence="2" action="hr_china.action_view_hr_china_payment" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_wage_type" name="Wage Type" parent="hr_china.menu_hr_china_contract_setup_child" sequence="3" action="hr_china.action_view_hr_china_wage_type" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_contracts_template" name="Contracts Template" parent="hr_china.menu_hr_china_contract_setup_child" sequence="4" action="hr_china.action_view_hr_china_contracts_template" groups="hr_china.group_hr_china_manager_dropdown"/>
+
 
             <menuitem id="hr_china.menu_hr_china_company_setup_child" name="Company Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="23" groups="hr_china.group_hr_china_manager_dropdown"/>
-                <menuitem id="hr_china.menu_hr_china_departments" name="Departments" parent="hr_china.menu_hr_china_company_setup_child" sequence="0" action="hr.open_module_tree_department" groups="hr_china.group_hr_china_manager_dropdown"/>
-                <menuitem id="hr_china.menu_hr_china_job_title" name="Job Title" parent="hr_china.menu_hr_china_company_setup_child" sequence="1" action="hr_china.action_view_hr_china_job_titles" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_company_logo" name="Company Name and Logo" parent="hr_china.menu_hr_china_company_setup_child" sequence="0" action="hr_china.action_view_hr_china_company" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_departments" name="Departments" parent="hr_china.menu_hr_china_company_setup_child" sequence="1" action="hr.open_module_tree_department" groups="hr_china.group_hr_china_manager_dropdown"/>
+                <menuitem id="hr_china.menu_hr_china_job_title" name="Job Title" parent="hr_china.menu_hr_china_company_setup_child" sequence="2" action="hr_china.action_view_hr_china_job_titles" groups="hr_china.group_hr_china_manager_dropdown"/>
 
     </data>
 </odoo>

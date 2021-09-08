@@ -5,6 +5,8 @@ from odoo import models, fields, api, _
 from datetime import datetime
 import time
 
+from pprint import pprint
+
 class SpecialWorkingDays(models.Model):
     _name = 'hr_china.special_working_days'
 
@@ -70,6 +72,7 @@ class HRChinaContractTemplateWorkingTime(models.Model):
     hour_from = fields.Float(string='Work from (Hour)', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to (Hour)', required=True)
     sequence = fields.Integer('Sequence')
+    break_hours = fields.Integer('Break Hours')
 
 
 class HRBenefits(models.Model):
@@ -111,15 +114,19 @@ class HRContractTemplate(models.Model):
             return cny.id
 
     name = fields.Char('Name')
-    wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
-                                 string='Wage Type', required=True)
+    wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type', required=True)
+    payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
+    # wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
+    #                              string='Wage Type', required=True)
     monthly_fee = fields.Float(string='Monthly Fee')
+    hourly_rate = fields.Float(string='Hourly Rate')
     weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
     weekends_fee = fields.Float(string='Weekends Fee')
     holiday_fee = fields.Float(string='Holiday Fee')
     dayoff_deduction = fields.Float(string='Day Off Deduction')
     other_info = fields.Text(string='Additional Information')
+    weekend_overtime_fee = fields.Float(string='Weekend Overtime Fee')
 
     working_time = fields.Many2many('hr_china.template_working_time', string='Working Time')
     benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
@@ -175,9 +182,44 @@ class HREmployee(models.Model):
     c_dayoff_deduction = fields.Float(string='Day Off Deduction')
     c_other_info = fields.Text(string='Additional Information')
     c_is_contract_active = fields.Boolean()
+    c_weekend_overtime_fee = fields.Float(string='Weekend Overtime Fee')
 
     job_new_id = fields.Many2one('hr_china.job_titles', string='Job Title')
     currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
+    payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
+
+    new_attendance_ids = fields.One2many('hr_china.attendance', 'employee_id', help='List of Attendances for the Employee')
+    new_last_attendance_id = fields.Many2one('hr_china.attendance', compute='_new_compute_last_attendance_id')
+    new_attendance_state = fields.Selection(string="Attendance", compute='_new_compute_attendance_state',
+                                            selection=[('checked_out_am', "Morning Checked Out"),
+                                                       ('checked_in_am', "Morning Checked In"),
+                                                       ('check_out_pm', "Afternnon Checked Out"),
+                                                       ('check_in_am', "Afternoon Checked In")])
+
+    @api.depends('attendance_ids')
+    def _new_compute_last_attendance_id(self):
+        for employee in self:
+            employee.new_last_attendance_id = employee.new_attendance_ids and employee.new_attendance_ids[0] or False
+
+    @api.depends('new_last_attendance_id.check_in_am', 'new_last_attendance_id.check_out_am', 'new_last_attendance_id.check_in_pm', 'new_last_attendance_id.check_out_pm', 'new_last_attendance_id')
+    def _new_compute_attendance_state(self):
+        for employee in self:
+            if employee.new_last_attendance_id:
+                if employee.new_last_attendance_id.check_in_am:
+                    employee.new_attendance_state = 'check_in_am'
+                    return
+                if employee.new_last_attendance_id.check_out_am:
+                    employee.new_attendance_state = 'check_out_am'
+                    return
+                if employee.new_last_attendance_id.check_in_pm:
+                    employee.new_attendance_state = 'check_in_pm'
+                    return
+                if employee.new_last_attendance_id.check_out_pm:
+                    employee.new_attendance_state = 'check_out_pm'
+                    return
+
+      #          employee.new_attendance_state = employee.new_last_attendance_id
+            #employee.new_attendance_state = employee.new_last_attendance_id and not employee.last_attendance_id.check_out and 'checked_in' or 'checked_out'
 
     @api.multi
     def _get_active_contract(self):
@@ -213,6 +255,7 @@ class HREmployee(models.Model):
                 'date_to': working_line.date_to,
                 'hour_from': working_line.hour_from,
                 'hour_to': working_line.hour_to,
+                'break_hours': working_line.break_hours,
             }
             working_time_lines.append((0, 0, vals))
 
@@ -254,6 +297,7 @@ class HREmployee(models.Model):
             self.c_working_time = templ_contract.working_time
             self.c_benefits_id = templ_contract.benefits_id
             self.c_deductions_id = templ_contract.deductions_id
+            self.c_weekend_overtime_fee = templ_contract.weekend_overtime_fee
         else:
             self.contract_name = False
             self.currency_id = False
@@ -270,6 +314,7 @@ class HREmployee(models.Model):
             self.c_working_time = False
             self.c_benefits_id = False
             self.c_deductions_id = False
+            self.c_weekend_overtime_fee = False
 
     @api.multi
     def write(self, vals):
@@ -293,7 +338,8 @@ class HREmployee(models.Model):
                         'other_info': self.contract_template_id.other_info,
                         'start_date': self.start_date,
                         'end_date': self.end_date,
-                        'contract_template_id': self.contract_template_id.id
+                        'contract_template_id': self.contract_template_id.id,
+                        'weekend_overtime_fee': self.contract_template_id.weekend_overtime_fee
                     })
 
                     self.new_contract_id = created_contract
@@ -309,6 +355,7 @@ class HREmployee(models.Model):
                             'date_to': working_line.date_to,
                             'hour_from': working_line.hour_from,
                             'hour_to': working_line.hour_to,
+                            'break_hours': working_line.break_hours,
                         }
                         working_time_lines.append((0, 0, vals))
 
@@ -357,6 +404,8 @@ class HREmployee(models.Model):
             active_cont_dict['end_date'] = vals['end_date']
         if 'is_contract_active' in vals:
             active_cont_dict['is_contract_active'] = vals['is_contract_active']
+        if 'c_weekend_overtime_fee' in vals:
+            active_cont_dict['weekend_overtime_fee'] = vals['c_weekend_overtime_fee']
 
         if len(active_cont_dict) > 0:
             #self.active_contract.write(active_cont_dict)
@@ -405,6 +454,7 @@ class HRChinaContract(models.Model):
     holiday_fee = fields.Float(string='Holiday Fee')
     dayoff_deduction = fields.Float(string='Day Off Deduction')
     other_info = fields.Text(string='Additional Information')
+    weekend_overtime_fee = fields.Float(string='Weekend Overtime Fee')
 
     working_time = fields.One2many('hr_china.contract_working_time', 'contract_id',
                                    string='Working Time')
@@ -467,6 +517,7 @@ class HRChinaContractWorkingTime(models.Model):
     date_to = fields.Date(string='End Date')
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
+    break_hours = fields.Integer('Break Hours')
 
 
 class HRChinaEmployeeBenefits(models.Model):
@@ -543,6 +594,7 @@ class HRChinaEmployeeWorkingTime(models.Model):
     date_to = fields.Date(string='End Date')
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
+    break_hours = fields.Integer('Break Hours')
 
 
 class HRChinaAttendance(models.Model):

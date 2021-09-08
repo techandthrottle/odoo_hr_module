@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'calendar', 'hr', 'hr_attendance', 'hr_holidays', 'zulu_attendance'],
+        'depends': ['base', 'calendar', 'hr', 'hr_attendance', 'hr_holidays', 'zulu_attendance'],
 
     'css': [
             'static/src/lib/jquery.timepicker.css',
@@ -39,6 +39,8 @@
         'views/company_setup.xml',
         'views/employee.xml',
         'views/employee_contract.xml',
+        'views/configuration.xml',
+        'views/timesheet.xml',
         'views/views.xml',
         'views/templates.xml',
     ],
