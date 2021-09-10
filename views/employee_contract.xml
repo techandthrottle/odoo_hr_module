@@ -1,0 +1,118 @@
+<odoo>
+    <data>
+        <record id="hr_china_employee_contracts_form" model="ir.ui.view">
+            <field name="name">view.employee_contracts.form</field>
+            <field name="model">hr_china.contract</field>
+            <field name="arch" type="xml">
+                <form string="Contract" edit="0">
+                    <sheet>
+                        <h1 style="width:50%%"><field name="name" readonly="1"/></h1>
+                        <group style="width:50%%">
+                            <field name="wage_type" readonly="1"/>
+                            <field name="holiday_fee" readonly="1"/>
+                            <field name="dayoff_deduction" readonly="1"/>
+                            <field name="start_date" widget="date" readonly="1"/>
+                            <field name="end_date" widget="date" readonly="1"/>
+                        </group>
+                        <group style="width:50%%">
+                            <field name="monthly_fee" widget="monetary" readonly="1"/>
+                            <field name="weekday_daily_fee" widget="monetary" readonly="1"/>
+                            <field name="weekday_overtime_fee" widget="monetary" readonly="1"/>
+                            <field name="weekend_overtime_fee" widget="monetary" readonly="1"/>
+                            <field name="weekends_fee" widget="monetary" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="WORKING TIME">
+                                <field name="working_time">
+                                    <tree create="false" delete="false" edit="false">
+                                        <field name="name" />
+                                        <field name="dayofweek" />
+                                        <field name="hour_from"/>
+                                        <field name="hour_to" />
+                                        <field name="break_hours" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="BENEFITS">
+                                <field name="benefits_id" mode="tree">
+                                    <tree >
+                                        <field name="benefits_id"/>
+                                        <field name="benefit_type"/>
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="DEDUCTIONS">
+                                <field name="deductions_id" mode="tree">
+                                    <tree >
+                                        <field name="deductions_id"/>
+                                        <field name="deduction_type"/>
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="OTHER INFORMATION">
+                                <group>
+                                    <field name="other_info" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_employee_benefits_form" model="ir.ui.view">
+            <field name="name">view.employee_benefits.form</field>
+            <field name="model">hr_china.employee_benefits</field>
+            <field name="arch" type="xml">
+                <form string="Benefits">
+                    <sheet>
+                        <group style="width:50%%">
+                            <field name="benefits_id" />
+                            <field name="benefit_type" />
+                            <field name="amount" />
+                            <field name="currency" widget="selection" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_employee_deductions_form" model="ir.ui.view">
+            <field name="name">view.employee_deductions.form</field>
+            <field name="model">hr_china.employee_deductions</field>
+            <field name="arch" type="xml">
+                <form string="Benefits">
+                    <sheet>
+                        <group style="width:50%%">
+                            <field name="deductions_id" />
+                            <field name="deduction_type" />
+                            <field name="amount" />
+                            <field name="currency" widget="selection" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_employee_working_time_form" model="ir.ui.view">
+            <field name="name">view.employee_working_time.form</field>
+            <field name="model">hr_china.employee_working_time</field>
+            <field name="arch" type="xml">
+                <form string="Benefits">
+                    <sheet>
+                        <group style="width:50%%">
+                            <field name="name" />
+                            <field name="dayofweek" />
+                            <field name="hour_from" widget="timepicker"/>
+                            <field name="hour_to" widget="timepicker"/>
+                            <field name="break_hours" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

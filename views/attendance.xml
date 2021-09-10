@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="view_hr_china_all_emp_attendance" model="ir.ui.view">
+            <field name="name">hr_china.view_all_emp_attendance.tree</field>
+            <field name="model">hr_china.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Attendances">
+                    <field name="employee_id"/>
+                    <field name="attendance_date" />
+                    <field name="attendance_day" />
+                    <field name="check_in_am" />
+                    <field name="check_out_am" />
+                    <field name="break_hours" />
+                    <field name="check_in_pm" />
+                    <field name="check_out_pm" />
+                    <field name="work_hours" />
+                    <field name="overtime_hours" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_china_emp_attendance" model="ir.actions.act_window">
+            <field name="name">Attendance</field>
+            <field name="res_model">hr_china.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_hr_china_all_emp_attendance"/>
+        </record>
+
+        <record id="view_hr_china_attendance_form" model="ir.ui.view">
+            <field name="name">hr_china.emp_attendance.form</field>
+            <field name="model">hr_china.attendance</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div><h1><field name="employee_id" readonly="1"/></h1></div>
+                        <group style="width:50%%">
+                            <field name="attendance_day" />
+                            <field name="attendance_date" />
+                        </group>
+                        <group style="width:50%%">
+                        </group>
+                        <group style="width:50%%">
+                            <field name="check_in_am" />
+                            <field name="check_out_am" />
+                        </group>
+                        <group style="width:50%%">
+                            <field name="check_in_pm" />
+                            <field name="check_out_pm" />
+                        </group>
+                        <group>
+                            <field name="break_hours" />
+                            <field name="work_hours" />
+                            <field name="overtime_hours" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
