@@ -25,5 +25,6 @@ Show list of all employee and employee public and personal information such as c
 
 ## Attendance
 Can see and edit attendance information of the employee. The Kiosk supports barcode scanning for automatic attendance.
+![Attendance List](img/Attendance.jpg)
 
 > Will add more details in the future
