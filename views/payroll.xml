@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="view_hr_china_payslip_tree" model="ir.ui.view">
+            <field name="name">hr_china_payslip.tree</field>
+            <field name="model">hr_china.payslip</field>
+            <field name="arch" type="xml">
+                <tree string="Payslips">
+                    <field name="name" />
+                    <field name="wage_type" />
+                    <field name="start_date" widget="date"/>
+                    <field name="end_date" widget="date"/>
+                    <field name="total_days" />
+                    <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" />
+                    <field name="work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                    <field name="payslip_state" widget="tree_html"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_china_payslips" model="ir.actions.act_window">
+            <field name="name">Payslips</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr_china.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="hr_china_create_payslip_wiz" model="ir.ui.view">
+            <field name="name">hr_china_create_payslip.wiz_form</field>
+            <field name="model">hr_china.payslip.create</field>
+            <field name="arch" type="xml">
+                <form string="Select Timesheet Period">
+                    <sheet>
+                        <h3>Choose the Timesheet Period</h3>
+
+                        <div class="oe_edit_only" style="padding-bottom: 50px; padding-right: 10px; padding-top: 25px">
+                            <label string="Choose Date: " class="oe_inline"/>
+                            <field name="start_date" class="oe_inline" required="1" widget="date" />
+                            <label string=" - " class="oe_inline" />
+                            <field name="end_date" class="oe_inline" required="1" widget="date" />
+                        </div>
+
+                        <footer>
+                            <button string="Update" name="display_timesheet_wizard" type="object" class="btn-primary" />
+                            <button string="Cancel" class="btn-default" special="cancel" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_create_payslip_temp_wiz" model="ir.ui.view">
+            <field name="name">hr_china_create_payslip.wiz_temp_form</field>
+            <field name="model">hr_china.payslip.create_temp</field>
+            <field name="arch" type="xml">
+                <form string="Select Employee Timesheet">
+                    <sheet>
+                        <field name="my_id" >
+                            <tree>
+                                <field name="employee_id" />
+                                <field name="department_id" />
+                                <field name="job_title_id" />
+                            </tree>
+                        </field>
+
+                        <footer>
+                            <button string="Create Payslip" name="close_dialog" type="object" class="btn-primary" />
+                            <button string="Cancel" class="btn-default" special="cancel" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_china_payslip_form" model="ir.ui.view">
+            <field name="name">hr_china_payslip.form</field>
+            <field name="model">hr_china.payslip</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                         <div><h1><field name="name" /></h1></div>
+                         <group style="width:50%%">
+                             <field name="timesheet_id" readonly="1"/>
+                             <field name="start_date" string="Payslip Period From" widget="date" readonly="1"/>
+                             <field name="end_date" string="Payslip Period To" widget="date" readonly="1"/>
+                             <field name="wage_type" invisible="1" />
+                             <field name="currency_id" invisible="1" />
+                         </group>
+                        <group style="width: 50%%">
+                            <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" string="Working Days" readonly="1"/>
+                            <field name="work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" string="Working Hours" readonly="1"/>
+                            <field name="overtime_hours" readonly="1"/>
+                            <field name="weekend" readonly="1"/>
+                            <field name="holiday" readonly="1"/>
+                            <field name="leave" readonly="1"/>
+                        </group>
+                        <group string="Income">
+                            <field name="basic_pay" string="Basic Pay" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" widget="monetary" readonly="1"/>
+                            <field name="total_hourly_pay" string="Total Hourly Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1"/>
+                            <field name="holiday_pay" string="Holiday Pay" widget="monetary" readonly="1"/>
+                            <field name="weekend_pay" string="Weekend Pay" widget="monetary" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="benefits_id" nolabel="1">
+                                <tree>
+                                    <field name="name" string="Benefits"/>
+                                    <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="deductions_id" nolabel="1">
+                                <tree>
+                                    <field name="name" string="Deductions"/>
+                                    <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="gross_pay" widget="monetary" readonly="1"/>
+                            <field name="total_deductions" widget="monetary" readonly="1"/>
+                        </group>
+                        <group class="oe_subtotal_footer oe_right" colspan="2">
+                            <field name="net_pay" widget="monetary" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

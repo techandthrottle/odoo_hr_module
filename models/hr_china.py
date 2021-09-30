@@ -179,6 +179,7 @@ class HREmployee(models.Model):
     c_weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
     c_weekends_fee = fields.Float(string='Weekends Fee')
     c_holiday_fee = fields.Float(string='Holiday Fee')
+    c_hourly_rate = fields.Float(string='Hourly Rate')
     c_dayoff_deduction = fields.Float(string='Day Off Deduction')
     c_other_info = fields.Text(string='Additional Information')
     c_is_contract_active = fields.Boolean()
@@ -286,8 +287,9 @@ class HREmployee(models.Model):
         if templ_contract:
             self.contract_name = self.name + " - " + templ_contract.name
             self.currency_id = templ_contract.currency_id
-            self.c_wage_type = templ_contract.wage_type
+            self.c_wage_type = templ_contract.wage_type.wage_type
             self.c_monthly_fee = templ_contract.monthly_fee
+            self.c_hourly_rate = templ_contract.hourly_rate
             self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
             self.c_weekday_overtime_fee = templ_contract.weekday_overtime_fee
             self.c_weekends_fee = templ_contract.weekends_fee
@@ -305,6 +307,7 @@ class HREmployee(models.Model):
             self.end_date = False
             self.c_wage_type = False
             self.c_monthly_fee = False
+            self.c_hourly_rate = False
             self.c_weekday_daily_fee = False
             self.c_weekday_overtime_fee = False
             self.c_weekends_fee = False
@@ -330,6 +333,7 @@ class HREmployee(models.Model):
                         'currency_id': self.currency_id,
                         'wage_type': self.contract_template_id.wage_type,
                         'monthly_fee': self.contract_template_id.monthly_fee,
+                        'hourly_rate': self.contract_template_id.hourly_rate,
                         'weekday_daily_fee': self.contract_template_id.weekday_daily_fee,
                         'weekday_overtime_fee': self.contract_template_id.weekday_overtime_fee,
                         'weekends_fee': self.contract_template_id.weekends_fee,
@@ -392,6 +396,8 @@ class HREmployee(models.Model):
             active_cont_dict['wage_type'] = vals['c_wage_type']
         if 'c_monthly_fee' in vals:
             active_cont_dict['monthly_fee'] = vals['c_monthly_fee']
+        if 'c_hourly_rate' in vals:
+            active_cont_dict['hourly_rate'] = vals['c_hourly_rate']
         if 'c_weekday_daily_fee' in vals:
             active_cont_dict['weekday_daily_fee'] = vals['c_weekday_daily_fee']
         if 'c_weekday_overtime_fee' in vals:

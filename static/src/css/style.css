@@ -1,0 +1,38 @@
+
+.payslip_table {
+    width: 100%;
+}
+
+.header_label {
+    margin: auto;
+    padding: 5px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.company_logo {
+    margin: auto;
+    padding: 5px;
+    float: right;
+}
+
+.payslip_table tr {
+    height: 30px;
+    margin: auto;
+    font-size: 2rem;
+}
+
+.slip_deductions {
+    color: #900D09;
+}
+
+.t_label {
+    padding: 5px;
+}
+
+.item_badge {
+    white-space: nowrap;
+    border-radius: 3px;
+    padding: 0 5px;
+    color: #fff;
+}

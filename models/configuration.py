@@ -30,6 +30,7 @@ class CompanyNameLogoConfig(models.Model):
 
     name = fields.Char(string='Company Name')
     logo = fields.Binary(string='Company Logo')
+    is_active = fields.Boolean(string='Active', default=False)
 
 
 class LeaveConfiguration(models.Model):

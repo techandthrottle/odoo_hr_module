@@ -19,7 +19,5 @@
             <field name="view_id" ref="view_job_titles_tree"/>
         </record>
 
-
-
     </data>
 </odoo>

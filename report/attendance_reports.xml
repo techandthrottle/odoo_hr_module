@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="action_print_payslip_pdf_form" model="ir.actions.server">
+            <field name="name">Payslip Form</field>
+            <field name="model_id" ref="model_hr_china_payslip" />
+            <field name="type">ir.actions.server</field>
+            <field name="code">
+                action = env['hr_china.payslip'].browse(context['active_id']).print_payslip_form()
+            </field>
+        </record>
+
+        <record id="action_print_payslip_pdf_form_key" model="ir.values">
+            <field name="key2" eval="'client_print_multi'" />
+            <field name="model" eval="'hr_china.payslip'" />
+            <field name="name">Payslip Form</field>
+            <field name="value" eval="'ir.actions.server,%d'%action_print_payslip_pdf_form" />
+        </record>
+
+        <record id="action_print_timesheet_pdf_form" model="ir.actions.server">
+            <field name="name">Timesheet Form</field>
+            <field name="model_id" ref="model_hr_china_timesheet" />
+            <field name="type">ir.actions.server</field>
+            <field name="code">
+                action = env['hr_china.timesheet'].browse(context['active_id']).print_timesheet_form()
+            </field>
+        </record>
+
+        <record id="action_print_timesheet_pdf_form_key" model="ir.values">
+            <field name="key2" eval="'client_print_multi'" />
+            <field name="model" eval="'hr_china.timesheet'" />
+            <field name="name">Timesheet Form</field>
+            <field name="value" eval="'ir.actions.server,%d'%action_print_timesheet_pdf_form" />
+        </record>
+
+        <record id="hr_china_timesheet_paper" model="report.paperformat">
+            <field name="name">Timesheet Paper</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">23</field>
+            <field name="dpi">72</field>
+        </record>
+
+        <record id="hr_china_payslip_paper" model="report.paperformat">
+            <field name="name">Payslip Paper</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">23</field>
+            <field name="dpi">72</field>
+        </record>
+
+        <report string="Payslip Form"
+                id="hr_china_payslip_form"
+                model="hr_china.payslip"
+                name="hr_china.payslip_form"
+                file="hr_china.payslip_form"
+                report_type="qweb-html"
+                paperformat="hr_china_payslip_paper"
+                menu="False" />
+
+        <report string="Timesheet Form"
+                id="hr_china_timesheet_form_rpt"
+                model="hr_china.timesheet"
+                name="hr_china.timesheet_form_rpt"
+                file="hr_china.timesheet_form_rpt"
+                report_type="qweb-html"
+                paperformat="hr_china_timesheet_paper"
+                menu="False" />
+
+    </data>
+</odoo>

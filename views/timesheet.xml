@@ -2,52 +2,12 @@
 <odoo>
     <data>
 
-        <record id="hr_china_timesheet_search" model="ir.ui.view">
-            <field name="name">hr_china_timesheet.filter</field>
-            <field name="model">zulu_attendance.timesheet</field>
-            <field name="arch" type="xml">
-                <search string="Timesheet Filter">
-                    <field name="name" string="Employee"/>
-                    <field name="working_time" string="Working Time"/>
-                    <field name="start_date" />
-                    <field name="end_date" />
-                    <field name="state" />
-
-                    <filter name="filter_draft" string="Draft" domain="[('state', 'in', ['draft'])]" />
-                    <filter name="filter_validate" string="Approved" domain="[('state', 'in', ['validate'])]" />
-                    <filter name="filter_month" string="This Month" domain="[
-                        ('create_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')),
-                        ('create_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
-                    <filter name="filter_last_month" string="Last Month" domain="[
-                        (‘create_date,'&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),
-                        (‘create_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
-
-                    <group expand="0" string="Group By">
-                        <filter string="Employee" domain="[]" context="{'group_by':'name'}"/>
-                        <filter string="Working Time" domain="[]" context="{'group_by':'working_time'}"/>
-                        <filter string="Start Date" domain="[]" context="{'group_by':'start_date'}"/>
-                        <filter string="End Date" domain="[]" context="{'group_by':'end_date'}"/>
-                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="zulu_attendance_timesheet_tree" model="ir.ui.view">
-            <field name="name">view.timesheet.tree</field>
-            <field name="model">zulu_attendance.timesheet</field>
-            <field name="arch" type="xml">
-                <tree string="Timesheets">
-                    <field name="employee_id" string="Employee"/>
-                    <field name="working_time" string="Working Time"/>
-                    <field name="start_date" widget="date"/>
-                    <field name="end_date" widget="date"/>
-                    <field name="total_days"/>
-                    <field name="worked_days"/>
-                    <field name="state" invisible="1"/>
-                    <field name="timesheet_state" widget="tree_html"/>
-                </tree>
-            </field>
+        <record id="open_hr_china_timesheets" model="ir.actions.act_window">
+            <field name="name">Timesheets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr_china.timesheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
         </record>
 
         <record id="zulu_attendance_timesheet_create_form" model="ir.ui.view">
@@ -79,9 +39,54 @@
             </field>
         </record>
 
-        <record id="zulu_attendance_timesheet_form" model="ir.ui.view">
-            <field name="name">view.timesheet.form</field>
-            <field name="model">zulu_attendance.timesheet</field>
+        <record id="view_hr_china_timesheet_tree" model="ir.ui.view">
+            <field name="name">hr_china_timesheet.tree</field>
+            <field name="model">hr_china.timesheet</field>
+            <field name="arch" type="xml">
+                <tree string="Timesheets">
+                    <field name="employee_id" />
+                    <field name="job_title_id" />
+                    <field name="department_id" />
+                    <field name="period_from" widget="date"/>
+                    <field name="period_to" widget="date"/>
+                    <field name="total_days" />
+                    <field name="state" invisible="1"/>
+                    <field name="timesheet_state" widget="tree_html"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_china_timesheet_create_form" model="ir.ui.view">
+            <field name="name">view.hr_china_timesheet_create.form</field>
+            <field name="model">hr_china.timesheet.create</field>
+            <field name="arch" type="xml">
+                <form string="Timesheets">
+                    <sheet>
+                        <div class="oe_edit_only" style="padding-bottom: 50px;">
+                            <label for="total_days" string="Timesheet Period"/>
+                            <field name="start_date" class="oe_inline" required="1" widget="date"/>
+                            <label string=" to " class="oe_inline"/>
+                            <field name="end_date" class="oe_inline" required="1" widget="date"/>
+                        </div>
+                        <field name="employee_ids" class="oe_edit_only">
+                            <tree editable="bottom" create="true">
+                                <field name="name" string="Employee"/>
+                                <field name="job_new_id" string="Job Title"/>
+                                <field name="department_id" string="Department"/>
+                            </tree>
+                        </field>
+                        <footer>
+                            <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_timesheet_form" model="ir.ui.view">
+            <field name="name">hr_china_timesheet.form</field>
+            <field name="model">hr_china.timesheet</field>
             <field name="arch" type="xml">
                 <form string="Timesheets">
                     <header>
@@ -92,51 +97,64 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
                     </header>
                     <sheet>
-                        <!--<div class="oe_button_box" name="button_box">
-                            <button name="action_open_leave" type="object" class="oe_stat_button" icon="fa-calendar">
-                                <field string="Leaves" name="leave_count" widget="statinfo" />
-                            </button>
-                            <button name="action_open_overtime" type="object" class="oe_stat_button" icon="fa-clock-o">
-                                <field string="Overtime" name="overtime_count" widget="statinfo" />
-                            </button>
-                        </div>-->
                         <div><h1><field name="name"/></h1></div>
-                        <group>
-                            <strong>
-                                <label for="total_days" string="Timesheet Period"/>
-                                <div>
-                                    <field name="x_start" class="oe_inline" widget="date"/>
-                                    <label string="to" class="oe_inline"/>
-                                    <field name="x_end" class="oe_inline" widget="date"/>
-                                </div>
-                            </strong>
-                            <group>
-                                <field name="employee_image" string=" " widget="image" class="oe_avatar"/>
-                            </group>
+                        <group style="width:50%%">
+                            <field name="department_id" />
+                            <field name="job_title_id" />
+                            <field name="period_from" widget="date"/>
+                            <field name="period_to" widget="date"/>
                         </group>
-                        <field name="attend" invisible="1"/>
+                        <group string="Total (days)" style="width:50%%">
+                            <field name="contract_type" invisible="1"/>
+                            <field name="work_time" attrs="{'invisible': [('contract_type', '=', 'monthly')]}"/>
+                            <field name="regular_days" />
+                            <field name="overtime_hours" />
+                            <field name="weekend" />
+                            <field name="holiday" />
+                            <field name="leaves" />
+                        </group>
                         <field name="attendance_trans">
-                            <tree editable="bottom" create="false">
-                                <field name="date" string="Date" widget="date"/>
-                                <field name="date_day" string="Day"/>
-                                <field name="timesheet" invisible="1"/>
-                                <field name="start_time_str" string="First Check In"/>
-                                <field name="end_time_str" string="Last Check Out"/>
-                                <field name="regular_time_str" string="Regular"/>
-                                <field name="break_hrs_str" />
-                                <field name="overtime_hrs_str" />
-                                <field name="weekend" />
-                                <!--<field name="overtime_hr" string="Overtime Hour"/>-->
-                                <field name="holiday_date" string="Holiday"/>
-                                <field name="leave_status" />
-                                <!--<field name="leave_date" string="Leave"/>-->
+                            <tree create="false">
+                                <field name="date" widget="date" />
+                                <field name="day" />
+                                <field name="check_in_am" widget="time" />
+                                <field name="check_out_am" widget="time" />
+                                <field name="break_hours" />
+                                <field name="check_in_pm" widget="time" />
+                                <field name="check_out_pm" widget="time" />
+                                <field name="work_hours" />
+                                <field name="overtime_hours" />
                             </tree>
                         </field>
                     </sheet>
                 </form>
             </field>
-         </record>
+        </record>
 
+        <record id="hr_china_timesheet_trans_frm" model="ir.ui.view">
+            <field name="name">view.hr_china_timesheet_trans.form</field>
+            <field name="model">hr_china.timesheet.trans</field>
+            <field name="arch" type="xml">
+                <form strig="Attendance">
+                    <sheet>
+                        <group>
+                            <field name="timesheet" readonly="1"/>
+                            <field name="day" />
+                            <field name="date" widget="date" readonly="1" />
+                        </group>
+                        <group></group>
+                        <group style="width:50%%">
+                            <field name="check_in_am" widget="time" />
+                            <field name="check_in_pm" widget="time" />
+                        </group>
+                        <group style="width:50%%">
+                            <field name="check_out_am" widget="time" />
+                            <field name="check_out_pm" widget="time" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
     </data>
 </odoo>

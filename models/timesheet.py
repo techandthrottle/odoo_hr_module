@@ -5,6 +5,7 @@ from odoo import models, fields, api, exceptions, _, SUPERUSER_ID
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime, timedelta, date, time
 from odoo.exceptions import UserError, AccessError, ValidationError
+import calendar
 import time
 
 from pprint import pprint
@@ -12,6 +13,388 @@ from pprint import pprint
 
 class HRTimesheet(models.Model):
     _name = "hr_china.timesheet"
+
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+    department_id = fields.Many2one('hr.department', string='Department', compute='_get_department', stored=True)
+    job_title_id = fields.Many2one('hr_china.job_titles', string='Position', compute='_get_job_title', stored=True)
+    period_from = fields.Datetime(string='Date From')
+    period_to = fields.Datetime(string='Date To')
+    attendance_id = fields.Many2many('hr_china.attendance', string='Attendance')
+    regular_days = fields.Integer(string='Regular Days', compute='_get_regular_days')
+    overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
+    weekend = fields.Float(string='Weekends', compute='_get_weekends')
+    holiday = fields.Float(string='Holidays', compute='_get_holiday_list')
+    leaves = fields.Float(string='Leaves', compute='_get_leave_list')
+    total_days = fields.Float(string='Total Days', compute='_get_total_days')
+    state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirmed'), ('validate', 'Approved')],
+                             string='Status', readonly=True, track_visibility='onchange', copy=False, default='draft')
+    timesheet_state = fields.Html(string='Status', compute='_get_timesheet_state')
+
+    name = fields.Char(string='Name', compute='_get_employee_name')
+    employee_image = fields.Binary(compute='_get_employee_image')
+
+    attendance_trans = fields.One2many('hr_china.timesheet.trans', 'timesheet')
+    contract_type = fields.Char(string='Contract Type', compute='_get_contract_type', stored=True)
+    work_time = fields.Float(string='Work Time', compute='_get_work_time')
+
+    def print_timesheet_form(self):
+        timesheet_id = str(self.id)
+        timesheet_name = self.name
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/report/pdf/hr_china.timesheet_form_rpt/%s?filename=%s' % (timesheet_id, timesheet_name),
+            'target': 'new'
+        }
+
+    @api.multi
+    def _get_employee_image(self):
+        for item in self:
+            item.employee_image = item.employee_id.image
+
+    @api.multi
+    def _get_department(self):
+        for item in self:
+            item.department_id = item.employee_id.department_id
+
+    @api.multi
+    def _get_job_title(self):
+        for item in self:
+            item.job_title_id = item.employee_id.job_new_id
+
+    @api.multi
+    def _gen_timesheet_name(self):
+        for item in self:
+            item.name = item.employee_id.name + ' ' + item.period_from + ' - ' + item.period_to + ' Timesheet'
+
+    @api.multi
+    def _get_employee_name(self):
+        for item in self:
+            item.name = item.employee_id.name + ' - Timesheet' if item.employee_id else ''
+
+    @api.multi
+    def _get_timesheet_state(self):
+        for item in self:
+            ret_val, color = 'Unknown', 'black'
+            state = item.state
+            if state == 'draft':
+                ret_val = 'Draft'
+                color = '#666666'
+            elif state == 'confirm':
+                ret_val = 'Confirmed'
+                color = '#156bf4'
+            elif state == 'validate':
+                ret_val = 'Approved'
+                color = '#5EBE6A'
+            item.timesheet_state = '<span class="item_badge" style="background-color:%s;">%s</span>' % (color, ret_val)
+
+    @api.onchange('employee_id')
+    def _get_contract_type(self):
+        for item in self:
+            contract = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+            item.contract_type = contract.c_wage_type
+
+    @api.onchange('employee_id')
+    def _get_regular_days(self):
+        for item in self:
+            employee = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+            contract_temp = employee.contract_template_id.id
+            ct = self.env['hr_china.contracts_template'].search([('id', '=', contract_temp)])
+            item.regular_days = ct.wage_type.days
+
+    @api.onchange('period_from', 'period_to')
+    def _get_holiday_list(self):
+        for item in self:
+            holiday_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.period_from),
+                                                                ('start_date', '<=', item.period_from),
+                                                                ('end_date', '>=', item.period_to),
+                                                                ('end_date', '<=', item.period_to)])
+
+            item.holiday = len(holiday_list) if holiday_list else 0
+
+    @api.onchange('employee_id')
+    def _get_leave_list(self):
+        for item in self:
+            pass
+
+    @api.onchange('employee_id')
+    def _get_overtime_work(self):
+        for item in self:
+            ot = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+                                                         ('attendance_date', '>=', item.period_from),
+                                                         ('attendance_date', '<=', item.period_to)])
+            ot_hours = False
+            for overtime in ot:
+                ot_hours = ot_hours + overtime.overtime_hours
+            item.overtime_hours = ot_hours
+
+    @api.onchange('employee_id')
+    def _get_work_time(self):
+        for item in self:
+            wh = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+                                                         ('attendance_date', '>=', item.period_from),
+                                                         ('attendance_date', '<=', item.period_to)])
+            wh_hours = False
+            for wtime in wh:
+                wh_hours = wh_hours + wtime.work_hours
+            item.work_time = wh_hours
+
+    @api.onchange('employee_id')
+    def _get_total_days(self):
+        for item in self:
+            td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+                                                         ('attendance_date', '>=', item.period_from),
+                                                         ('attendance_date', '<=', item.period_to)])
+
+            item.total_days = len(td) if td else 0
+
+    @api.onchange('employee_id')
+    def _get_weekends(self):
+        for item in self:
+            wks = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+                                                         ('attendance_date', '>=', item.period_from),
+                                                         ('attendance_date', '<=', item.period_to)])
+            weekend_count = False
+            for day in wks:
+                if day.attendance_day == 5 or day.attendance_day == 6:
+                    weekend_count = weekend_count + 1
+
+            item.weekend = weekend_count
+
+    @api.multi
+    def create_attendance_trans(self):
+        context = self.env.context
+        for item in self:
+            frmt = '%Y-%m-%d %H:%M:%S'
+            st = datetime.strptime(item.period_from, frmt)
+            end = datetime.strptime(item.period_to, frmt)
+            st_y = int(st.strftime("%Y"))
+            st_m = int(st.strftime("%m"))
+            st_d = int(st.strftime("%d"))
+            end_y = int(end.strftime("%Y"))
+            end_m = int(end.strftime("%m"))
+            end_d = int(end.strftime("%d"))
+
+            dt1 = date(st_y, st_m, st_d)
+            dt2 = date(end_y, end_m, end_d)
+            delta = dt2 - dt1
+            employee = item.employee_id
+
+            for i in range(delta.days + 1):
+                day = dt1 + timedelta(days=i)
+                date_i = day.strftime(frmt)
+
+                base_date = date_i.split(' ')
+                base_date[1] = '23:59:59'
+                base_date_2 = date_i.split(' ')
+                base_date_2[1] = '00:00:00'
+                base_date_0 = ' '.join(base_date_2)
+                base_date_23 = ' '.join(base_date)
+
+                #GET Holidays
+                holiday_lis = self.env['hr_china.holiday'].search(
+                    ['|', '&', ('start_date', '<=', base_date_0), ('end_date', '>=', base_date_23),
+                     ('end_date', '=', base_date_0)], limit=1)
+
+                same_dates = self.env['hr_china.attendance'].search(
+                    [('employee_id', '=', employee.id), ('attendance_date', '>=', base_date_0),
+                     ('attendance_date', '<=', base_date_23)])
+
+                trans_data = {
+                    'timesheet': item.id,
+                    'date': day
+                }
+
+                if len(same_dates) > 0:
+                    trans_data['day'] = same_dates[0].attendance_day
+                    trans_data['check_in_am'] = same_dates[0].check_in_am if same_dates[0].check_in_am else False
+                    trans_data['check_out_am'] = same_dates[0].check_out_am if same_dates[0].check_out_am else False
+                    trans_data['check_in_pm'] = same_dates[0].check_in_pm if same_dates[0].check_in_pm else False
+                    trans_data['check_out_pm'] = same_dates[0].check_out_pm if same_dates[0].check_out_pm else False
+                    trans_data['break_hours'] = same_dates[0].break_hours if same_dates[0].break_hours else False
+                    trans_data['work_hours'] = same_dates[0].work_hours if same_dates[0].work_hours else False
+                    trans_data['overtime_hours'] = same_dates[0].overtime_hours if same_dates[0].overtime_hours else False
+                self.env['hr_china.timesheet.trans'].create(trans_data)
+        return True
+
+    @api.model
+    def create(self, vals):
+        if 'derivative_create' not in self.env.context:
+            if 'employee_ids' in vals:
+                emps = vals['employee_ids'][0][2]
+                vals['employee_id'] = emps[0]
+                del emps[0]
+                for emp in emps:
+                    self.env['hr_china.timesheet'].with_context({
+                        'derivative_create': 1
+                    }).create({
+                        'employee_id': emp,
+                        'period_from': vals['period_from'],
+                        'period_to': vals['period_to']
+                    })
+            elif 'employee_ids' not in vals and 'derivative_create' not in self.env.context:
+                raise UserError(_('Select Users'))
+        timesheet = super(HRTimesheet, self).create(vals)
+        timesheet.create_attendance_trans()
+
+
+class HRChinaTrans(models.Model):
+    _name = 'hr_china.timesheet.trans'
+
+    @api.onchange('check_in_pm')
+    @api.depends('check_out_am', 'check_in_pm')
+    def compute_break_hours(self):
+        for attendance in self:
+            if attendance.check_out_am and attendance.check_in_pm:
+                break_hours_delta = datetime.strptime(attendance.check_in_pm, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                    datetime.strptime(attendance.check_out_am, DEFAULT_SERVER_DATETIME_FORMAT)
+                attendance.break_hours = break_hours_delta.total_seconds() / 3600.0
+
+    date = fields.Datetime(string='Date')
+    hr_attendance = fields.Many2one('hr_china.attendance')
+    timesheet = fields.Many2one('hr_china.timesheet', ondelete='cascade')
+
+    day = fields.Selection([
+        ('0', 'Monday'),
+        ('1', 'Tuesday'),
+        ('2', 'Wednesday'),
+        ('3', 'Thursday'),
+        ('4', 'Friday'),
+        ('5', 'Saturday'),
+        ('6', 'Sunday')
+    ], string='Day')
+    check_in_am = fields.Datetime(string='Morning Check-In')
+    check_out_am = fields.Datetime(string='Morning Check-Out')
+    check_in_pm = fields.Datetime(string='Afternoon Check-In')
+    check_out_pm = fields.Datetime(string='Afternoon Check-Out')
+    break_hours = fields.Float(string='Break Hours', compute=compute_break_hours)
+    work_hours = fields.Float(string='Worked Hours', compute='_get_work_time')
+    overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
+    weekend = fields.Float(string='Weekends')
+    date_day = fields.Char('Day', compute='_get_day_of_date')
+
+    @api.onchange('check_out_am', 'check_out_pm')
+    def _get_overtime_work(self):
+        for item in self:
+            working_time = self.env['hr_china.employee_working_time'].search([
+                ('employee_id', '=', item.timesheet.employee_id.id),
+                ('dayofweek', '=', item.day)
+            ], order='id DESC')
+            reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
+            ot_hours = item.work_hours - reg_hours
+
+            if ot_hours > 0:
+                item.overtime_hours = ot_hours
+
+    @api.onchange('check_in_am', 'check_out_am', 'check_in_pm', 'check_out_pm')
+    def _get_work_time(self):
+        for item in self:
+            morning_wh = False
+            afternoon_wh = False
+            if item.check_out_am and item.check_in_am:
+                morning_wh_delta = datetime.strptime(item.check_out_am, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                   datetime.strptime(item.check_in_am, DEFAULT_SERVER_DATETIME_FORMAT)
+                morning_wh = morning_wh_delta.total_seconds() / 3600.0
+            if item.check_out_pm and item.check_in_pm:
+                afternoon_wh_delta = datetime.strptime(item.check_out_pm, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                     datetime.strptime(item.check_in_pm, DEFAULT_SERVER_DATETIME_FORMAT)
+                afternoon_wh = afternoon_wh_delta.total_seconds() / 3600.0
+
+            if not morning_wh:
+                morning_wh = 0
+            if not afternoon_wh:
+                afternoon_wh = 0
+
+            total_wh = afternoon_wh + morning_wh
+            item.work_hours = total_wh
+
+    @api.onchange('date')
+    def _get_day_of_date(self):
+        for r in self:
+            selected = fields.Datetime.from_string(r.date)
+            r.date_day = calendar.day_abbr[selected.weekday() if selected else 0]
+
+    @api.multi
+    def _get_checkin_am_str(self):
+        for item in self:
+            if item.check_in_am:
+                frmt = '%Y-%m-%d %H:%M:%S'
+                st = datetime.strptime(item.check_in_am, frmt)
+                end_ad = st + timedelta(hours=8, minutes=0)
+                end = end_ad.strftime("%H:%M")
+                x = str(end)
+                item.check_in_am_str = x
+
+    @api.multi
+    def _get_checkout_am_str(self):
+        for item in self:
+            if item.check_out_am:
+                frmt = '%Y-%m-%d %H:%M:%S'
+                st = datetime.strptime(item.check_out_am, frmt)
+                end_ad = st + timedelta(hours=8, minutes=0)
+                end = end_ad.strftime("%H:%M")
+                x = str(end)
+                item.check_out_am_str = x
+
+    @api.multi
+    def _get_checkin_pm_str(self):
+        for item in self:
+            if item.check_in_pm:
+                frmt = '%Y-%m-%d %H:%M:%S'
+                st = datetime.strptime(item.check_in_pm, frmt)
+                end_ad = st + timedelta(hours=8, minutes=0)
+                end = end_ad.strftime("%H:%M")
+                x = str(end)
+                item.check_in_pm_str = x
+
+    @api.multi
+    def _get_checkout_pm_str(self):
+        for item in self:
+            if item.check_out_pm:
+                frmt = '%Y-%m-%d %H:%M:%S'
+                st = datetime.strptime(item.check_out_pm, frmt)
+                end_ad = st + timedelta(hours=8, minutes=0)
+                end = end_ad.strftime("%H:%M")
+                x = str(end)
+                item.check_out_pm_str = x
+
+    check_in_am_str = fields.Char(compute=_get_checkin_am_str)
+    check_out_am_str = fields.Char(compute=_get_checkout_am_str)
+    check_in_pm_str = fields.Char(compute=_get_checkin_pm_str)
+    check_out_pm_str = fields.Char(compute=_get_checkout_pm_str)
+
+
+class HRChinaTimesheetCreate(models.TransientModel):
+    _name = 'hr_china.timesheet.create'
+    _description = 'For attendance timesheet create'
+
+    start_date = fields.Datetime('Start Date')
+    end_date = fields.Datetime('End Date')
+    employee_ids = fields.Many2many('hr.employee')
+
+    @api.model
+    def do_get_display(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr_china.timesheet.create',
+            'name': 'Timesheet',
+            'views': [(False, 'form')],
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    @api.multi
+    def close_dialog(self):
+        self.env['hr_china.timesheet'].create({
+            'employee_ids': [[6, 0, self.employee_ids.ids]],
+            'period_from': self.start_date,
+            'period_to': self.end_date,
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
 
 class HREmployee(models.Model):
@@ -191,12 +574,19 @@ class HREmployee(models.Model):
                 'check_in_am': action_date,
             }
             return self.env['hr_china.attendance'].create(vals)
+        else:
+            if attendance.check_in_am:
+                vals = {
+                    'employee_id': self.id,
+                    'check_out_am': action_date,
+                }
+                return self.env['hr_china.attendance'].create(vals)
 
-        vals = {
-            'employee_id': self.id,
-            'check_in_pm': action_date,
-        }
-        return self.env['hr_china.attendance'].create(vals)
+            vals = {
+                'employee_id': self.id,
+                'check_in_pm': action_date,
+            }
+            return self.env['hr_china.attendance'].create(vals)
 
         raise exceptions.UserError(
             _('Cannot perform check out on %(empl_name)s, could not find corresponding check in. '
@@ -210,7 +600,7 @@ class HRNewAttendance(models.Model):
     _description = 'New Attendance Module'
     _order = 'attendance_date desc'
 
-    attendance_date = fields.Datetime(string='Date', default=fields.Datetime.now, required=True)
+    attendance_date = fields.Datetime(string='Date', default=fields.Datetime.now, required=True, store=True)
     attendance_day = fields.Selection([
         ('0', 'Monday'),
         ('1', 'Tuesday'),
@@ -219,7 +609,7 @@ class HRNewAttendance(models.Model):
         ('4', 'Friday'),
         ('5', 'Saturday'),
         ('6', 'Sunday')
-    ], string='Day', compute='_get_day')
+    ], string='Day', compute='_get_day', store=True)
     check_in_am = fields.Datetime(string='Morning Check-In')
     check_out_am = fields.Datetime(string='Morning Check-Out')
     check_in_pm = fields.Datetime(string='Afternoon Check-In')
@@ -275,12 +665,13 @@ class HRNewAttendance(models.Model):
     def _compute_overtime(self):
         for attendance in self:
             working_time = self.env['hr_china.employee_working_time'].search([
-                ('employee_id', '=', attendance.employee_id),
+                ('employee_id', '=', attendance.employee_id.id),
                 ('dayofweek', '=', attendance.attendance_day)
             ], order='id DESC')
 
             reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
             ot_hours = attendance.work_hours - reg_hours
+
             if ot_hours > 0:
                 attendance.overtime_hours = ot_hours
 

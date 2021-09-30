@@ -1,6 +1,12 @@
 <odoo>
     <data>
 
+        <template id="assets_backend" name="edit_hr_china btn assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/hr_china/static/src/js/edit_btn.js" />
+            </xpath>
+        </template>
+
         <record id="hr_china_action_my_attendances" model="ir.actions.act_window">
             <field name="name">Attendance</field>
             <field name="res_model">hr.attendance</field>
@@ -15,10 +21,11 @@
             <menuitem id="hr_china.menu_hr_china_my_attendances" name="Attendances" parent="menu_hr_china_attendances" sequence="0" action="hr_china.action_view_hr_china_emp_attendance" />
             <menuitem id="hr_china.menu_hr_china_kiosk_mode" name="Kiosk Mode" parent="menu_hr_china_attendances" sequence="1" action="zulu_attendance.zulu_attendance_action_kiosk_mode" />
 
-        <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="zulu_attendance.open_zulu_timesheets"/>
-        <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown" action="zulu_attendance.action_view_zulu_attendance_payslip"/>
+        <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="hr_china.open_hr_china_timesheets"/>
+        <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown" action="hr_china.action_hr_china_payslips"/>
+        <menuitem id="menu_hr_china_leave_req" name="Leave Request" parent="menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager_dropdown" action="" />
 
-        <menuitem id="hr_china.menu_hr_china_configuration_main" name="Configuration" parent="hr_china.menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager_dropdown"/>
+        <menuitem id="hr_china.menu_hr_china_configuration_main" name="Configuration" parent="hr_china.menu_hr_china_root" sequence="106" groups="hr_china.group_hr_china_manager_dropdown"/>
             <menuitem id="hr_china.menu_hr_china_configuration_child" name="Configuration" parent="hr_china.menu_hr_china_configuration_main" sequence="0" action="zulu_attendance.action_zulu_attendance_configuration" groups="hr_china.group_hr_china_manager_dropdown"/>
 
             <menuitem id="hr_china.menu_hr_china_time_setup_child" name="Time Setup" parent="hr_china.menu_hr_china_configuration_main" sequence="21" groups="hr_china.group_hr_china_manager_dropdown"/>

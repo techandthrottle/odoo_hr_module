@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="payslip_form">
+            <t t-call="report.html_container">
+                <div class="page" style="margin:0px;">
+                    <link rel="stylesheet" href="/hr_china/static/src/css/style.css" />
+                    <div>
+                        <table class="payslip_table">
+                            <tr style="border:1px solid black;">
+                                <td style="font-weight:600;padding:5px" t-att-colspan="2">
+                                    <div class="header_label">PAYSLIP</div>
+                                </td>
+                                <td style="padding:5px" t-att-colspan="2">
+                                    <div class="company_logo">
+                                        <t t-if="company_id">
+                                            <img t-attf-src="data:image/*;base64,{{company_id.logo}}" style="max-height:70px; max-width:150px;" />
+                                        </t>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="border:1px solid black;text-align:center;background-color:#585858;color:#ffffff;">
+                                <td t-att-colspan="4" style="padding:5px">
+                                    <div>
+                                        Payslip for
+                                        <t t-esc="datetime.datetime.strptime(payslip_data.start_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d,%Y')" /> -
+                                        <t t-esc="datetime.datetime.strptime(payslip_data.end_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d,%Y')" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black">
+                                <td class="t_label">Name: </td>
+                                <td><t t-esc="payslip_data.emp_name" /> </td>
+                                <td class="t_label">Work Days: </td>
+                                <td><t t-esc="payslip_data.worked_days" /> </td>
+                            </tr>
+                            <tr style="border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black">
+                                <td class="t_label">Position: </td>
+                                <td><t t-esc="payslip_data.emp_position" /> </td>
+                                <td class="t_label">Leave: </td>
+                                <td><t t-esc="payslip_data.leave" /> </td>
+                            </tr>
+                            <tr style="border-left:1px solid black;border-right:1px solid black;">
+                                <td class="t_label">Basic Pay </td>
+                                <td>
+                                    <span t-field="payslip_data.basic_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                                <td class="t_label">Deductions </td>
+                                <td>
+                                    <span t-field="payslip_data.total_deductions" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}' />
+                                </td>
+                            </tr>
+                            <tr style="border-left:1px solid black;border-right:1px solid black;">
+                                <td class="t_label">Holiday Pay </td>
+                                <td>
+                                    <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}' />
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr style="border-left:1px solid black;border-right:1px solid black;">
+                                <td class="t_label">Benefits </td>
+                                <td>
+                                    <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr style="border:1px solid black;">
+                                <td class="t_label">Total Pay</td>
+                                <td>
+                                    <span t-field="payslip_data.gross_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                                <td class="t_label">Total Deductions:</td>
+                                <td>
+                                    <span class="slip_deductions" t-field="payslip_data.total_deductions" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                            </tr>
+                            <tr style="border:1px solid black;">
+                                <td t-att-colspan="3" style="font-weight:600;padding:5px">NET PAY</td>
+                                <td style="padding:5px">
+                                    <span t-field="payslip_data.net_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="ot_after_table">
+                        <div class="ot_emp_sig">
+                            <div>__________________________________</div>
+                            <div class="ot_sig">Employee Signature - 员工签名</div>
+                        </div>
+                        <div class="ot_hr_sig">
+                            <div>__________________________________</div>
+                            <div class="ot_sig">HR Signature - 人力资源签名</div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

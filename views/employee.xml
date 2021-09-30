@@ -77,7 +77,8 @@
                             <field name="contract_template_id" required="1"/>
                             <field name="c_wage_type" />
                             <field name="currency_id" />
-                            <field name="c_monthly_fee" widget="monetary"/>
+                            <field name="c_monthly_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'hourly')]}"/>
+                            <field name="c_hourly_rate" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}"/>
                              <field name="c_weekday_daily_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
                             <field name="c_weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
                             <field name="c_weekend_overtime_fee" widget="monetary" attrs="{'invisible': [('c_wage_type', '=', 'monthly')]}" />
