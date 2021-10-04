@@ -133,6 +133,13 @@ class HRContractTemplate(models.Model):
     deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
     currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
+    converted_wage_type = fields.Char()
+
+    @api.onchange('wage_type')
+    def onchange_wage_type(self):
+        for item in self:
+            item.converted_wage_type = item.wage_type.wage_type
+
 
 class HRJobTitles(models.Model):
     _name = 'hr_china.job_titles'
@@ -172,8 +179,7 @@ class HREmployee(models.Model):
     end_date = fields.Datetime('End Date')
 
     contract_name = fields.Char()
-    c_wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
-                                 string='Wage Type')
+    c_wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type', required=True)
     c_monthly_fee = fields.Float(string='Monthly Fee')
     c_weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     c_weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
@@ -196,6 +202,12 @@ class HREmployee(models.Model):
                                                        ('checked_in_am', "Morning Checked In"),
                                                        ('check_out_pm', "Afternoon Checked Out"),
                                                        ('check_in_am', "Afternoon Checked In")])
+    converted_wage_type = fields.Char()
+
+    @api.onchange('c_wage_type')
+    def onchange_wage_type(self):
+        for item in self:
+            item.converted_wage_type = item.c_wage_type.wage_type
 
     @api.depends('attendance_ids')
     def _new_compute_last_attendance_id(self):
