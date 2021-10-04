@@ -555,7 +555,6 @@ class HREmployee(models.Model):
             modified_attendance = self.sudo().attendance_action_change()
             action_message['attendance'] = modified_attendance.read()[0]
 
-
         return {'action': action_message}
 
     @api.multi
