@@ -453,7 +453,7 @@ class HREmployee(models.Model):
                            {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
         else:
             return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                          time_action="check_in_am", custom_action='no_action') or \
+                                                           time_action="check_in_am", custom_action='no_action') or \
                    {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
         # End of fix
         my_action = "check_in_am"
