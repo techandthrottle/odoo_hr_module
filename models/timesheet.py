@@ -415,45 +415,51 @@ class HREmployee(models.Model):
             ('employee_id', '=', employee.id)
         ], order='id desc', limit=1)
 
-        if last_attendance_obj.check_out_pm:
-            last_activity_time = last_attendance_obj.check_out_pm
-            my_action = 'check_in_am'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                                               time_action='check_out_pm', custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
+        if last_attendance_obj:
+            if last_attendance_obj.check_out_pm:
+                last_activity_time = last_attendance_obj.check_out_pm
+                my_action = 'check_in_am'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+                    return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                                   time_action='check_out_pm', custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
 
-        if last_attendance_obj.check_in_pm:
-            last_activity_time = last_attendance_obj.check_in_pm
-            my_action = 'check_out_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                                               time_action="check_in_pm", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
+            if last_attendance_obj.check_in_pm:
+                last_activity_time = last_attendance_obj.check_in_pm
+                my_action = 'check_out_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+                    return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                                   time_action="check_in_pm", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
 
-        if last_attendance_obj.check_out_am:
-            last_activity_time = last_attendance_obj.check_out_am
-            my_action = 'check_in_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                                               time_action="check_out_am", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
+            if last_attendance_obj.check_out_am:
+                last_activity_time = last_attendance_obj.check_out_am
+                my_action = 'check_in_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+                    return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                                   time_action="check_out_am", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
 
-        if last_attendance_obj.check_in_am:
-            last_activity_time = last_attendance_obj.check_in_am
-            my_action = 'check_out_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                                               time_action="check_in_am", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
+            if last_attendance_obj.check_in_am:
+                last_activity_time = last_attendance_obj.check_in_am
+                my_action = 'check_out_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+                    return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                                   time_action="check_in_am", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
+        else:
+            return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                          time_action="check_in_am", custom_action='no_action') or \
+                   {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
         # End of fix
 
+        my_action = "check_in_am"
         return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                                       time_action=my_action) or \
+                                                       time_action=my_action, custom_action='no_action') or \
                {'warning': _('No employee corresponding to barcode %(barcode)s') % {'barcode': barcode}}
 
     @api.multi
@@ -466,42 +472,50 @@ class HREmployee(models.Model):
         ], order='id desc', limit=1)
 
         my_action = False
+        if last_attendance_obj:
+            if last_attendance_obj.check_out_pm:
+                last_activity_time = last_attendance_obj.check_out_pm
+                my_action = 'check_in_am'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
 
-        if last_attendance_obj.check_out_pm:
-            last_activity_time = last_attendance_obj.check_out_pm
-            my_action = 'check_in_am'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                              time_action="check_out_pm", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': self.name.split()[0]}}
+                    return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                  time_action="check_out_pm", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': self.name.split()[0]}}
 
-        if last_attendance_obj.check_in_pm:
-            last_activity_time = last_attendance_obj.check_in_pm
-            my_action = 'check_out_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                              time_action="check_in_pm", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
+            if last_attendance_obj.check_in_pm:
+                last_activity_time = last_attendance_obj.check_in_pm
+                my_action = 'check_out_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
 
-        if last_attendance_obj.check_out_am:
-            last_activity_time = last_attendance_obj.check_out_am
-            my_action = 'check_in_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                              time_action="check_out_am", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': self.name.split()[0]}}
+                    return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                  time_action="check_in_pm", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
 
-        if last_attendance_obj.check_in_am:
-            last_activity_time = last_attendance_obj.check_in_am
-            my_action = 'check_out_pm'
-            if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
-                                              time_action="check_in_am", custom_action='no_action') or \
-                       {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
+            if last_attendance_obj.check_out_am:
+                last_activity_time = last_attendance_obj.check_out_am
+                my_action = 'check_in_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+
+                    return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                  time_action="check_out_am", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': self.name.split()[0]}}
+
+            if last_attendance_obj.check_in_am:
+                last_activity_time = last_attendance_obj.check_in_am
+                my_action = 'check_out_pm'
+                if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
+                        last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
+
+                    return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                                  time_action="check_in_am", custom_action='no_action') or \
+                           {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
+        else:
+            return self.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
+                                          time_action="check_in_am", custom_action='no_action') or \
+                   {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': self.name.split()[0]}}
 
         if not (entered_pin is None) or self.env['res.users'].browse(SUPERUSER_ID).has_group(
                 'zulu_attendance.group_hr_attendance_use_pin') and (
@@ -512,16 +526,16 @@ class HREmployee(models.Model):
         return self.attendance_action(next_action, time_action=my_action)
 
     @api.multi
-    def attendance_action(self, next_action, time_action, custom_action="none"):
+    def attendance_action(self, next_action, time_action, custom_action="no_action"):
         """ Changes the attendance of the employee.
             Returns an action to the check in/out message,
             next_action defines which menu the check in/out message should return to. ("My Attendances" or "Kiosk Mode")
         """
         self.ensure_one()
+
         config = self.env['zulu_attendance.configuration'].search([], order='id desc', limit=1)
 
         action_message = self.env.ref('zulu_attendance.zulu_attendance_action_error_message').read()[0]
-
         action_message['previous_attendance_change_date'] = self.new_last_attendance_id and (
                 self.new_last_attendance_id.check_out_am or self.new_last_attendance_id.check_in_pm
                 or self.new_last_attendance_id.check_out_pm) or False
@@ -537,6 +551,10 @@ class HREmployee(models.Model):
             if custom_action != "no_action":
                 modified_attendance = self.sudo().attendance_action_change()
                 action_message['attendance'] = modified_attendance.read()[0]
+
+            modified_attendance = self.sudo().attendance_action_change()
+            action_message['attendance'] = modified_attendance.read()[0]
+
 
         return {'action': action_message}
 
@@ -555,15 +573,16 @@ class HREmployee(models.Model):
                                                              ('check_in_am', '!=', False),
                                                              ('check_in_pm', '!=', False)], limit=1)
 
-        if not attendance.check_out_am and not attendance.check_in_pm:
-            attendance.check_out_am = action_date
-            return attendance
-        if not attendance.check_in_pm:
-            attendance.check_in_pm = action_date
-            return attendance
-        if not attendance.check_out_pm:
-            attendance.check_out_pm = action_date
-            return attendance
+        if attendance:
+            if not attendance.check_out_am and not attendance.check_in_pm:
+                attendance.check_out_am = action_date
+                return attendance
+            if not attendance.check_in_pm:
+                attendance.check_in_pm = action_date
+                return attendance
+            if not attendance.check_out_pm:
+                attendance.check_out_pm = action_date
+                return attendance
 
         mid_day = datetime(2021, 01, 01, 12, 0, 0)
         hours = timedelta(hours=8)
