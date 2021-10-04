@@ -194,7 +194,7 @@ class HREmployee(models.Model):
     new_attendance_state = fields.Selection(string="Attendance", compute='_new_compute_attendance_state',
                                             selection=[('checked_out_am', "Morning Checked Out"),
                                                        ('checked_in_am', "Morning Checked In"),
-                                                       ('check_out_pm', "Afternnon Checked Out"),
+                                                       ('check_out_pm', "Afternoon Checked Out"),
                                                        ('check_in_am', "Afternoon Checked In")])
 
     @api.depends('attendance_ids')
