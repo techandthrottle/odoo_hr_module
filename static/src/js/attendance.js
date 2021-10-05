@@ -36,6 +36,7 @@ var MyAttendances = Widget.extend({
         return this._super.apply(this, arguments);
     },
 
+
     update_attendance: function () {
         var self = this;
         var hr_employee = new Model('hr.employee');
