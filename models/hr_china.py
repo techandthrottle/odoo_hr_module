@@ -198,10 +198,7 @@ class HREmployee(models.Model):
     new_attendance_ids = fields.One2many('hr_china.attendance', 'employee_id', help='List of Attendances for the Employee')
     new_last_attendance_id = fields.Many2one('hr_china.attendance', compute='_new_compute_last_attendance_id')
     new_attendance_state = fields.Selection(string="Attendance", compute='_new_compute_attendance_state',
-                                            selection=[('checked_out_am', "Morning Checked Out"),
-                                                       ('checked_in_am', "Morning Checked In"),
-                                                       ('check_out_pm', "Afternoon Checked Out"),
-                                                       ('check_in_am', "Afternoon Checked In")])
+                                            selection=[('checked_out', "Checked Out"), ('checked_in', "Checked In")])
     converted_wage_type = fields.Char()
 
     @api.onchange('c_wage_type')
@@ -209,30 +206,26 @@ class HREmployee(models.Model):
         for item in self:
             item.converted_wage_type = item.c_wage_type.wage_type
 
-    @api.depends('attendance_ids')
+    @api.depends('new_attendance_ids')
     def _new_compute_last_attendance_id(self):
         for employee in self:
             employee.new_last_attendance_id = employee.new_attendance_ids and employee.new_attendance_ids[0] or False
 
-    @api.depends('new_last_attendance_id.check_in_am', 'new_last_attendance_id.check_out_am', 'new_last_attendance_id.check_in_pm', 'new_last_attendance_id.check_out_pm', 'new_last_attendance_id')
+    @api.depends('new_last_attendance_id')
     def _new_compute_attendance_state(self):
         for employee in self:
             if employee.new_last_attendance_id:
                 if employee.new_last_attendance_id.check_in_am:
-                    employee.new_attendance_state = 'check_in_am'
-                    return
-                if employee.new_last_attendance_id.check_out_am:
-                    employee.new_attendance_state = 'check_out_am'
-                    return
-                if employee.new_last_attendance_id.check_in_pm:
-                    employee.new_attendance_state = 'check_in_pm'
-                    return
-                if employee.new_last_attendance_id.check_out_pm:
-                    employee.new_attendance_state = 'check_out_pm'
-                    return
+                    employee.new_attendance_state = 'checked_in'
 
-      #          employee.new_attendance_state = employee.new_last_attendance_id
-            #employee.new_attendance_state = employee.new_last_attendance_id and not employee.last_attendance_id.check_out and 'checked_in' or 'checked_out'
+                if employee.new_last_attendance_id.check_out_am:
+                    employee.new_attendance_state = 'checked_out'
+
+                if employee.new_last_attendance_id.check_in_pm:
+                    employee.new_attendance_state = 'checked_in'
+
+                if employee.new_last_attendance_id.check_out_pm:
+                    employee.new_attendance_state = 'checked_out'
 
     @api.multi
     def _get_active_contract(self):

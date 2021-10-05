@@ -170,5 +170,24 @@
             </field>
         </record>
 
+        <record id="hr_china_employee_kanban_view" model="ir.ui.view">
+            <field name="name">hr_china.employee_kanban</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_attendance.hr_employees_view_kanban" />
+            <field name="priority">1000</field>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban/templates/t/div[@class='oe_kanban_global_click']/div[@class='oe_kanban_details']/div[@id='textbox']" position="replace">
+                    <div class="col-xs-11" style="padding:0px">
+                        <strong>
+                            <field name="name"/>
+                        </strong>
+                    </div>
+                    <div class="col-xs-1" style="padding:0px">
+                        <field name="new_attendance_state" widget="hr_attendance_kanban_presence_indicator"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
