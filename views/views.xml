@@ -7,6 +7,12 @@
             </xpath>
         </template>
 
+        <template id="assets_backend" name="hr_china assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/hr_china/static/src/js/employee_kanban_handler.js" />
+            </xpath>
+        </template>
+
         <record id="hr_china_action_my_attendances" model="ir.actions.act_window">
             <field name="name">Attendance</field>
             <field name="res_model">hr.attendance</field>

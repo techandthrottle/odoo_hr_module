@@ -215,17 +215,18 @@ class HREmployee(models.Model):
     def _new_compute_attendance_state(self):
         for employee in self:
             if employee.new_last_attendance_id:
-                if employee.new_last_attendance_id.check_in_am:
+                employee.new_attendance_state = 'checked_out'
+                if employee.new_last_attendance_id.check_in_am or employee.new_last_attendance_id.check_in_pm:
                     employee.new_attendance_state = 'checked_in'
 
-                if employee.new_last_attendance_id.check_out_am:
+                if employee.new_last_attendance_id.check_out_am or employee.new_last_attendance_id.check_out_pm:
                     employee.new_attendance_state = 'checked_out'
 
-                if employee.new_last_attendance_id.check_in_pm:
-                    employee.new_attendance_state = 'checked_in'
+                # if employee.new_last_attendance_id.check_in_pm:
+                #     employee.new_attendance_state = 'checked_in'
 
-                if employee.new_last_attendance_id.check_out_pm:
-                    employee.new_attendance_state = 'checked_out'
+                # if employee.new_last_attendance_id.check_out_pm:
+                #     employee.new_attendance_state = 'checked_out'
 
     @api.multi
     def _get_active_contract(self):
