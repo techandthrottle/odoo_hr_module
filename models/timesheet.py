@@ -694,7 +694,7 @@ class HRNewAttendance(models.Model):
                                                                ('check_out_pm', '=', False)])
         for rec in not_checkout:
             check_out_time = fields.Datetime.now()
-            if not rec.check_out_pm:
+            if not rec.check_out_pm and rec.check_in_pm:
                 rec.check_out_pm = check_out_time
-            elif not rec.check_out_am:
+            elif not rec.check_out_am and rec.check_in_am:
                 rec.check_out_am = check_out_time
