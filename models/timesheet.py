@@ -687,3 +687,14 @@ class HRNewAttendance(models.Model):
     @api.multi
     def copy(self):
         raise exceptions.UserError(_('You cannot duplicate an attendance.'))
+
+    @api.model
+    def force_checkout_attendance(self):
+        not_checkout = self.env['hr_china.attendance'].search(['|', ('check_out_am', '=', False),
+                                                               ('check_out_pm', '=', False)])
+        for rec in not_checkout:
+            check_out_time = fields.Datetime.now()
+            if not rec.check_out_pm:
+                rec.check_out_pm = check_out_time
+            elif not rec.check_out_am:
+                rec.check_out_am = check_out_time

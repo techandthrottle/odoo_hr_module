@@ -92,5 +92,23 @@
             <field name="view_id" ref="view_leave_configuration" />
         </record>
 
+        <record id="inherit_configuration" model="ir.ui.view">
+            <field name="name">hr_china.cron_configuration.form</field>
+            <field name="model">zulu_attendance.configuration</field>
+            <field name="priority">500</field>
+            <field name="inherit_id" ref="zulu_attendance.zulu_attendance_configuration" />
+            <field name="arch" type="xml">
+                <xpath expr="//form/group[3]" position="replace">
+                    <group string="Kiosk Settings" col="6">
+                        <field name="timeout" class="oe_inline"/>
+                        <label for="timeout" string="Number of minutes the scanner will not check-in or out a user that has recently checked-in or out" colspan="4"/>
+
+                        <field name="force_checkout" widget="timepicker" class="oe_inline"/>
+                        <label for="force_checkout" string="Time that will automatically checkout all checked-in employees" colspan="4"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

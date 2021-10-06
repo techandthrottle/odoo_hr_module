@@ -1,6 +1,8 @@
 #-*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from datetime import datetime, timedelta, date, time
+from pprint import pprint
 
 
 class WageTypeConfiguration(models.Model):
@@ -39,3 +41,19 @@ class LeaveConfiguration(models.Model):
     name = fields.Char(string='Name')
     days_allowed = fields.Integer(string='Days Allowed')
     leave_type = fields.Selection([('paid', 'Paid'), ('unpaid', 'Unpaid')], string='Type')
+
+
+class ZuluConfigInherit(models.Model):
+    _inherit = 'zulu_attendance.configuration'
+
+    @api.multi
+    def execute(self):
+        self.ensure_one()
+
+        for item in self:
+            cur_date = fields.Datetime.now().split(' ')
+            exec_time = str(timedelta(hours=item.force_checkout))
+            exec_date = cur_date[0] + ' ' + exec_time
+
+            self._cr.execute("""UPDATE ir_cron SET nextcall = %s WHERE name='Attendance Force Checkout' AND
+            model='hr_china.attendance'""", (datetime.strptime(exec_date, '%Y-%m-%d %H:%M:%S')))

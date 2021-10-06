@@ -34,6 +34,7 @@
 
     # always loaded
     'data': [
+        'data/force_checkout.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'report/attendance_reports.xml',
