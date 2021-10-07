@@ -564,13 +564,13 @@ class HREmployee(models.Model):
                                                              ('check_in_am', '!=', False),
                                                              ('check_in_pm', '!=', False)], limit=1)
         if attendance:
-            if not attendance.check_out_am and not attendance.check_in_pm:
+            if attendance.check_in_am and not attendance.check_in_pm:
                 attendance.check_out_am = action_date
                 return attendance
-            if not attendance.check_in_pm:
-                attendance.check_in_pm = action_date
-                return attendance
-            if not attendance.check_out_pm:
+            # if not attendance.check_in_pm:
+            #     attendance.check_in_pm = action_date
+            #     return attendance
+            if attendance.check_in_pm and not attendance.check_out_pm:
                 attendance.check_out_pm = action_date
                 return attendance
 
