@@ -562,7 +562,9 @@ class HREmployee(models.Model):
 
         attendance = self.env['hr_china.attendance'].search(['|', ('employee_id', '=', self.id), '&',
                                                              ('check_in_am', '!=', False),
-                                                             ('check_in_pm', '!=', False)], limit=1)
+                                                             ('check_in_pm', '!=', False),
+                                                             ('attendance_date', '>=', action_date),
+                                                             ('attendance_date', '<=', action_date)], limit=1)
         if attendance:
             if attendance.check_in_am and not attendance.check_in_pm:
                 attendance.check_out_am = action_date
