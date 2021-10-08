@@ -29,7 +29,6 @@
 
         <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="hr_china.open_hr_china_timesheets"/>
         <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown" action="hr_china.action_hr_china_payslips"/>
-        <menuitem id="menu_hr_china_leave_req" name="Leave Request" parent="menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager_dropdown" action="" />
 
         <menuitem id="menu_hr_china_configuration_main" name="Configuration" parent="hr_china.menu_hr_china_root" sequence="106" groups="hr_china.group_hr_china_manager_dropdown"/>
             <menuitem id="menu_hr_china_configuration_child" name="Configuration" parent="hr_china.menu_hr_china_configuration_main" sequence="0" action="zulu_attendance.action_zulu_attendance_configuration" groups="hr_china.group_hr_china_manager_dropdown"/>

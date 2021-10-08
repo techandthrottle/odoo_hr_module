@@ -56,4 +56,4 @@ class ZuluConfigInherit(models.Model):
             exec_date = cur_date[0] + ' ' + exec_time
 
             self._cr.execute("""UPDATE ir_cron SET nextcall = %s WHERE name='Attendance Force Checkout' AND
-            model='hr_china.attendance'""", (datetime.strptime(exec_date, '%Y-%m-%d %H:%M:%S')))
+            model='hr_china.attendance'""", (datetime.strptime(exec_date, '%Y-%m-%d %H:%M:%S'),))

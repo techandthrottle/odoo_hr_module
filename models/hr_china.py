@@ -287,7 +287,7 @@ class HREmployee(models.Model):
         if templ_contract:
             self.contract_name = self.name + " - " + templ_contract.name
             self.currency_id = templ_contract.currency_id
-            self.c_wage_type = templ_contract.wage_type.wage_type
+            self.c_wage_type = templ_contract.wage_type.id
             self.c_monthly_fee = templ_contract.monthly_fee
             self.c_hourly_rate = templ_contract.hourly_rate
             self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
@@ -330,8 +330,8 @@ class HREmployee(models.Model):
                     created_contract = self.env['hr_china.contract'].create({
                         'employee_id': self.id,
                         'name': self.contract_name,
-                        'currency_id': self.currency_id,
-                        'wage_type': self.contract_template_id.wage_type,
+                        'currency_id': self.currency_id.id,
+                        'wage_type': self.contract_template_id.wage_type.id,
                         'monthly_fee': self.contract_template_id.monthly_fee,
                         'hourly_rate': self.contract_template_id.hourly_rate,
                         'weekday_daily_fee': self.contract_template_id.weekday_daily_fee,
@@ -451,8 +451,9 @@ class HRChinaContract(models.Model):
     #is_contract_active = fields.Boolean('Contract is Active', compute=_check_contract_status)
     is_contract_active = fields.Selection([('expired', 'Expired'), ('active', 'Active')])
     name = fields.Char('Name')
-    wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
-                                 string='Wage Type')
+    # wage_type = fields.Selection([('hourly', 'Hourly'), ('monthly', 'Monthly')], default="hourly",
+    #                              string='Wage Type')
+    wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type')
     monthly_fee = fields.Float(string='Monthly Fee')
     weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
@@ -468,7 +469,7 @@ class HRChinaContract(models.Model):
                                   string='Benefits')
     deductions_id = fields.One2many('hr_china.contract_deductions', 'contract_id',
                                     string='Deductions')
-    currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
+    currency_id = fields.Many2one('res.currency', string='Currency')
 
 
 class HRChinaContractBenefits(models.Model):
