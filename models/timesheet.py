@@ -427,7 +427,7 @@ class HREmployee(models.Model):
                 # cust_action = 'no_action'
                 if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
                         last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                    pprint("111111111111111111111111111111111111111111")
+
                     return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                                                                    time_action=my_action, custom_action='no_action') or \
                            {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
@@ -438,7 +438,7 @@ class HREmployee(models.Model):
                 # cust_action = 'no_action'
                 if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
                         last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                    pprint("22222222222222222222222222222222222222222")
+
                     return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                                                                    time_action=my_action, custom_action='no_action') or \
                            {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
@@ -449,7 +449,7 @@ class HREmployee(models.Model):
                 # cust_action = 'no_action'
                 if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
                         last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                    pprint("33333333333333333333333333333333333333333")
+
                     return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                                                                    time_action=my_action, custom_action='no_action') or \
                            {'warning': _('YOU HAVE ALREADY CHECKED IN.') % {'employee': employee.name.split()[0]}}
@@ -460,7 +460,7 @@ class HREmployee(models.Model):
                 # cust_action = 'no_action'
                 if (datetime.strptime(fields.Datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
                         last_activity_time, DEFAULT_SERVER_DATETIME_FORMAT)).seconds < (config.timeout * 60):
-                    pprint("4444444444444444444444444444444444444444444444444444")
+
                     return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                                                                    time_action=my_action, custom_action='no_action') or \
                            {'warning': _('YOU HAVE ALREADY CHECKED OUT.') % {'employee': employee.name.split()[0]}}
@@ -471,21 +471,16 @@ class HREmployee(models.Model):
             hours = timedelta(hours=8)
 
             if (datetime.strptime(action_date, DEFAULT_SERVER_DATETIME_FORMAT) + hours).time() < mid_day.time():
-                pprint("5555555555555555555555555555555555555555555555")
                 my_action = 'check_in_am'
                 # return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                 #                                                time_action=my_action) or \
                 #        {'warning': _('No employee corresponding to barcode %(barcode)s') % {'barcode': barcode}}
             else:
-                pprint("66666666666666666666666666666666666666666666666666666")
                 my_action = 'check_in_pm'
                 # return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                 #                                                time_action=my_action) or \
                 #        {'warning': _('No employee corresponding to barcode %(barcode)s') % {'barcode': barcode}}
         # End of fix
-        pprint("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        pprint(my_action)
-        pprint(cust_action)
         return employee and employee.attendance_action('zulu_attendance.zulu_attendance_action_kiosk_mode',
                                                        time_action=my_action, custom_action=cust_action) or \
                {'warning': _('No employee corresponding to barcode %(barcode)s') % {'barcode': barcode}}
@@ -599,10 +594,14 @@ class HREmployee(models.Model):
         if len(self) > 1:
             raise exceptions.UserError(_('Cannot perform check in or check out on multiple employees.'))
         action_date = fields.Datetime.now()
-
+        now_date = datetime.now().date()
+        from_date = datetime.strftime(now_date, '%Y-%m-%d 00:00:00')
+        to_date = datetime.strftime(now_date, '%Y-%m-%d 23:59:00')
         attendance = self.env['hr_china.attendance'].search(['|', ('employee_id', '=', self.id), '&',
                                                              ('check_in_am', '!=', False),
-                                                             ('check_in_pm', '!=', False)], limit=1)
+                                                             ('check_in_pm', '!=', False), '&',
+                                                             ('attendance_date', '>=', from_date),
+                                                             ('attendance_date', '<=', to_date)], limit=1)
 
         if attendance:
             if attendance.check_in_am and not attendance.check_in_pm:
@@ -736,8 +735,8 @@ class HRNewAttendance(models.Model):
                                                                ('check_out_pm', '=', False)])
         for rec in not_checkout:
             check_out_time = fields.Datetime.now()
-            if not rec.check_out_am:
+            if rec.check_in_am and not rec.check_out_am:
                 rec.check_out_am = check_out_time
-            elif not rec.check_out_pm:
+            elif rec.check_in_pm and not rec.check_out_pm:
                 rec.check_out_pm = check_out_time
 
