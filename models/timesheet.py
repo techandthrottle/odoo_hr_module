@@ -490,11 +490,17 @@ class HREmployee(models.Model):
         self.ensure_one()
 
         config = self.env['zulu_attendance.configuration'].search([], order='id desc', limit=1)
+        now_date = datetime.now().date()
+        from_date = datetime.strftime(now_date, '%Y-%m-%d 00:00:00')
+        to_date = datetime.strptime(now_date, '%Y-%m-%d 23:59:00')
         last_attendance_obj = self.env['hr_china.attendance'].search([
-            ('employee_id', '=', self.id)
+            ('employee_id', '=', self.id),
+            ('attendance_date', '>=', from_date),
+            ('attendanace_date', '<=', to_date)
         ], order='id desc', limit=1)
 
         my_action = False
+        cust_action = 'none'
         if last_attendance_obj:
             if last_attendance_obj.check_in_am:
                 last_activity_time = last_attendance_obj.check_in_am
@@ -554,7 +560,7 @@ class HREmployee(models.Model):
                 self.user_id and self.user_id.id != self._uid or not self.user_id):
             if entered_pin != self.pin:
                 return {'warning': _('Wrong PIN')}
-        return self and self.attendance_action(next_action, time_action=my_action)
+        return self and self.attendance_action(next_action, time_action=my_action, custom_action=cust_action)
 
     @api.multi
     def attendance_action(self, next_action, time_action, custom_action="none"):
