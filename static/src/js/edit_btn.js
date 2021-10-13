@@ -13,7 +13,9 @@ odoo.define('hr_china.edit_btn', function (require) {
             this._super.apply(this, arguments);
             if(this.dataset.model == 'hr_china.timesheet'){
                 var create_btn = this.$buttons.find('.o_list_button_add');
+                var imp_btn = this.$buttons.find('.o_button_import');
                 create_btn.hide();
+                imp_btn.hide();
             }
             if (this.$buttons){
                 var btn = this.$buttons.find('button.hr_china_timesheet_create')

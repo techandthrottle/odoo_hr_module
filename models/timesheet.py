@@ -46,6 +46,21 @@ class HRTimesheet(models.Model):
         }
 
     @api.multi
+    def action_confirm(self):
+        for rec in self:
+            rec.state = 'confirm'
+
+    @api.multi
+    def action_approve(self):
+        for rec in self:
+            rec.state = 'validate'
+
+    @api.multi
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    @api.multi
     def _get_employee_image(self):
         for item in self:
             item.employee_image = item.employee_id.image
@@ -673,6 +688,9 @@ class HRNewAttendance(models.Model):
     break_hours = fields.Float(string='Break Hours', compute='_compute_break_hours')
     work_hours = fields.Float(string='Worked Hours', store=True, readonly=True, compute='_compute_worked_hours')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_compute_overtime', default=0)
+
+    check_in = fields.Datetime(string='Check In')
+    check_out = fields.Datetime(string='Check Out')
 
     def _default_employee(self):
         return self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
