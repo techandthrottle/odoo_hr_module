@@ -8,8 +8,6 @@ from odoo.exceptions import UserError, AccessError, ValidationError
 import calendar
 import time
 
-from pprint import pprint
-
 
 class HRTimesheet(models.Model):
     _name = "hr_china.timesheet"
