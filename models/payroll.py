@@ -19,7 +19,7 @@ class HRChinaPayroll(models.Model):
     @api.multi
     def _get_wage_type(self):
         for item in self:
-            item.wage_type = item.employee_id.c_wage_type if item.employee_id else ''
+            item.wage_type = item.employee_id.converted_wage_type if item.employee_id else ''
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
     name = fields.Char(string='Name', compute=_get_timesheet_name)
@@ -166,6 +166,21 @@ class HRChinaPayroll(models.Model):
             'target': 'new'
         }
 
+    @api.multi
+    def action_confirm(self):
+        for rec in self:
+            rec.state = 'confirm'
+
+    @api.multi
+    def action_approve(self):
+        for rec in self:
+            rec.state = 'validate'
+
+    @api.multi
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
 
 class HRChinaPayslipBenefits(models.Model):
     _name = 'hr_china.payslip.benefits'
@@ -226,7 +241,7 @@ class HRChinaPayrollCreate(models.TransientModel):
                 'holiday': item.holiday,
                 'leave': item.leaves,
                 'working_days': item.total_days,
-                'wage_type': item.contract_type,
+                'wage_type': item.contract_type.id,
                 'name': item.employee_id.name,
                 'regular_days': item.regular_days
             }
@@ -259,7 +274,8 @@ class HRChinaPayrollTimesheetTempTrans(models.TransientModel):
     leave = fields.Float(string='Leaves')
     working_days = fields.Float(string='Working Days') #TOTAL DAYS EQUIVALENT
     work_hours = fields.Float(string='Work Hours') #WORK TIME EQUIVALENT
-    wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')], string='Type')
+    # wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')], string='Type')
+    wage_type = fields.Many2one('hr_china.wage_type', string='Type')
     name = fields.Char()
 
 
@@ -280,8 +296,9 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
     leave = fields.Float(string='Leaves')
     working_days = fields.Float(string='Working Days')
     regular_days = fields.Integer(string='Regular Days')
-    wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')],
-                                 string='Type')
+    # wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')],
+    #                              string='Type')
+    wage_type = fields.Many2one('hr_china.wage_type', string='Type')
 
     # def _update_timesheet_id(self):
     #     self.ensure_one()
@@ -395,7 +412,7 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'employee_id': timesheet.employee_id.id,
                     'start_date': timesheet.period_from,
                     'end_date': timesheet.period_to,
-                    'wage_type': timesheet.wage_type,
+                    'wage_type': timesheet.wage_type.wage_type,
                     'worked_days': timesheet.working_days,
                     'work_hours': timesheet.work_hours,
                     'overtime_hours': timesheet.overtime_hours,

@@ -32,7 +32,8 @@ class HRTimesheet(models.Model):
     employee_image = fields.Binary(compute='_get_employee_image')
 
     attendance_trans = fields.One2many('hr_china.timesheet.trans', 'timesheet')
-    contract_type = fields.Char(string='Contract Type', compute='_get_contract_type', stored=True)
+    contract_type = fields.Many2one('hr_china.wage_type', string='Contract Type')
+    # contract_type = fields.Char(string='Contract Type', compute='_get_contract_type', stored=True)
     work_time = fields.Float(string='Work Time', compute='_get_work_time')
 
     def print_timesheet_form(self):
@@ -101,11 +102,11 @@ class HRTimesheet(models.Model):
                 color = '#5EBE6A'
             item.timesheet_state = '<span class="item_badge" style="background-color:%s;">%s</span>' % (color, ret_val)
 
-    @api.onchange('employee_id')
-    def _get_contract_type(self):
-        for item in self:
-            contract = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
-            item.contract_type = contract.c_wage_type
+    # @api.onchange('employee_id')
+    # def _get_contract_type(self):
+    #     for item in self:
+    #         contract = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+    #         item.contract_type = contract.c_wage_type.id
 
     @api.onchange('employee_id')
     def _get_regular_days(self):
