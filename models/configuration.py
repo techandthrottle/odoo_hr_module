@@ -34,6 +34,13 @@ class CompanyNameLogoConfig(models.Model):
     logo = fields.Binary(string='Company Logo')
     is_active = fields.Boolean(string='Active', default=False)
 
+    @api.constrains('is_active')
+    def change_active_status(self):
+        if self.is_active:
+            records = self.env['hr_china.company_name_logo'].search([('id', '!=', self.id)])
+            for rec in records:
+                rec.is_active = False
+
 
 class LeaveConfiguration(models.Model):
     _name = 'hr_china.leave_config'

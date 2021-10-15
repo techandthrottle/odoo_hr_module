@@ -61,8 +61,9 @@ class HRChinaPayroll(models.Model):
     weekend_pay = fields.Float(string='Weekend Pay', compute='_get_weekend_pay')
     regular_days = fields.Integer(string='Regular Days')
 
-    benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
-    deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
+    # benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
+    # deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
+
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_get_emp_currency')
     gross_pay = fields.Float(string='Gross Pay', compute='_get_gross_pay')
 
@@ -71,22 +72,22 @@ class HRChinaPayroll(models.Model):
     total_benefits = fields.Float(string='Total Benefits', store=True, compute='sum_benefits')
     total_deductions = fields.Float(string='Total Deduction', compute='get_sum_deductions')
 
-    # payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id')
-    # payslip_deductions = fields.One2many('hr_china.payslip.deductions', 'payslip_id')
+    payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id', string='Benefits')
+    payslip_deductions = fields.One2many('hr_china.payslip.deductions', 'payslip_id', string='Deductions')
 
-    @api.onchange('benefits_id')
+    @api.onchange('payslip_benefits')
     def sum_benefits(self):
         for benefits in self:
             total_benefits = False
-            for line in benefits.benefits_id:
+            for line in benefits.payslip_benefits:
                 total_benefits = total_benefits + line.amount
             benefits.total_benefits = total_benefits
 
-    @api.onchange('deductions_id')
+    @api.onchange('payslip_deductions')
     def get_sum_deductions(self):
         for item in self:
             total_ded = False
-            for line in item.deductions_id:
+            for line in item.payslip_deductions:
                 total_ded = total_ded + line.amount
             item.total_deductions = total_ded
 
@@ -142,7 +143,7 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id', 'total_benefits')
     def _get_gross_pay(self):
         for item in self:
-            benefits = item.benefits_id
+            benefits = item.payslip_benefits
             total = False
             for line in benefits:
                 total = total + line.amount
@@ -185,6 +186,13 @@ class HRChinaPayroll(models.Model):
 class HRChinaPayslipBenefits(models.Model):
     _name = 'hr_china.payslip.benefits'
 
+    @api.onchange('benefits_id')
+    def onchange_benefits_id(self):
+        if self.benefits_id:
+            self.benefits_id = self.benefits_id.id
+            self.amount = self.benefits_id.amount
+            self.currency = self.benefits_id.currency
+
     payslip_id = fields.Many2one('hr_china.payslip', string='Payslip')
     benefits_id = fields.Many2one('hr_china.benefits', string='Benefits')
     amount = fields.Float(string='Amount')
@@ -193,6 +201,13 @@ class HRChinaPayslipBenefits(models.Model):
 
 class HRChinaPayslipDeductions(models.Model):
     _name = 'hr_china.payslip.deductions'
+
+    @api.onchange('deductions_id')
+    def onchange_deductions_id(self):
+        if self.deductions_id:
+            self.deductions_id = self.deductions_id.id
+            self.amount = self.deductions_id.amount
+            self.currency = self.deductions_id.currency
 
     payslip_id = fields.Many2one('hr_china.payslip', string='Payslip')
     deductions_id = fields.Many2one('hr_china.deductions', string='Deductions')
@@ -419,9 +434,33 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'weekend': timesheet.weekend,
                     'holiday': timesheet.holiday,
                     'leave': timesheet.leave,
-                    'regular_days': timesheet.regular_days
+                    'regular_days': timesheet.regular_days,
+
                 }
+                pprint(timesheet.wage_type)
                 payrolls = self.env['hr_china.payslip'].create(trans_data)
+                benefits_lines = []
+                if timesheet.employee_id.employee_benefit:
+                    for benefit_line in timesheet.employee_id.employee_benefit:
+                        vals = {
+                            'payslip_id': payrolls.id,
+                            'benefits_id': benefit_line.benefits_id.id,
+                            'amount': benefit_line.amount,
+                            'currency': benefit_line.currency.id
+                        }
+                        benefits_lines.append((0, 0, vals))
+                deductions_lines = []
+                if timesheet.employee_id.employee_deduction:
+                    for deduction_line in timesheet.employee_id.employee_deduction:
+                        vals = {
+                            'payslip_id': payrolls.id,
+                            'deductions_id': deduction_line.deductions_id.id,
+                            'amount': deduction_line.amount,
+                            'currency': deduction_line.currency.id
+                        }
+                        deductions_lines.append((0, 0, vals))
+                payrolls.payslip_benefits = benefits_lines
+                payrolls.payslip_deductions = deductions_lines
 
         return {
             'type': 'ir.actions.client',

@@ -3,6 +3,17 @@
     width: 100%;
 }
 
+.new_ot_logo1{
+    max-height: 65px;
+    max-width: 200px;
+}
+
+.new_ot_logo img {
+    max-height: 150px;
+    max-width: 150px;
+    margin-left: 5%;
+}
+
 .header_label {
     margin: auto;
     padding: 5px;

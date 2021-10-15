@@ -3,15 +3,15 @@
     <data>
 		<template id="timesheet_form_rpt">
             <t t-call="report.html_container">
+                <link rel="stylesheet" href="/hr_china/static/src/css/style.css"/>
                 <div class="page" style="margin:0px;">
-                    <link rel="stylesheet" href="/hr_china/static/src/css/style.css"/>
+                    <div class="new_ot_logo">
+                        <t t-if="company_id">
+                            <div t-field="company_id.logo" t-field-options='{"widget": "image"}'/>
+                        </t>
+                    </div>
                     <table class="overtime_header">
                         <tr>
-                            <div class="ot_logo">
-                                <t t-if="company_id">
-                                    <div t-field="company_id.logo" t-field-options='{"widget": "image"}'/>
-                                </t>
-                            </div>
                         </tr>
                     </table>
                     <div class="ot_title_header">
