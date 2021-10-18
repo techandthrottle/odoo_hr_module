@@ -239,9 +239,9 @@ class HRChinaPayrollCreate(models.TransientModel):
     def display_timesheet_wizard(self):
         self.env['hr_china.payslip.create_temp'].search([]).unlink()
         self.env['hr_china.payslip.ttt'].search([]).unlink()
-        time_list = self.env['hr_china.timesheet'].search(['|', '|', ('period_from', '>=', self.start_date),
-                                                                     ('period_to', '<=', self.start_date),
-                                                                     ('period_from', '>=', self.end_date),
+        time_list = self.env['hr_china.timesheet'].search(['|', '&', ('period_from', '>=', self.start_date),
+                                                                     ('period_from', '<=', self.start_date), '&',
+                                                                     ('period_to', '>=', self.end_date),
                                                                      ('period_to', '<=', self.end_date)])
 
         for item in time_list:
@@ -437,7 +437,6 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'regular_days': timesheet.regular_days,
 
                 }
-                pprint(timesheet.wage_type)
                 payrolls = self.env['hr_china.payslip'].create(trans_data)
                 benefits_lines = []
                 if timesheet.employee_id.employee_benefit:

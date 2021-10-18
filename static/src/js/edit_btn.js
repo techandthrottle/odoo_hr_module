@@ -35,7 +35,7 @@ odoo.define('hr_china.edit_btn', function (require) {
         hr_china_timesheet_create: function() {
             var self = this
             var context = this.dataset._model;
-            new Model('hr_china.timesheet.create')
+            new Model('hr_china.timesheet.create_temp')
                 .call('do_get_display', [], {context: context})
                 .then(function(response) {
                     self.do_action(response);

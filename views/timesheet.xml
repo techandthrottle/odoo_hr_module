@@ -62,19 +62,40 @@
             <field name="arch" type="xml">
                 <form string="Timesheets">
                     <sheet>
-                        <div class="oe_edit_only" style="padding-bottom: 50px;">
-                            <label for="total_days" string="Timesheet Period"/>
-                            <field name="start_date" class="oe_inline" required="1" widget="date"/>
-                            <label string=" to " class="oe_inline"/>
-                            <field name="end_date" class="oe_inline" required="1" widget="date"/>
-                        </div>
+<!--                        <div class="oe_edit_only" style="padding-bottom: 50px;">-->
+<!--                            <label for="total_days" string="Timesheet Period"/>-->
+<!--                            <field name="start_date" class="oe_inline" required="1" widget="date"/>-->
+<!--                            <label string=" to " class="oe_inline"/>-->
+<!--                            <field name="end_date" class="oe_inline" required="1" widget="date"/>-->
+<!--                        </div>-->
                         <field name="employee_ids" class="oe_edit_only">
                             <tree editable="bottom" create="true">
                                 <field name="name" string="Employee"/>
-                                <field name="job_new_id" string="Job Title"/>
+                                <field name="job_id" string="Job Title"/>
                                 <field name="department_id" string="Department"/>
                             </tree>
                         </field>
+                        <footer>
+                            <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_timesheet_create_temp" model="ir.ui.view">
+            <field name="name">view.hr_china_timesheet_create.temp</field>
+            <field name="model">hr_china.timesheet.create_temp</field>
+            <field name="arch" type="xml">
+                <form string="Timesheets">
+                    <sheet>
+                        <div class="oe_edit_only" style="padding-bottom: 50px;">
+                            <label for="total_days" string="Timesheet Period"/>
+                            <field name="period_from" class="oe_inline" required="1" widget="date"/>
+                            <label string=" to " class="oe_inline"/>
+                            <field name="period_to" class="oe_inline" required="1" widget="date"/>
+                        </div>
                         <footer>
                             <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
                             <button string="Discard" class="btn-default" special="cancel"/>

@@ -35,6 +35,7 @@ class HRTimesheet(models.Model):
     contract_type = fields.Many2one('hr_china.wage_type', string='Contract Type', compute='_get_contract_type')
     # contract_type = fields.Char(string='Contract Type', compute='_get_contract_type', stored=True)
     work_time = fields.Float(string='Work Time', compute='_get_work_time')
+    # work_time = fields.Float(string='Work Time', related='attendance_trans.work_hours')
 
     def print_timesheet_form(self):
         timesheet_id = str(self.id)
@@ -45,6 +46,10 @@ class HRTimesheet(models.Model):
             'url': '/report/pdf/hr_china.timesheet_form_rpt/%s?filename=%s' % (timesheet_id, timesheet_name),
             'target': 'new'
         }
+
+    @api.multi
+    def action_update_timesheet(self):
+        return False
 
     @api.multi
     def action_confirm(self):
@@ -132,28 +137,48 @@ class HRTimesheet(models.Model):
             pass
 
     @api.onchange('employee_id')
+    # @api.constraints('attendance_trans')
     def _get_overtime_work(self):
+        # for item in self:
+        #     ot = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+        #                                                  ('attendance_date', '>=', item.period_from),
+        #                                                  ('attendance_date', '<=', item.period_to)])
+        #     ot_hours = False
+        #     for overtime in ot:
+        #         ot_hours = ot_hours + overtime.overtime_hours
+        #     item.overtime_hours = ot_hours
+
         for item in self:
-            ot = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
-                                                         ('attendance_date', '>=', item.period_from),
-                                                         ('attendance_date', '<=', item.period_to)])
+            ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+                                                         ('date', '>=', item.period_from),
+                                                         ('date', '<=', item.period_to)])
             ot_hours = False
             for overtime in ot:
                 ot_hours = ot_hours + overtime.overtime_hours
             item.overtime_hours = ot_hours
 
     @api.onchange('employee_id')
+    # @api.constraints('attendance_trans')
     def _get_work_time(self):
+        # for item in self:
+        #     wh = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
+        #                                                  ('attendance_date', '>=', item.period_from),
+        #                                                  ('attendance_date', '<=', item.period_to)])
+        #     wh_hours = False
+        #     for wtime in wh:
+        #         wh_hours = wh_hours + wtime.work_hours
+        #     item.work_time = wh_hours
         for item in self:
-            wh = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
-                                                         ('attendance_date', '>=', item.period_from),
-                                                         ('attendance_date', '<=', item.period_to)])
+            wh = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+                                                         ('date', '>=', item.period_from),
+                                                         ('date', '<=', item.period_to)])
             wh_hours = False
             for wtime in wh:
                 wh_hours = wh_hours + wtime.work_hours
             item.work_time = wh_hours
 
-    @api.onchange('employee_id')
+    @api.onchange('employee_id', 'attendance_trans')
+    # @api.constraints('attendance_trans')
     def _get_total_days(self):
         for item in self:
             td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
@@ -384,7 +409,8 @@ class HRChinaTimesheetCreate(models.TransientModel):
 
     start_date = fields.Datetime('Start Date')
     end_date = fields.Datetime('End Date')
-    employee_ids = fields.Many2many('hr.employee')
+    # employee_ids = fields.Many2many('hr.employee')
+    employee_ids = fields.Many2many('hr_china.timesheet_emp_list')
 
     @api.model
     def do_get_display(self):
@@ -409,6 +435,74 @@ class HRChinaTimesheetCreate(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
+
+
+class HRChinaTimesheetTempTrans(models.TransientModel):
+    _name = 'hr_china.timesheet.create_temp'
+
+    period_from = fields.Date(string='Date From')
+    period_to = fields.Date(string='Date To')
+
+    @api.model
+    def do_get_display(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr_china.timesheet.create_temp',
+            'name': 'Timesheet',
+            'views': [(False, 'form')],
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    @api.multi
+    def close_dialog(self):
+        self.env['hr_china.timesheet_emp_list'].search([]).unlink()
+        # emp_list = self.env['hr_china.attendance'].search([('attendance_date', '>=', self.period_from),
+        #                                                    ('attendance_date', '<=', self.period_to)])
+
+        test_emp_list = self.env['hr_china.attendance'].read_group([('attendance_date', '>=', self.period_from),
+                                                                    ('attendance_date', '<=', self.period_to)], fields=['employee_id'], groupby=['employee_id'])
+
+        for emp in test_emp_list:
+            trans_data = {
+                'employee_id': emp['employee_id'][0],
+            }
+            self.env['hr_china.timesheet_emp_list'].create(trans_data)
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr_china.timesheet.create',
+            'name': 'Timesheet',
+            'views': [(False, 'form')],
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
+
+
+class HRChinaTimesheetTTT(models.TransientModel):
+    _name = 'hr_china.timesheet_emp_list'
+
+    employee_id = fields.Many2one('hr.employee')
+    name = fields.Char(string='Name', compute='_get_name')
+    job_id = fields.Many2one('hr_china.job_titles', string='Job Title', compute='_get_job_id')
+    department_id = fields.Many2one('hr.department', string='Department', compute='get_department_id')
+
+    @api.onchange('employee_id')
+    def _get_name(self):
+        for emp in self:
+            emp.name = emp.employee_id.name
+
+    @api.onchange('employee_id')
+    def _get_job_id(self):
+        for emp in self:
+            emp.job_id = emp.employee_id.job_new_id.id
+
+    @api.onchange('employee_id')
+    def _get_department_id(self):
+        for emp in self:
+            emp.department_id = emp.employee_id.department_id.id
 
 
 class HREmployee(models.Model):
