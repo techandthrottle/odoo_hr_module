@@ -83,7 +83,7 @@
                         <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight" />
                         <button string="Approve" name="action_approve" states="draft,confirm" type="object" class="oe_highlight"/>
                         <button string="Set as Draft" name="action_draft" states="validate,confirm" type="object" />
-                        <button string="Update Payroll" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
+                        <button string="Update Payroll" name="action_update_payroll" states="draft,validate,confirm" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
                     </header>
                     <sheet>

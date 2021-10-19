@@ -182,6 +182,24 @@ class HRChinaPayroll(models.Model):
         for rec in self:
             rec.state = 'draft'
 
+    @api.multi
+    def action_update_payroll(self):
+        self.ensure_one()
+        times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.timesheet_id.id), '|',
+                                                             ('check_in_am', '!=', False),
+                                                             ('check_in_pm', '!=', False)])
+
+        ot_hours = False
+        weekend_count = False
+        for rec in times:
+            ot_hours = ot_hours + rec.overtime_hours
+            if rec.day in [6]:
+                weekend_count = weekend_count + 1
+
+        self.worked_days = len(times)
+        self.overtime_hours = ot_hours
+        self.weekend = weekend_count
+
 
 class HRChinaPayslipBenefits(models.Model):
     _name = 'hr_china.payslip.benefits'
