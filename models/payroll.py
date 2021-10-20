@@ -56,10 +56,12 @@ class HRChinaPayroll(models.Model):
     leave = fields.Float(string='Leaves') #Copied from Timsheet
     basic_pay = fields.Float(string='Basic Pay', compute='_get_basic_pay')
     total_hourly_pay = fields.Float(string='Total Hourly Pay', compute='_get_hourly_pay')
-    overtime_pay = fields.Float(string='Overtime Pay')
+    overtime_pay = fields.Float(string='Overtime Pay', compute='_get_overtime_pay')
     holiday_pay = fields.Float(string='Holiday Pay', compute='_get_holiday_pay')
     weekend_pay = fields.Float(string='Weekend Pay', compute='_get_weekend_pay')
     regular_days = fields.Integer(string='Regular Days')
+    weekday_ot = fields.Float(string='Weekday Overtime Pay')
+    weekend_ot = fields.Float(string='Weekend Overtime Pay')
 
     # benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
     # deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
@@ -91,14 +93,6 @@ class HRChinaPayroll(models.Model):
                 total_ded = total_ded + line.amount
             item.total_deductions = total_ded
 
-    # @api.onchange('deductions_id')
-    # def get_deductions(self):
-    #     for deductions in self:
-    #         total_deductions = False
-    #         for line in deductions.deductions_id:
-    #             total_deductions = total_deductions + line.amount
-    #         deductions.total_deductions = total_deductions
-
     @api.multi
     def get_emp_name_str(self):
         for emp in self:
@@ -118,9 +112,17 @@ class HRChinaPayroll(models.Model):
             item.currency_id = item.employee_id.currency_id.id
 
     @api.onchange('employee_id')
+    def _get_overtime_pay(self):
+        for item in self:
+            weekday_ot_pay = item.weekday_ot * item.employee_id.c_weekday_overtime_fee
+            weekend_ot_pay = item.weekend_ot * item.employee_id.c_weekend_overtime_fee
+            item.overtime_pay = weekday_ot_pay + weekend_ot_pay
+
+    @api.onchange('employee_id')
     def _get_hourly_pay(self):
         for item in self:
-            item.total_hourly_pay = item.employee_id.c_hourly_rate * item.work_hours
+            regular_wh_rate = item.employee_id.c_hourly_rate * item.work_hours
+            item.total_hourly_pay = regular_wh_rate + item.overtime_pay
 
     @api.onchange('employee_id')
     def _get_basic_pay(self):
@@ -190,14 +192,20 @@ class HRChinaPayroll(models.Model):
                                                              ('check_in_pm', '!=', False)])
 
         ot_hours = False
+        weekday_ot = False
+        weekend_ot = False
         weekend_count = False
         for rec in times:
+            weekday_ot = weekday_ot + rec.weekday_ot
+            weekend_ot = weekend_ot + rec.weekend_ot
             ot_hours = ot_hours + rec.overtime_hours
             if rec.day in [6]:
                 weekend_count = weekend_count + 1
 
         self.worked_days = len(times)
         self.overtime_hours = ot_hours
+        self.weekday_ot = weekday_ot
+        self.weekend_ot = weekend_ot
         self.weekend = weekend_count
 
 
@@ -270,6 +278,8 @@ class HRChinaPayrollCreate(models.TransientModel):
                 'period_to': item.period_to,
                 'work_hours': item.work_time,
                 'overtime_hours': item.overtime_hours,
+                'weekday_ot': item.weekday_ot_hours,
+                'weekend_ot': item.weekend_ot_hours,
                 'weekend': item.weekend,
                 'holiday': item.holiday,
                 'leave': item.leaves,
@@ -302,6 +312,8 @@ class HRChinaPayrollTimesheetTempTrans(models.TransientModel):
     period_to = fields.Datetime(string='Payslip Period To')
     regular_days = fields.Integer(string='Regular Days')
     overtime_hours = fields.Float(string='Overtime Hours')
+    weekday_ot = fields.Float(string='Weekday Overtime')
+    weekend_ot = fields.Float(string='Weekend Overtime')
     weekend = fields.Float(string='Weekends')
     holiday = fields.Float(string='Holidays')
     leave = fields.Float(string='Leaves')
@@ -324,6 +336,8 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
     period_to = fields.Datetime(string='Payslip Period To')
     work_hours = fields.Float(string='Work Hours')
     overtime_hours = fields.Float(string='Overtime Hours')
+    weekday_ot = fields.Float(string='Weekday Overtime')
+    weekend_ot = fields.Float(string='Weekend Overtime')
     weekend = fields.Float(string='Weekends')
     holiday = fields.Float(string='Holidays')
     leave = fields.Float(string='Leaves')
@@ -447,8 +461,10 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'end_date': timesheet.period_to,
                     'wage_type': timesheet.wage_type.wage_type,
                     'worked_days': timesheet.working_days,
-                    'work_hours': timesheet.work_hours,
+                    'work_hours': timesheet.work_hours - timesheet.overtime_hours,
                     'overtime_hours': timesheet.overtime_hours,
+                    'weekday_ot': timesheet.weekday_ot,
+                    'weekend_ot': timesheet.weekend_ot,
                     'weekend': timesheet.weekend,
                     'holiday': timesheet.holiday,
                     'leave': timesheet.leave,

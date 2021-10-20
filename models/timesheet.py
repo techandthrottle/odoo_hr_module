@@ -20,6 +20,8 @@ class HRTimesheet(models.Model):
     attendance_id = fields.Many2many('hr_china.attendance', string='Attendance')
     regular_days = fields.Integer(string='Regular Days', compute='_get_regular_days')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
+    weekday_ot_hours = fields.Float(string='Weekday Overtime Hours')
+    weekend_ot_hours = fields.Float(string='Weekend Overtime Hours')
     weekend = fields.Float(string='Weekends', compute='_get_weekends')
     holiday = fields.Float(string='Holidays', compute='_get_holiday_list')
     leaves = fields.Float(string='Leaves', compute='_get_leave_list')
@@ -153,8 +155,16 @@ class HRTimesheet(models.Model):
                                                          ('date', '>=', item.period_from),
                                                          ('date', '<=', item.period_to)])
             ot_hours = False
+            weekday_ot = 0
+            weekend_ot = 0
             for overtime in ot:
-                ot_hours = ot_hours + overtime.overtime_hours
+                if overtime.day == '6':
+                    weekend_ot = weekend_ot + overtime.overtime_hours
+                else:
+                    weekday_ot = weekday_ot + overtime.overtime_hours
+            ot_hours = weekday_ot + weekend_ot
+            item.weekday_ot_hours = weekday_ot
+            item.weekend_ot_hours = weekend_ot
             item.overtime_hours = ot_hours
 
     @api.onchange('employee_id')
@@ -309,6 +319,8 @@ class HRChinaTrans(models.Model):
     break_hours = fields.Float(string='Break Hours', compute=compute_break_hours)
     work_hours = fields.Float(string='Worked Hours', compute='_get_work_time')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
+    weekday_ot = fields.Float(string='Weekday OT')
+    weekend_ot = fields.Float(string='Weekend OT')
     weekend = fields.Float(string='Weekends')
     date_day = fields.Char('Day', compute='_get_day_of_date')
 
@@ -320,10 +332,20 @@ class HRChinaTrans(models.Model):
                 ('dayofweek', '=', item.day)
             ], order='id DESC')
             reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
-            ot_hours = item.work_hours - reg_hours
+            weekend_ot = 0
+            weekday_ot = 0
+            if item.day == '6':
+                weekend_ot = item.work_hours - reg_hours
+            else:
+                weekday_ot = item.work_hours - reg_hours
+            ot_hours = weekend_ot + weekday_ot
 
+            item.weekday_ot = weekday_ot
+            item.weekend_ot = weekend_ot
             if ot_hours > 0:
                 item.overtime_hours = ot_hours
+            if item.work_hours == ot_hours:
+                item.work_hours = 0
 
     @api.onchange('check_in_am', 'check_out_am', 'check_in_pm', 'check_out_pm')
     def _get_work_time(self):
