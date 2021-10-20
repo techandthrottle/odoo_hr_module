@@ -106,6 +106,7 @@
                         <group string="Income">
                             <field name="basic_pay" string="Basic Pay" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" widget="monetary" readonly="1"/>
                             <field name="total_hourly_pay" string="Total Hourly Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1"/>
+                            <field name="overtime_pay" />
                             <field name="holiday_pay" string="Holiday Pay" widget="monetary" readonly="1"/>
                             <field name="weekend_pay" string="Weekend Pay" widget="monetary" readonly="1"/>
                         </group>

@@ -51,6 +51,12 @@
                                 </td>
                             </tr>
                             <tr style="border-left:1px solid black;border-right:1px solid black;">
+                                <td class="t_label">Overtime Pay </td>
+                                <td>
+                                    <span t-field="payslip_data.overtime_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                </td>
+                            </tr>
+                            <tr style="border-left:1px solid black;border-right:1px solid black;">
                                 <td class="t_label">Holiday Pay </td>
                                 <td>
                                     <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}' />

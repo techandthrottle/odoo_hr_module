@@ -122,7 +122,7 @@ class HRChinaPayroll(models.Model):
     def _get_hourly_pay(self):
         for item in self:
             regular_wh_rate = item.employee_id.c_hourly_rate * item.work_hours
-            item.total_hourly_pay = regular_wh_rate + item.overtime_pay
+            item.total_hourly_pay = regular_wh_rate
 
     @api.onchange('employee_id')
     def _get_basic_pay(self):
@@ -152,7 +152,7 @@ class HRChinaPayroll(models.Model):
             if item.wage_type == 'monthly':
                 item.gross_pay = total + item.basic_pay + item.holiday_pay + item.weekend_pay
             else:
-                item.gross_pay = total + item.total_hourly_pay + item.holiday_pay + item.weekend_pay
+                item.gross_pay = total + item.total_hourly_pay + item.holiday_pay + item.weekend_pay + item.overtime_pay
 
     @api.onchange('gross_pay', 'total_deductions')
     def _get_net_pay(self):
@@ -161,7 +161,7 @@ class HRChinaPayroll(models.Model):
 
     def print_payslip_form(self):
         payslip_id = str(self.id)
-        payslip_name = self.name
+        payslip_name = self.employee_id.first_name
 
         return {
             'type': 'ir.actions.act_url',
