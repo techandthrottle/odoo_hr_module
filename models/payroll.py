@@ -63,9 +63,6 @@ class HRChinaPayroll(models.Model):
     weekday_ot = fields.Float(string='Weekday Overtime Pay')
     weekend_ot = fields.Float(string='Weekend Overtime Pay')
 
-    # benefits_id = fields.Many2many('hr_china.benefits', string='Benefits')
-    # deductions_id = fields.Many2many('hr_china.deductions', string='Deductions')
-
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_get_emp_currency')
     gross_pay = fields.Float(string='Gross Pay', compute='_get_gross_pay')
 
