@@ -285,7 +285,7 @@ class HRTimesheet(models.Model):
                     trans_data['check_in_pm'] = same_dates[0].check_in_pm if same_dates[0].check_in_pm else False
                     trans_data['check_out_pm'] = same_dates[0].check_out_pm if same_dates[0].check_out_pm else False
                     trans_data['break_hours'] = same_dates[0].break_hours if same_dates[0].break_hours else False
-                    trans_data['work_hours'] = same_dates[0].work_hours if same_dates[0].total_work_hours else False
+                    trans_data['work_hours'] = same_dates[0].work_hours if same_dates[0].work_hours else False
                     trans_data['overtime_hours'] = same_dates[0].overtime_hours if same_dates[0].overtime_hours else False
                 self.env['hr_china.timesheet.trans'].create(trans_data)
         return True
