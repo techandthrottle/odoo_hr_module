@@ -102,7 +102,7 @@
                             <field name="weekend" readonly="1"/>
                             <field name="holiday" readonly="1"/>
                             <field name="leave" readonly="1"/>
-                            <field name="unpaid_leave_deduction" invisible="1" />
+<!--                            <field name="unpaid_leave_deduction" invisible="1" />-->
                         </group>
                         <group string="Income">
                             <field name="basic_pay" string="Basic Pay" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" widget="monetary" readonly="1"/>

@@ -75,24 +75,54 @@ class HRChinaPayroll(models.Model):
 
     payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id', string='Benefits')
     payslip_deductions = fields.One2many('hr_china.payslip.deductions', 'payslip_id', string='Deductions')
-    unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
+    # unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
 
-    @api.multi
-    def _unpaid_leave_deduction(self):
-        for item in self:
-            no_of_days = item.employee_id.c_wage_type.days
-            monthly_rate = item.employee_id.c_monthly_fee
-            leave_deduction = 0
-            leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', item.employee_id.id),
-                                                                      ('paid_type', '=', 'unpaid'),
-                                                                      ('start_date', '>=', item.start_date),
-                                                                      ('end_date', '<=', item.end_date)])
-            for leave in leave_list:
-                if leave.half_day:
-                    leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
-                else:
-                    leave_deduction = leave_deduction + (monthly_rate / no_of_days)
-            item.unpaid_leave_deduction = leave_deduction
+    # @api.multi
+    # def _unpaid_leave_deduction(self):
+    #     self.ensure_one()
+    #
+    #     no_of_days = self.employee_id.c_wage_type.days
+    #     monthly_rate = self.employee_id.c_monthly_fee
+    #     leave_deduction = 0
+    #     leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', self.employee_id.id),
+    #                                                               ('paid_type', '=', 'unpaid'),
+    #                                                               ('start_date', '>=', self.start_date),
+    #                                                               ('end_date', '<=', self.end_date)])
+    #     for leave in leave_list:
+    #         if leave.half_day:
+    #             leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
+    #         else:
+    #             leave_deduction = leave_deduction + (monthly_rate / no_of_days)
+    #
+    #     vals = {
+    #         'payslip_id': self.id,
+    #         'amount': leave_deduction,
+    #         'currency': self.employee_id.currency_id.id
+    #     }
+    #     self.payslip_deductions = (0, 0, vals)
+    #
+    #     # for item in self:
+    #     #     no_of_days = item.employee_id.c_wage_type.days
+    #     #     monthly_rate = item.employee_id.c_monthly_fee
+    #     #     leave_deduction = 0
+    #     #     leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', item.employee_id.id),
+    #     #                                                               ('paid_type', '=', 'unpaid'),
+    #     #                                                               ('start_date', '>=', item.start_date),
+    #     #                                                               ('end_date', '<=', item.end_date)])
+    #     #     for leave in leave_list:
+    #     #         if leave.half_day:
+    #     #             leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
+    #     #         else:
+    #     #             leave_deduction = leave_deduction + (monthly_rate / no_of_days)
+    #     #
+    #     #     vals = {
+    #     #         'payslip_id': item.id,
+    #     #         'amount': leave_deduction,
+    #     #         'currency': item.employee_id.currency_id.id
+    #     #     }
+    #     #     item.payslip_deductions = (0, 0, vals)
+    #
+    #         # item.unpaid_leave_deduction = leave_deduction
 
 
     @api.onchange('payslip_benefits')
@@ -257,6 +287,7 @@ class HRChinaPayroll(models.Model):
         self.weekday_ot = weekday_ot
         self.weekend_ot = weekend_ot
         self.weekend = weekend_count
+        # self._unpaid_leave_deduction()
 
 
 class HRChinaPayslipBenefits(models.Model):
