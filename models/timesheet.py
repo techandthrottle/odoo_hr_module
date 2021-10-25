@@ -176,17 +176,15 @@ class HRTimesheet(models.Model):
                             weekday_ot = weekday_ot + overtime.overtime_hours
                             break
 
-            # for overtime in ot:
-            #     for hol in holidays:
-            #         if overtime.day == '6':
-            #             if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
-            #                 hol_ot_hours = hol_ot_hours + overtime.overtime_hours
-
             hol_ot_hours = hol_weekday_ot + hol_weekend_ot
             ot_hours = weekday_ot + weekend_ot
             item.weekday_ot_hours = weekday_ot - hol_weekday_ot
             item.weekend_ot_hours = weekend_ot - hol_weekend_ot
-            item.overtime_hours = ot_hours - hol_ot_hours
+            total = ot_hours - hol_ot_hours
+            if total < 1:
+                item.overtime_hours = total * (-1)
+            else:
+                item.overtime_hours = total
 
     @api.onchange('employee_id')
     def _get_work_time(self):
