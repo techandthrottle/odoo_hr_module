@@ -8,6 +8,8 @@ from odoo.exceptions import UserError, AccessError, ValidationError
 import calendar
 import time
 
+from pprint import pprint
+
 
 class HRTimesheet(models.Model):
     _name = "hr_china.timesheet"
@@ -35,9 +37,8 @@ class HRTimesheet(models.Model):
 
     attendance_trans = fields.One2many('hr_china.timesheet.trans', 'timesheet')
     contract_type = fields.Many2one('hr_china.wage_type', string='Contract Type', compute='_get_contract_type')
-    # contract_type = fields.Char(string='Contract Type', compute='_get_contract_type', stored=True)
     work_time = fields.Float(string='Work Time', compute='_get_work_time')
-    # work_time = fields.Float(string='Work Time', related='attendance_trans.work_hours')
+    holiday_work_time = fields.Float(string='Holiday Work Time', compute='_get_holiday_wt')
 
     def print_timesheet_form(self):
         timesheet_id = str(self.id)
@@ -126,12 +127,19 @@ class HRTimesheet(models.Model):
     @api.onchange('period_from', 'period_to')
     def _get_holiday_list(self):
         for item in self:
+            wh = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+                                                              ('date', '>=', item.period_from),
+                                                              ('date', '<=', item.period_to)])
             holiday_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.period_from),
-                                                                ('start_date', '<=', item.period_from),
-                                                                ('end_date', '>=', item.period_to),
                                                                 ('end_date', '<=', item.period_to)])
+            hol_hours = False
+            for time in wh:
+                for hol in holiday_list:
+                    if time.date >= hol.start_date and time.date <= hol.end_date:
+                        hol_hours = hol_hours + time.holiday_work_hours
+            # item.holiday = len(holiday_list) if holiday_list else 0
 
-            item.holiday = len(holiday_list) if holiday_list else 0
+            item.holiday = hol_hours
 
     @api.onchange('employee_id')
     def _get_leave_list(self):
@@ -142,20 +150,43 @@ class HRTimesheet(models.Model):
     def _get_overtime_work(self):
         for item in self:
             ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
-                                                         ('date', '>=', item.period_from),
-                                                         ('date', '<=', item.period_to)])
+                                                              ('date', '>=', item.period_from),
+                                                              ('date', '<=', item.period_to)])
+            holidays = self.env['hr_china.holiday'].search([('start_date', '>=', item.period_from),
+                                                            ('end_date', '<=', item.period_to)])
             ot_hours = False
+            hol_ot_hours = False
             weekday_ot = 0
             weekend_ot = 0
+            hol_weekday_ot = 0
+            hol_weekend_ot = 0
             for overtime in ot:
-                if overtime.day == '6':
-                    weekend_ot = weekend_ot + overtime.overtime_hours
-                else:
-                    weekday_ot = weekday_ot + overtime.overtime_hours
+                for hol in holidays:
+                    if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
+                        if overtime.day == '6':
+                            hol_weekend_ot = hol_weekend_ot + overtime.overtime_hours
+                        else:
+                            hol_weekday_ot = hol_weekday_ot + overtime.overtime_hours
+
+                    else:
+                        if overtime.day == '6':
+                            weekend_ot = weekend_ot + overtime.overtime_hours
+                            break
+                        else:
+                            weekday_ot = weekday_ot + overtime.overtime_hours
+                            break
+
+            # for overtime in ot:
+            #     for hol in holidays:
+            #         if overtime.day == '6':
+            #             if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
+            #                 hol_ot_hours = hol_ot_hours + overtime.overtime_hours
+
+            hol_ot_hours = hol_weekday_ot + hol_weekend_ot
             ot_hours = weekday_ot + weekend_ot
-            item.weekday_ot_hours = weekday_ot
-            item.weekend_ot_hours = weekend_ot
-            item.overtime_hours = ot_hours
+            item.weekday_ot_hours = weekday_ot - hol_weekday_ot
+            item.weekend_ot_hours = weekend_ot - hol_weekend_ot
+            item.overtime_hours = ot_hours - hol_ot_hours
 
     @api.onchange('employee_id')
     def _get_work_time(self):
@@ -167,6 +198,16 @@ class HRTimesheet(models.Model):
             for wtime in wh:
                 wh_hours = wh_hours + wtime.work_hours
             item.work_time = wh_hours
+
+    # @api.onchange('employee_id')
+    # def _get_holiday_wt(self):
+    #     for item in self:
+    #         wh = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+    #                                                           ('date', '>=', item.period_from),
+    #                                                           ('date', '<=', item.period_to)])
+    #         for trans in wh:
+    #             holiday_list = self.env['hr_china.holiday'].search([('start_date', '>=', trans.date),
+    #                                                             ('end_date', '<=', trans.date)])
 
     @api.onchange('employee_id', 'attendance_trans')
     def _get_total_days(self):
@@ -183,9 +224,12 @@ class HRTimesheet(models.Model):
             wks = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
                                                          ('attendance_date', '<=', item.period_to)])
+
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
+
             weekend_count = False
             for day in wks:
-                if day.attendance_day == 5 or day.attendance_day == 6:
+                if day.attendance_day == '6':
                     weekend_count = weekend_count + 1
 
             item.weekend = weekend_count
@@ -241,7 +285,7 @@ class HRTimesheet(models.Model):
                     trans_data['check_in_pm'] = same_dates[0].check_in_pm if same_dates[0].check_in_pm else False
                     trans_data['check_out_pm'] = same_dates[0].check_out_pm if same_dates[0].check_out_pm else False
                     trans_data['break_hours'] = same_dates[0].break_hours if same_dates[0].break_hours else False
-                    trans_data['work_hours'] = same_dates[0].work_hours if same_dates[0].work_hours else False
+                    trans_data['work_hours'] = same_dates[0].work_hours if same_dates[0].total_work_hours else False
                     trans_data['overtime_hours'] = same_dates[0].overtime_hours if same_dates[0].overtime_hours else False
                 self.env['hr_china.timesheet.trans'].create(trans_data)
         return True
@@ -298,6 +342,7 @@ class HRChinaTrans(models.Model):
     check_out_pm = fields.Datetime(string='Afternoon Check-Out')
     break_hours = fields.Float(string='Break Hours', compute=compute_break_hours)
     work_hours = fields.Float(string='Worked Hours', compute='_get_work_time')
+    holiday_work_hours = fields.Float(string='Holiday Work Hours', compute='_get_holiday_wh')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
     weekday_ot = fields.Float(string='Weekday OT')
     weekend_ot = fields.Float(string='Weekend OT')
@@ -327,6 +372,31 @@ class HRChinaTrans(models.Model):
                 item.overtime_hours = ot_hours
             if item.work_hours == ot_hours:
                 item.work_hours = 0
+
+    @api.multi
+    def _get_holiday_wh(self):
+        for item in self:
+            morning_wh = False
+            afternoon_wh = False
+            if item.check_out_am and item.check_in_am:
+                morning_wh_delta = datetime.strptime(item.check_out_am, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                   datetime.strptime(item.check_in_am, DEFAULT_SERVER_DATETIME_FORMAT)
+                morning_wh = morning_wh_delta.total_seconds() / 3600.0
+            if item.check_out_pm and item.check_in_pm:
+                afternoon_wh_delta = datetime.strptime(item.check_out_pm, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                     datetime.strptime(item.check_in_pm, DEFAULT_SERVER_DATETIME_FORMAT)
+                afternoon_wh = afternoon_wh_delta.total_seconds() / 3600.0
+
+            if not morning_wh:
+                morning_wh = 0
+            if not afternoon_wh:
+                afternoon_wh = 0
+
+            hol_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.date),
+                                                            ('end_date', '<=', item.date)])
+            total_wh = afternoon_wh + morning_wh
+            if hol_list:
+                item.holiday_work_hours = total_wh
 
     @api.onchange('check_in_am', 'check_out_am', 'check_in_pm', 'check_out_pm')
     def _get_work_time(self):

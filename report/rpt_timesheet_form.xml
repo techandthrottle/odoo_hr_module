@@ -58,9 +58,8 @@
                                 <td style="font-weight:600;">Break<br/>休息时间</td>
                                 <td align="center" style="width:20%; font-weight:600;text-align:center;" t-att-colspan="2">Afternoon</td>
                                 <td style="font-weight:600;">Overtime<br/>加班</td>
-                                <td style="font-weight:600;">Weekend<br/>周末</td>
+                                <td style="font-weight:600;">Notes<br/>笔记</td>
                                 <td style="font-weight:600;">Total<br/>工作时间</td>
-
                             </tr>
                             <tr>
                                 <td></td>

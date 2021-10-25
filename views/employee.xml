@@ -3,8 +3,9 @@
         <record model="ir.ui.view" id="view_hr_china_employee_form">
             <field name="name">hr_china.view_employee_form</field>
             <field name="model">hr.employee</field>
-            <field name="inherit_id" ref="hr.view_employee_form" />
-            <field name="sequence">100</field>
+<!--            <field name="inherit_id" ref="hr.view_employee_form" />-->
+            <field name="inherit_id" ref="zulu_attendance.employee_view_form_inherit" />
+            <field name="sequence">3000</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
 

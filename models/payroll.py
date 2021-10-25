@@ -29,7 +29,9 @@ class HRChinaPayroll(models.Model):
     end_date = fields.Datetime(string='End Date')
     total_days = fields.Float(string='Total Days')
     worked_days = fields.Float(string='Worked Days')
-    work_hours = fields.Float(string='Hours Worked')
+    holiday_work_hours = fields.Float(string='Holiday Hours Worked', compute='_get_holiday_work_hours')
+    total_work_hours = fields.Float(string='Hours Worked')
+    actual_work_hours = fields.Float(string='Actual Work Hours', compute='_get_actual_wh')
     state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirmed'), ('validate', 'Approved')],
                              string='Status', default='draft')
 
@@ -73,6 +75,25 @@ class HRChinaPayroll(models.Model):
 
     payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id', string='Benefits')
     payslip_deductions = fields.One2many('hr_china.payslip.deductions', 'payslip_id', string='Deductions')
+    unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
+
+    @api.multi
+    def _unpaid_leave_deduction(self):
+        for item in self:
+            no_of_days = item.employee_id.c_wage_type.days
+            monthly_rate = item.employee_id.c_monthly_fee
+            leave_deduction = 0
+            leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', item.employee_id.id),
+                                                                      ('paid_type', '=', 'unpaid'),
+                                                                      ('start_date', '>=', item.start_date),
+                                                                      ('end_date', '<=', item.end_date)])
+            for leave in leave_list:
+                if leave.half_day:
+                    leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
+                else:
+                    leave_deduction = leave_deduction + (monthly_rate / no_of_days)
+            item.unpaid_leave_deduction = leave_deduction
+
 
     @api.onchange('payslip_benefits')
     def sum_benefits(self):
@@ -108,6 +129,20 @@ class HRChinaPayroll(models.Model):
         for item in self:
             item.currency_id = item.employee_id.currency_id.id
 
+    @api.multi
+    def _get_holiday_work_hours(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            hol_wh = 0
+            for trans in timesheet_trans:
+                hol_wh = hol_wh + trans.holiday_work_hours
+            item.holiday_work_hours = hol_wh
+
+    @api.multi
+    def _get_actual_wh(self):
+        for item in self:
+            item.actual_work_hours = item.total_work_hours
+
     @api.onchange('employee_id')
     def _get_overtime_pay(self):
         for item in self:
@@ -118,7 +153,7 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
         for item in self:
-            regular_wh_rate = item.employee_id.c_hourly_rate * item.work_hours
+            regular_wh_rate = item.employee_id.c_hourly_rate * item.actual_work_hours
             item.total_hourly_pay = regular_wh_rate
 
     @api.onchange('employee_id')
@@ -131,7 +166,20 @@ class HRChinaPayroll(models.Model):
 
     @api.onchange('employee_id')
     def _get_holiday_pay(self):
-        pass
+        for item in self:
+            times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id), '|',
+                                                                 ('check_in_am', '!=', False),
+                                                                 ('check_in_pm', '!=', False)])
+            hol_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.start_date),
+                                                            ('end_date', '<=', item.end_date)])
+            emp = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+            emp_hol_rate = emp.c_holiday_fee
+
+            for att in times:
+                for ls in hol_list:
+                    if att.date >= ls.start_date and att.date <= ls.end_date:
+                        if emp.converted_wage_type == 'hourly':
+                            item.holiday_pay = emp_hol_rate * att.holiday_work_hours
 
     @api.onchange('employee_id')
     def _get_weekend_pay(self):
@@ -192,15 +240,20 @@ class HRChinaPayroll(models.Model):
         weekday_ot = False
         weekend_ot = False
         weekend_count = False
+        total_wh = False
+        holiday_wh = False
         for rec in times:
             weekday_ot = weekday_ot + rec.weekday_ot
             weekend_ot = weekend_ot + rec.weekend_ot
             ot_hours = ot_hours + rec.overtime_hours
+            total_wh = total_wh + rec.work_hours
+            holiday_wh = holiday_wh + rec.holiday_work_hours
             if rec.day in [6]:
                 weekend_count = weekend_count + 1
 
         self.worked_days = len(times)
         self.overtime_hours = ot_hours
+        self.actual_work_hours = total_wh
         self.weekday_ot = weekday_ot
         self.weekend_ot = weekend_ot
         self.weekend = weekend_count
@@ -331,7 +384,7 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
     job_title_id = fields.Many2one('hr_china.job_titles', string='Position')
     period_from = fields.Datetime(string='Payslip Period From')
     period_to = fields.Datetime(string='Payslip Period To')
-    work_hours = fields.Float(string='Work Hours')
+    total_work_hours = fields.Float(string='Work Hours')
     overtime_hours = fields.Float(string='Overtime Hours')
     weekday_ot = fields.Float(string='Weekday Overtime')
     weekend_ot = fields.Float(string='Weekend Overtime')
@@ -458,7 +511,7 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'end_date': timesheet.period_to,
                     'wage_type': timesheet.wage_type.wage_type,
                     'worked_days': timesheet.working_days,
-                    'work_hours': timesheet.work_hours - timesheet.overtime_hours,
+                    'total_work_hours': timesheet.work_hours - timesheet.overtime_hours - timesheet.holiday,
                     'overtime_hours': timesheet.overtime_hours,
                     'weekday_ot': timesheet.weekday_ot,
                     'weekend_ot': timesheet.weekend_ot,

@@ -6,6 +6,12 @@
         <field name="sequence">7</field>
     </record>
 
+    <record id="group_hr_china_employee_dropdown" model="res.groups">
+        <field name="name">Employee</field>
+        <field name="category_id" ref="module_hr_china_main_config" />
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
     <record id="group_hr_china_timekeeper_dropdown" model="res.groups">
         <field name="name">Timekeeper</field>
         <field name="category_id" ref="module_hr_china_main_config" />
