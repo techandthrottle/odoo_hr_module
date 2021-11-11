@@ -124,7 +124,6 @@ class HRChinaPayroll(models.Model):
     #
     #         # item.unpaid_leave_deduction = leave_deduction
 
-
     @api.onchange('payslip_benefits')
     def sum_benefits(self):
         for benefits in self:

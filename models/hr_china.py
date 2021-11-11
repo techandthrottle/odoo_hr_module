@@ -198,7 +198,8 @@ class HREmployee(models.Model):
     new_attendance_ids = fields.One2many('hr_china.attendance', 'employee_id', help='List of Attendances for the Employee')
     new_last_attendance_id = fields.Many2one('hr_china.attendance', compute='_new_compute_last_attendance_id')
     new_attendance_state = fields.Selection(string="Attendance", compute='_new_compute_attendance_state',
-                                            selection=[('checked_out', "Checked Out"), ('checked_in', "Checked In")])
+                                            selection=[('checked_out', "Checked Out"), ('checked_in', "Checked In")],
+                                            default='checked_out')
     converted_wage_type = fields.Char()
 
     @api.onchange('c_wage_type')
