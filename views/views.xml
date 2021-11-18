@@ -21,7 +21,7 @@
             <field name="view_id" ref="view_hr_china_all_emp_attendance"/>
         </record>
 
-        <menuitem id="menu_hr_china_root" name="HR Philippines" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
+        <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
 
         <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager_dropdown" action="hr.open_view_employee_list_my"/>
         <menuitem id="menu_hr_china_attendances" name="Attendance" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" />
