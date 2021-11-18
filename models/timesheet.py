@@ -52,7 +52,8 @@ class HRTimesheet(models.Model):
 
     @api.multi
     def action_update_timesheet(self):
-        return False
+        self.ensure_one()
+        self._get_overtime_work()
 
     @api.multi
     def action_confirm(self):
@@ -148,43 +149,42 @@ class HRTimesheet(models.Model):
 
     @api.onchange('employee_id')
     def _get_overtime_work(self):
-        for item in self:
-            ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
-                                                              ('date', '>=', item.period_from),
-                                                              ('date', '<=', item.period_to)])
-            holidays = self.env['hr_china.holiday'].search([('start_date', '>=', item.period_from),
-                                                            ('end_date', '<=', item.period_to)])
-            ot_hours = False
-            hol_ot_hours = False
-            weekday_ot = 0
-            weekend_ot = 0
-            hol_weekday_ot = 0
-            hol_weekend_ot = 0
-            for overtime in ot:
-                for hol in holidays:
-                    if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
-                        if overtime.day == '6':
-                            hol_weekend_ot = hol_weekend_ot + overtime.overtime_hours
-                        else:
-                            hol_weekday_ot = hol_weekday_ot + overtime.overtime_hours
-
+        ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.id),
+                                                          ('date', '>=', self.period_from),
+                                                          ('date', '<=', self.period_to)])
+        holidays = self.env['hr_china.holiday'].search([('start_date', '>=', self.period_from),
+                                                        ('end_date', '<=', self.period_to)])
+        ot_hours = False
+        hol_ot_hours = False
+        weekday_ot = 0
+        weekend_ot = 0
+        hol_weekday_ot = 0
+        hol_weekend_ot = 0
+        for overtime in ot:
+            for hol in holidays:
+                if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
+                    if overtime.day == '6':
+                        hol_weekend_ot = hol_weekend_ot + overtime.overtime_hours
                     else:
-                        if overtime.day == '6':
-                            weekend_ot = weekend_ot + overtime.overtime_hours
-                            break
-                        else:
-                            weekday_ot = weekday_ot + overtime.overtime_hours
-                            break
+                        hol_weekday_ot = hol_weekday_ot + overtime.overtime_hours
 
-            hol_ot_hours = hol_weekday_ot + hol_weekend_ot
-            ot_hours = weekday_ot + weekend_ot
-            item.weekday_ot_hours = weekday_ot - hol_weekday_ot
-            item.weekend_ot_hours = weekend_ot - hol_weekend_ot
-            total = ot_hours - hol_ot_hours
-            if total < 1:
-                item.overtime_hours = total * (-1)
-            else:
-                item.overtime_hours = total
+                else:
+                    if overtime.day == '6':
+                        weekend_ot = weekend_ot + overtime.overtime_hours
+                        break
+                    else:
+                        weekday_ot = weekday_ot + overtime.overtime_hours
+                        break
+
+        hol_ot_hours = hol_weekday_ot + hol_weekend_ot
+        ot_hours = weekday_ot + weekend_ot
+        self.weekday_ot_hours = weekday_ot - hol_weekday_ot
+        self.weekend_ot_hours = weekend_ot - hol_weekend_ot
+        total = ot_hours - hol_ot_hours
+        if total < 1:
+            self.overtime_hours = total * (-1)
+        else:
+            self.overtime_hours = total
 
     @api.onchange('employee_id')
     def _get_work_time(self):

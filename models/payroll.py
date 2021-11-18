@@ -264,8 +264,8 @@ class HRChinaPayroll(models.Model):
         times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.timesheet_id.id), '|',
                                                              ('check_in_am', '!=', False),
                                                              ('check_in_pm', '!=', False)])
-
         ot_hours = False
+        hol_ot_hours = False
         weekday_ot = False
         weekend_ot = False
         weekend_count = False
@@ -279,7 +279,7 @@ class HRChinaPayroll(models.Model):
             holiday_wh = holiday_wh + rec.holiday_work_hours
             if rec.day in [6]:
                 weekend_count = weekend_count + 1
-
+        # total_wh = total_wh - ot_hours
         self.worked_days = len(times)
         self.overtime_hours = ot_hours
         self.actual_work_hours = total_wh
