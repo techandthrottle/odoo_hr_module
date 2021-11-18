@@ -93,7 +93,7 @@
                         <field name="weekend_overtime_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                         <field name="weekends_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                         <field name="holiday_fee" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="dayoff_deduction" />
+                        <field name="dayoff_deduction" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
                         <field name="payment_method" />
                     </group>
                     <group style="width:50%%">
