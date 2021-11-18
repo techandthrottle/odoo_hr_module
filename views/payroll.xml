@@ -2,6 +2,38 @@
 <odoo>
     <data>
 
+        <record id="view_zulu_hr_payslip_filter" model="ir.ui.view">
+            <field name="name">zulu_hr.payslip.select</field>
+            <field name="model">hr_china.payslip</field>
+            <field name="arch" type="xml">
+                <search string="Search Payslips">
+                    <field name="name" string="Payslips" filter_domain="['|',('name','ilike',self)]"/>
+                    <field name="start_date"/>
+                    <filter string="Draft" domain="[('state','=','draft')]" help="Draft Slip"/>
+                    <filter string="Done" domain="[('state','=','done')]" help="Done Slip"/>
+                    <field name="employee_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employees" name="employee_id" context="{'group_by':'employee_id'}"/>
+                        <filter string="States" name="state" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_zulu_hr_contract_filter" model="ir.ui.view">
+            <field name="name">zulu_hr.payslip.select</field>
+            <field name="model">hr_china.contract</field>
+            <field name="arch" type="xml">
+                <search string="Search Contracts">
+                    <field name="name" string="Contract" filter_domain="['|',('name','ilike',self)]"/>
+                    <field name="employee_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employees" name="employee_id" context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="view_hr_china_payslip_tree" model="ir.ui.view">
             <field name="name">hr_china_payslip.tree</field>
             <field name="model">hr_china.payslip</field>

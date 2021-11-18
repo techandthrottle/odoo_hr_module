@@ -1,5 +1,22 @@
 <odoo>
     <data>
+
+        <record id="act_zulu_hr_payslip_tree" model="ir.actions.act_window">
+            <field name="name">Payslips</field>
+            <field name="res_model">hr_china.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id}</field>
+        </record>
+
+        <record id="act_zulu_hr_contract_tree" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="res_model">hr_china.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id}</field>
+        </record>
+
         <record model="ir.ui.view" id="view_hr_china_employee_form">
             <field name="name">hr_china.view_employee_form</field>
             <field name="model">hr.employee</field>
@@ -8,6 +25,27 @@
             <field name="sequence">3000</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
+
+                <xpath expr="//form/sheet/div/button[4]" position="replace">
+                    <button class="oe_stat_button" name="%(act_zulu_hr_payslip_tree)d"
+                            type="action" icon="fa-money">
+                        <field string="Payslips" name="payslips_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//form/sheet/div/button[3]" position="replace">
+                    <button class="oe_stat_button" name="%(act_zulu_hr_contract_tree)d"
+                            type="action" icon="fa-clock-o">
+                        <field string="Contracts" name="contract_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//form/sheet/div/button[2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/div/button[5]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">
                     <page name="public" string="PUBLIC INFORMATION">

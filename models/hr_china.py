@@ -202,6 +202,22 @@ class HREmployee(models.Model):
                                             default='checked_out')
     converted_wage_type = fields.Char()
 
+    @api.multi
+    def _get_payslips_count(self):
+        for item in self:
+            payslip_count = self.env['hr_china.payslip'].search([('employee_id', '=', item.id)])
+            item.payslips_count = len(payslip_count)
+
+    @api.multi
+    def _get_contract_count(self):
+        for item in self:
+            contract_count = self.env['hr_china.contract'].search([('employee_id', '=', item.id)])
+            item.contract_count = len(contract_count)
+
+    payslips_count = fields.Integer(compute=_get_payslips_count)
+    contract_count = fields.Integer(compute=_get_contract_count)
+
+
     @api.onchange('c_wage_type')
     def onchange_wage_type(self):
         for item in self:
