@@ -283,12 +283,12 @@ class HRChinaPayroll(models.Model):
         self.worked_days = len(times)
         self.overtime_hours = ot_hours
         self.actual_work_hours = total_wh
+        self.total_work_hours = total_wh
         self.weekday_ot = weekday_ot
         self.weekend_ot = weekend_ot
         self.weekend = weekend_count
         if self.wage_type == 'hourly':
             self.holiday = holiday_wh
-        # self._unpaid_leave_deduction()
 
 
 class HRChinaPayslipBenefits(models.Model):
