@@ -82,23 +82,187 @@
             <form string="Contract Template">
                 <sheet>
                     <h1 style="width:50%%"><field name="name"/></h1>
-                    <group style="width:50%%">
+                    <group>
                         <field name="converted_wage_type" invisible="1" />
-                        <field name="wage_type" />
-                        <field name="currency_id" />
-                        <field name="monthly_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
-                        <field name="hourly_rate" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="weekday_daily_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="weekend_overtime_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="weekends_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="holiday_fee" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
-                        <field name="dayoff_deduction" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
-                        <field name="payment_method" />
+                        <group string="General:">
+                            <label for="wage_type" string="Wage Type:"/>
+                            <div class="o_row">
+                                <field name="wage_type" />
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="wage_type_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                            <label for="currency_id" string="Currency:"/>
+                            <div class="o_row">
+                                <field name="currency_id" />
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="currency_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                            <label for="payment_method" string="Payment Method"/>
+                            <div class="o_row">
+                                <field name="payment_method" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="payment_method_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                        </group>
+                        <group></group>
+                        <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}">
+                            <label for="monthly_fee" string="Monthly Fee"/>
+                            <div class="o_row">
+                                <field name="monthly_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="monthly_fee_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                            <label for="dayoff_deduction" string="Days Off Deduction"/>
+                            <div class="o_row">
+                                <field name="dayoff_deduction" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="dayoff_deduction_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                        </group>
+                        <group string="Weekdays Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
+                            <label for="hourly_rate" string="Hourly Rate"/>
+                            <div class="o_row">
+                                <field name="hourly_rate" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <span class="so_information_button">
+                                    <field name="weekday_hourly_rate_info" widget="show_info"/>
+                                </span>
+                            </div>
+                            <label for="weekday_daily_fee" string="Daily Fee"/>
+                            <div class="o_row">
+                                <field name="weekday_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <span class="so_information_button">
+                                    <field name="weekday_daily_fee_info" widget="show_info"/>
+                                </span>
+                            </div>
+                            <label for="weekday_overtime_fee" string="Overtime Fee"/>
+                            <div class="o_row">
+                                <field name="weekday_overtime_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <span class="so_information_button">
+                                    <field name="weekday_ot_fee_info" widget="show_info"/>
+                                </span>
+                            </div>
+                        </group>
+                        <group></group>
+                        <group string="Weekends Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
+                            <label for="weekends_fee" string="Hourly Rate"/>
+                            <div class="o_row">
+                                <field name="weekends_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <span class="so_information_button">
+                                    <field name="weekend_hourly_rate_info" widget="show_info"/>
+                                </span>
+                            </div>
+                            <label for="weekends_daily_fee" string="Daily Fee"/>
+                            <div class="o_row">
+                                <field name="weekends_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <span class="so_information_button">
+                                    <field name="weekend_hourly_rate_info" widget="show_info"/>
+                                </span>
+                            </div>
+                        </group>
+                        <group></group>
+                        <group string="Holiday Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
+                            <label for="holiday_fee" string="Hourly Rate"/>
+                            <div class="o_row">
+                                <field name="holiday_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="holiday_fee_info" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                            <label for="holiday_daily_fee" string="Daily Fee"/>
+                            <div class="o_row">
+                                <field name="holiday_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="holiday_daily_fee" widget="show_info"/>-->
+<!--                                </span>-->
+                            </div>
+                        </group>
+                        <group></group>
                     </group>
                     <group style="width:50%%">
-
-
+<!--                        <div class="o_row">-->
+<!--                            <label for="wage_type" string="Wage Type:"/>-->
+<!--                            <field name="wage_type" />-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="wage_type_info" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="currency_id" string="Currency:"/>-->
+<!--                            <field name="currency_id" />-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="monthly_fee" string="Monthly Fee"/>-->
+<!--                            <field name="monthly_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="hourly_rate" string="Hourly Rate"/>-->
+<!--                            <field name="hourly_rate" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="weekday_daily_fee" string="Weekday Daily Fee" />-->
+<!--                            <field name="weekday_daily_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                           <label for="weekday_overtime_fee" string="Weekday Overtime Fee" />-->
+<!--                            <field name="weekday_overtime_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="weekend_overtime_fee" string="Weekend Overtime Fee" />-->
+<!--                            <field name="weekend_overtime_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                            <label for="weekends_fee" string="Weekends Fee" />-->
+<!--                            <field name="weekends_fee" widget="monetary" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                           <label for="holiday_fee" string="Holiday Fee" />-->
+<!--                            <field name="holiday_fee" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                           <label for="dayoff_deduction" string="Day Off Deduction" />-->
+<!--                            <field name="dayoff_deduction" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                        <div class="o_row">-->
+<!--                           <label for="payment_method" string="Payment Method" />-->
+<!--                            <field name="payment_method" />-->
+<!--                            <span class="so_information_button">-->
+<!--&lt;!&ndash;                                <field name="" widget="show_info"/>&ndash;&gt;-->
+<!--                            </span>-->
+<!--                        </div>-->
+                    </group>
+                    <group style="width:50%%">
                     </group>
                     <notebook>
                         <page string="WORKING TIME">
@@ -106,6 +270,7 @@
                                 <tree editable="bottom">
                                     <field name="sequence" widget="handle" />
                                     <field name="name" />
+                                    <field name="day_type"/>
                                     <field name="dayofweek" />
                                     <field name="hour_from" />
                                     <field name="hour_to" />

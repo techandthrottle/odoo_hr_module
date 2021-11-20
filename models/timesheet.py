@@ -137,7 +137,6 @@ class HRTimesheet(models.Model):
                 for hol in holiday_list:
                     if time.date >= hol.start_date and time.date <= hol.end_date:
                         hol_hours = hol_hours + time.holiday_work_hours
-            # item.holiday = len(holiday_list) if holiday_list else 0
 
             item.holiday = hol_hours
 
@@ -358,7 +357,7 @@ class HRChinaTrans(models.Model):
             reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
             weekend_ot = 0
             weekday_ot = 0
-            if item.day == '6':
+            if working_time.day_type == 'weekend':
                 weekend_ot = item.work_hours - reg_hours
             else:
                 weekday_ot = item.work_hours - reg_hours

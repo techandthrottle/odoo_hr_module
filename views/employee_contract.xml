@@ -26,6 +26,7 @@
                                 <field name="working_time">
                                     <tree create="false" delete="false" edit="false">
                                         <field name="name" />
+                                        <field name="day_type"/>
                                         <field name="dayofweek" />
                                         <field name="hour_from"/>
                                         <field name="hour_to" />
@@ -104,6 +105,7 @@
                     <sheet>
                         <group style="width:50%%">
                             <field name="name" />
+                            <field name="day_type"/>
                             <field name="dayofweek" />
                             <field name="hour_from" widget="timepicker"/>
                             <field name="hour_to" widget="timepicker"/>

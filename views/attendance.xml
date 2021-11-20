@@ -37,7 +37,8 @@
                     <sheet>
                         <div><h1><field name="employee_id" readonly="1"/></h1></div>
                         <group style="width:50%%">
-                            <field name="employee_id" options="{'no_create_edit': True}" />
+                            <field name="employee_id" groups="hr_china.group_hr_china_manager_dropdown" options="{'no_create_edit': True}" />
+                            <field name="name" groups="hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown,hr_china.group_hr_china_employee_dropdown" />
                             <field name="attendance_day" />
                             <field name="attendance_date" />
                         </group>

@@ -7,6 +7,7 @@ import time
 
 from pprint import pprint
 
+
 class SpecialWorkingDays(models.Model):
     _name = 'hr_china.special_working_days'
 
@@ -73,6 +74,7 @@ class HRChinaContractTemplateWorkingTime(models.Model):
     hour_to = fields.Float(string='Work to (Hour)', required=True)
     sequence = fields.Integer('Sequence')
     break_hours = fields.Integer('Break Hours')
+    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')])
 
 
 class HRBenefits(models.Model):
@@ -123,7 +125,9 @@ class HRContractTemplate(models.Model):
     weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
     weekends_fee = fields.Float(string='Weekends Fee')
+    weekends_daily_fee = fields.Float(string='Weekends Daily Fee')
     holiday_fee = fields.Float(string='Holiday Fee')
+    holiday_daily_fee = fields.Float(string='Holiday Daily Fee')
     dayoff_deduction = fields.Float(string='Day Off Deduction')
     other_info = fields.Text(string='Additional Information')
     weekend_overtime_fee = fields.Float(string='Weekend Overtime Fee')
@@ -134,6 +138,79 @@ class HRContractTemplate(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
     converted_wage_type = fields.Char()
+
+    @api.multi
+    def _get_wagetype_info(self):
+        for item in self:
+            item.wage_type_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_currency_info(self):
+        for item in self:
+            item.currency_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_monthly_info(self):
+        for item in self:
+            item.monthly_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_dayoff_info(self):
+        for item in self:
+            item.dayoff_deduction_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_payment_info(self):
+        for item in self:
+            item.payment_method_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekday_hourly_rate_info(self):
+        for item in self:
+            item.weekday_hourly_rate_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekday_daily_fee_info(self):
+        for item in self:
+            item.weekday_daily_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekday_ot_fee_info(self):
+        for item in self:
+            item.weekday_ot_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekend_hourly_fee_info(self):
+        for item in self:
+            item.weekend_hourly_rate_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekend_daily_fee_info(self):
+        for item in self:
+            item.weekend_daily_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_holiday_fee_info(self):
+        for item in self:
+            item.holiday_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_holiday_daily_info(self):
+        for item in self:
+            item.holiday_daily_fee = "LOREM IPSUM DOLOR"
+
+    wage_type_info = fields.Text(compute=_get_wagetype_info)
+    currency_info = fields.Text(compute=_get_currency_info)
+    monthly_fee_info = fields.Text(compute=_get_monthly_info)
+    dayoff_deduction_info = fields.Text(compute=_get_dayoff_info)
+    payment_method_info = fields.Text(compute=_get_payment_info)
+    weekday_hourly_rate_info = fields.Text(compute=_get_weekday_hourly_rate_info)
+    weekday_daily_fee_info = fields.Text(compute=_get_weekday_daily_fee_info)
+    weekday_ot_fee_info = fields.Text(compute=_get_weekday_ot_fee_info)
+    weekend_hourly_rate_info = fields.Text(compute=_get_weekend_hourly_fee_info)
+    weekend_daily_fee_info = fields.Text(compute=_get_weekend_daily_fee_info)
+    holiday_fee_info = fields.Text(compute=_get_holiday_fee_info)
+    holiday_daily_fee = fields.Text(compute=_get_holiday_daily_info)
 
     @api.onchange('wage_type')
     def onchange_wage_type(self):
@@ -184,7 +261,9 @@ class HREmployee(models.Model):
     c_weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     c_weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
     c_weekends_fee = fields.Float(string='Weekends Fee')
+    c_weekends_daily_fee = fields.Float(string='Weekends Daily Fee')
     c_holiday_fee = fields.Float(string='Holiday Fee')
+    c_holiday_daily_fee = fields.Float(string='Holiday Daily Fee')
     c_hourly_rate = fields.Float(string='Hourly Rate')
     c_dayoff_deduction = fields.Float(string='Day Off Deduction')
     c_other_info = fields.Text(string='Additional Information')
@@ -201,6 +280,79 @@ class HREmployee(models.Model):
                                             selection=[('checked_out', "Checked Out"), ('checked_in', "Checked In")],
                                             default='checked_out')
     converted_wage_type = fields.Char()
+
+    @api.multi
+    def _get_wagetype_info(self):
+        for item in self:
+            item.wage_type_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_currency_info(self):
+        for item in self:
+            item.currency_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_monthly_info(self):
+        for item in self:
+            item.monthly_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_dayoff_info(self):
+        for item in self:
+            item.dayoff_deduction_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_payment_info(self):
+        for item in self:
+            item.payment_method_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekday_hourly_rate_info(self):
+        for item in self:
+            item.weekday_hourly_rate_info = "Hourly rate weekdays"
+
+    @api.multi
+    def _get_weekday_daily_fee_info(self):
+        for item in self:
+            item.weekday_daily_fee_info = "The daily rate of the employee (e.i, if hourly rate is 10 multiplied by 8 hours. Daily fee is 80.00)"
+
+    @api.multi
+    def _get_weekday_ot_fee_info(self):
+        for item in self:
+            item.weekday_ot_fee_info = "Overtime rate per hour on Regular Days (Monday - Friday)"
+
+    @api.multi
+    def _get_weekend_hourly_fee_info(self):
+        for item in self:
+            item.weekend_hourly_rate_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_weekend_daily_fee_info(self):
+        for item in self:
+            item.weekend_daily_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_holiday_fee_info(self):
+        for item in self:
+            item.holiday_fee_info = "LOREM IPSUM DOLOR"
+
+    @api.multi
+    def _get_holiday_daily_info(self):
+        for item in self:
+            item.holiday_daily_fee = "LOREM IPSUM DOLOR"
+
+    wage_type_info = fields.Text(compute=_get_wagetype_info)
+    currency_info = fields.Text(compute=_get_currency_info)
+    monthly_fee_info = fields.Text(compute=_get_monthly_info)
+    dayoff_deduction_info = fields.Text(compute=_get_dayoff_info)
+    payment_method_info = fields.Text(compute=_get_payment_info)
+    weekday_hourly_rate_info = fields.Text(compute=_get_weekday_hourly_rate_info)
+    weekday_daily_fee_info = fields.Text(compute=_get_weekday_daily_fee_info)
+    weekday_ot_fee_info = fields.Text(compute=_get_weekday_ot_fee_info)
+    weekend_hourly_rate_info = fields.Text(compute=_get_weekend_hourly_fee_info)
+    weekend_daily_fee_info = fields.Text(compute=_get_weekend_daily_fee_info)
+    holiday_fee_info = fields.Text(compute=_get_holiday_fee_info)
+    holiday_daily_fee = fields.Text(compute=_get_holiday_daily_info)
 
     @api.multi
     def _get_payslips_count(self):
@@ -268,6 +420,7 @@ class HREmployee(models.Model):
             vals = {
                 'employee_id': self.id,
                 'name': working_line.name,
+                'day_type': working_line.day_type,
                 'dayofweek': working_line.dayofweek,
                 'date_from': working_line.date_from,
                 'date_to': working_line.date_to,
@@ -371,6 +524,7 @@ class HREmployee(models.Model):
                         vals = {
                             'contract_id': created_contract.id,
                             'name': working_line.name,
+                            'day_type': working_line.day_type,
                             'dayofweek': working_line.dayofweek,
                             'date_from': working_line.date_from,
                             'date_to': working_line.date_to,
@@ -542,6 +696,7 @@ class HRChinaContractWorkingTime(models.Model):
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
     break_hours = fields.Integer('Break Hours')
+    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')])
 
 
 class HRChinaEmployeeBenefits(models.Model):
@@ -619,6 +774,7 @@ class HRChinaEmployeeWorkingTime(models.Model):
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
     break_hours = fields.Integer('Break Hours')
+    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day")
 
 
 class HRChinaAttendance(models.Model):
