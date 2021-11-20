@@ -17,6 +17,7 @@
                     <field name="check_out_pm" widget="time"/>
                     <field name="work_hours" />
                     <field name="overtime_hours" />
+                    <field name="fc_html_label" widget="tree_html"/>
                 </tree>
             </field>
         </record>
