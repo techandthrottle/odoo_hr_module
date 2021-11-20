@@ -52,7 +52,6 @@ class HRTimesheet(models.Model):
 
     @api.multi
     def action_update_timesheet(self):
-        self.ensure_one()
         self._get_overtime_work()
 
     @api.multi
