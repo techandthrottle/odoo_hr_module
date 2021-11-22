@@ -169,7 +169,7 @@
                             <div class="o_row">
                                 <field name="holiday_daily_fee"/>
                                 <span class="so_information_button">
-                                    <field name="holiday_daily_fee" widget="show_info"/>
+                                    <field name="holiday_daily_fee_info" widget="show_info"/>
                                 </span>
                             </div>
                         </group>

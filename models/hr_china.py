@@ -197,7 +197,7 @@ class HRContractTemplate(models.Model):
     @api.multi
     def _get_holiday_daily_info(self):
         for item in self:
-            item.holiday_daily_fee = "The total rate of an employee when they work on holiday"
+            item.holiday_daily_fee_info = "The total rate of an employee when they work on holiday"
 
     wage_type_info = fields.Text(compute=_get_wagetype_info)
     currency_info = fields.Text(compute=_get_currency_info)
@@ -210,7 +210,7 @@ class HRContractTemplate(models.Model):
     weekend_hourly_rate_info = fields.Text(compute=_get_weekend_hourly_fee_info)
     weekend_daily_fee_info = fields.Text(compute=_get_weekend_daily_fee_info)
     holiday_fee_info = fields.Text(compute=_get_holiday_fee_info)
-    holiday_daily_fee = fields.Text(compute=_get_holiday_daily_info)
+    holiday_daily_fee_info = fields.Text(compute=_get_holiday_daily_info)
 
     @api.onchange('wage_type')
     def onchange_wage_type(self):
