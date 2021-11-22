@@ -119,21 +119,21 @@
                         <group string="Weekdays Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                             <label for="hourly_rate" string="Hourly Rate"/>
                             <div class="o_row">
-                                <field name="hourly_rate" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="hourly_rate"/>
                                 <span class="so_information_button">
                                     <field name="weekday_hourly_rate_info" widget="show_info"/>
                                 </span>
                             </div>
                             <label for="weekday_daily_fee" string="Daily Fee"/>
                             <div class="o_row">
-                                <field name="weekday_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="weekday_daily_fee"/>
                                 <span class="so_information_button">
                                     <field name="weekday_daily_fee_info" widget="show_info"/>
                                 </span>
                             </div>
                             <label for="weekday_overtime_fee" string="Overtime Fee"/>
                             <div class="o_row">
-                                <field name="weekday_overtime_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="weekday_overtime_fee"/>
                                 <span class="so_information_button">
                                     <field name="weekday_ot_fee_info" widget="show_info"/>
                                 </span>
@@ -143,16 +143,16 @@
                         <group string="Weekends Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                             <label for="weekends_fee" string="Hourly Rate"/>
                             <div class="o_row">
-                                <field name="weekends_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="weekends_fee"/>
                                 <span class="so_information_button">
                                     <field name="weekend_hourly_rate_info" widget="show_info"/>
                                 </span>
                             </div>
                             <label for="weekends_daily_fee" string="Daily Fee"/>
                             <div class="o_row">
-                                <field name="weekends_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="weekends_daily_fee"/>
                                 <span class="so_information_button">
-                                    <field name="weekend_hourly_rate_info" widget="show_info"/>
+                                    <field name="weekend_daily_fee_info" widget="show_info"/>
                                 </span>
                             </div>
                         </group>
@@ -160,14 +160,14 @@
                         <group string="Holiday Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                             <label for="holiday_fee" string="Hourly Rate"/>
                             <div class="o_row">
-                                <field name="holiday_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="holiday_fee"/>
                                 <span class="so_information_button">
                                     <field name="holiday_fee_info" widget="show_info"/>
                                 </span>
                             </div>
                             <label for="holiday_daily_fee" string="Daily Fee"/>
                             <div class="o_row">
-                                <field name="holiday_daily_fee" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                                <field name="holiday_daily_fee"/>
                                 <span class="so_information_button">
                                     <field name="holiday_daily_fee" widget="show_info"/>
                                 </span>
