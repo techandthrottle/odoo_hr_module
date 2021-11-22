@@ -113,9 +113,11 @@
                                 <field name="contract_name"/>
                             </h1>
                         </group>
+
                         <field name="converted_wage_type" invisible="1" />
                         <group>
                             <group string="General:">
+                                <field name="contract_template_id" required="1"/>
                                 <label for="c_wage_type" string="Wage Type:"/>
                                 <div class="o_row">
                                     <field name="c_wage_type" />
