@@ -17,6 +17,14 @@
             <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id}</field>
         </record>
 
+        <record id="act_zulu_hr_timesheet_tree" model="ir.actions.act_window">
+            <field name="name">Timesheets</field>
+            <field name="res_model">hr_china.timesheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id}</field>
+        </record>
+
         <record model="ir.ui.view" id="view_hr_china_employee_form">
             <field name="name">hr_china.view_employee_form</field>
             <field name="model">hr.employee</field>
@@ -38,6 +46,13 @@
                     <button class="oe_stat_button" name="%(act_zulu_hr_contract_tree)d"
                             type="action" icon="fa-clock-o">
                         <field string="Contracts" name="contract_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//form/sheet/div/button[3]" position="before">
+                    <button class="oe_stat_button" name="%(act_zulu_hr_timesheet_tree)d"
+                            type="action" icon="fa-calendar">
+                        <field string="Timesheets" name="timesheet_count" widget="statinfo"/>
                     </button>
                 </xpath>
 
@@ -113,7 +128,6 @@
                                 <field name="contract_name"/>
                             </h1>
                         </group>
-
                         <field name="converted_wage_type" invisible="1" />
                         <group>
                             <group string="General:">

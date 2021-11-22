@@ -366,9 +366,15 @@ class HREmployee(models.Model):
             contract_count = self.env['hr_china.contract'].search([('employee_id', '=', item.id)])
             item.contract_count = len(contract_count)
 
+    @api.multi
+    def _get_timesheet_count(self):
+        for item in self:
+            timesheet_count = self.env['hr_china.timesheet'].search([('employee_id', '=', item.id)])
+            item.timesheet_count = len(timesheet_count)
+
     payslips_count = fields.Integer(compute=_get_payslips_count)
     contract_count = fields.Integer(compute=_get_contract_count)
-
+    timesheet_count = fields.Integer(compute=_get_timesheet_count)
 
     @api.onchange('c_wage_type')
     def onchange_wage_type(self):

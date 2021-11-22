@@ -20,7 +20,7 @@ class HRTimesheet(models.Model):
     period_from = fields.Datetime(string='Date From')
     period_to = fields.Datetime(string='Date To')
     attendance_id = fields.Many2many('hr_china.attendance', string='Attendance')
-    regular_days = fields.Integer(string='Regular Days', compute='_get_regular_days')
+    regular_days = fields.Integer(string='Working Days', compute='_get_regular_days')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
     weekday_ot_hours = fields.Float(string='Weekday Overtime Hours')
     weekend_ot_hours = fields.Float(string='Weekend Overtime Hours')
@@ -38,6 +38,7 @@ class HRTimesheet(models.Model):
     attendance_trans = fields.One2many('hr_china.timesheet.trans', 'timesheet')
     contract_type = fields.Many2one('hr_china.wage_type', string='Contract Type', compute='_get_contract_type')
     work_time = fields.Float(string='Work Time', compute='_get_work_time')
+    work_time_weekend = fields.Float()
     holiday_work_time = fields.Float(string='Holiday Work Time', compute='_get_holiday_wt')
 
     def print_timesheet_form(self):
@@ -119,10 +120,15 @@ class HRTimesheet(models.Model):
     @api.onchange('employee_id')
     def _get_regular_days(self):
         for item in self:
-            employee = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
-            contract_temp = employee.contract_template_id.id
-            ct = self.env['hr_china.contracts_template'].search([('id', '=', contract_temp)])
-            item.regular_days = ct.wage_type.days
+            times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id), '|',
+                                                                 ('check_in_am', '!=', False),
+                                                                 ('check_in_pm', '!=', False)])
+
+            item.regular_days = len(times)
+            # employee = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+            # contract_temp = employee.contract_template_id.id
+            # ct = self.env['hr_china.contracts_template'].search([('id', '=', contract_temp)])
+            # item.regular_days = ct.wage_type.days
 
     @api.onchange('period_from', 'period_to')
     def _get_holiday_list(self):
@@ -191,24 +197,22 @@ class HRTimesheet(models.Model):
             wh = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
                                                               ('date', '>=', item.period_from),
                                                               ('date', '<=', item.period_to)])
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
             wh_hours = False
+            weekend_wh = False
             for wtime in wh:
-                wh_hours = wh_hours + wtime.work_hours
+                for ttime in wt:
+                    if wtime.day == ttime.dayofweek:
+                        if ttime.day_type == 'weekend':
+                            weekend_wh = weekend_wh + wtime.work_hours
+                        else:
+                            wh_hours = wh_hours + wtime.work_hours
             item.work_time = wh_hours
-
-    # @api.onchange('employee_id')
-    # def _get_holiday_wt(self):
-    #     for item in self:
-    #         wh = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
-    #                                                           ('date', '>=', item.period_from),
-    #                                                           ('date', '<=', item.period_to)])
-    #         for trans in wh:
-    #             holiday_list = self.env['hr_china.holiday'].search([('start_date', '>=', trans.date),
-    #                                                             ('end_date', '<=', trans.date)])
 
     @api.onchange('employee_id', 'attendance_trans')
     def _get_total_days(self):
         for item in self:
+
             td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
                                                          ('attendance_date', '<=', item.period_to)])
@@ -218,18 +222,26 @@ class HRTimesheet(models.Model):
     @api.onchange('employee_id')
     def _get_weekends(self):
         for item in self:
+
+            converted_date = datetime.strptime(item.period_to, '%Y-%m-%d %H:%M:%S')
+            base_date = converted_date.strftime('%Y-%m-%d %H:%M:%S')
+            new_date = base_date.split(' ')
+            new_date[1] = '23:59:59'
+            new_to_date = ' '.join(new_date)
             wks = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
-                                                         ('attendance_date', '<=', item.period_to)])
+                                                         ('attendance_date', '<=', new_to_date)])
 
             wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
-
-            weekend_count = False
+            weekend_hours = False
             for day in wks:
-                if day.attendance_day == '6':
-                    weekend_count = weekend_count + 1
+                for time in wt:
+                    if day.attendance_day == time.dayofweek:
+                        if time.day_type == 'weekend':
 
-            item.weekend = weekend_count
+                            weekend_hours = weekend_hours + day.work_hours
+
+            item.weekend = weekend_hours
 
     @api.multi
     def create_attendance_trans(self):

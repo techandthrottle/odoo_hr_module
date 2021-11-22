@@ -53,8 +53,8 @@ class HRChinaPayroll(models.Model):
 
     payslip_state = fields.Html(string='Status', compute=_get_timesheet_state)
     overtime_hours = fields.Float(string='Overtime Hours')
-    weekend = fields.Float(string='Weekend') #Copied from timesheet
-    holiday = fields.Float(string='Holiday') #Copied from timesheet
+    weekend = fields.Float(string='Weekend Working Hours') #Copied from timesheet
+    holiday = fields.Float(string='Holiday Working Hours') #Copied from timesheet
     leave = fields.Float(string='Leaves') #Copied from Timsheet
     basic_pay = fields.Float(string='Basic Pay', compute='_get_basic_pay')
     total_hourly_pay = fields.Float(string='Total Hourly Pay', compute='_get_hourly_pay')
@@ -64,6 +64,7 @@ class HRChinaPayroll(models.Model):
     regular_days = fields.Integer(string='Regular Days')
     weekday_ot = fields.Float(string='Weekday Overtime Pay')
     weekend_ot = fields.Float(string='Weekend Overtime Pay')
+    weekend_wh = fields.Float(string='Weekend Working Hours')
 
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_get_emp_currency')
     gross_pay = fields.Float(string='Gross Pay', compute='_get_gross_pay')
@@ -214,7 +215,7 @@ class HRChinaPayroll(models.Model):
     def _get_weekend_pay(self):
         for item in self:
             wk_pay = item.employee_id.c_weekends_fee if item.employee_id.c_weekends_fee else 0
-            item.weekend_pay = wk_pay * item.weekend
+            item.weekend_pay = wk_pay * item.weekend_wh
 
     @api.onchange('employee_id', 'total_benefits')
     def _get_gross_pay(self):
@@ -264,29 +265,34 @@ class HRChinaPayroll(models.Model):
         times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.timesheet_id.id), '|',
                                                              ('check_in_am', '!=', False),
                                                              ('check_in_pm', '!=', False)])
+        wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
         ot_hours = False
         hol_ot_hours = False
         weekday_ot = False
-        weekend_ot = False
+        weekend_wh = False
         weekend_count = False
         total_wh = False
         holiday_wh = False
         for rec in times:
-            weekday_ot = weekday_ot + rec.weekday_ot
-            weekend_ot = weekend_ot + rec.weekend_ot
-            ot_hours = ot_hours + rec.overtime_hours
-            total_wh = total_wh + rec.work_hours
+            for wtime in wt:
+                if rec.day == wtime.dayofweek:
+                    if wtime.day_type == 'weekend':
+                        weekend_count = weekend_count + 1
+                        weekend_wh = weekend_wh + rec.work_hours
+                    else:
+                        total_wh = total_wh + rec.work_hours
+                        ot_hours = ot_hours + rec.overtime_hours
+                        weekday_ot = weekday_ot + rec.weekday_ot
+
             holiday_wh = holiday_wh + rec.holiday_work_hours
-            if rec.day in [6]:
-                weekend_count = weekend_count + 1
 
         self.worked_days = len(times)
         self.overtime_hours = ot_hours
         self.actual_work_hours = total_wh
         self.total_work_hours = total_wh
         self.weekday_ot = weekday_ot
-        self.weekend_ot = weekend_ot
         self.weekend = weekend_count
+        self.weekend_wh = weekend_wh
         if self.wage_type == 'hourly':
             self.holiday = holiday_wh
 

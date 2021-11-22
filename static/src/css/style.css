@@ -47,3 +47,8 @@
     padding: 0 5px;
     color: #fff;
 }
+
+.o_form_field_empty {
+    display: inline-block !important;
+    margin-left: -90px !important;
+}

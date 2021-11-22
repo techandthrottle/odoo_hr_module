@@ -105,6 +105,20 @@
             </field>
         </record>
 
+        <record id="view_zulu_hr_timesheet_filter" model="ir.ui.view">
+            <field name="name">zulu_hr.timesheet.select</field>
+            <field name="model">hr_china.timesheet</field>
+            <field name="arch" type="xml">
+                <search string="Search Timesheets">
+                    <field name="name" string="Employee" filter_domain="['|',('name','ilike',self)]"/>
+                    <field name="employee_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employees" name="employee_id" context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="hr_china_timesheet_form" model="ir.ui.view">
             <field name="name">hr_china_timesheet.form</field>
             <field name="model">hr_china.timesheet</field>

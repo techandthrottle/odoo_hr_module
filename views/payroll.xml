@@ -131,7 +131,7 @@
                             <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" string="Working Days" readonly="1"/>
                             <field name="total_work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" string="Working Hours" readonly="1"/>
                             <field name="overtime_hours" readonly="1"/>
-                            <field name="weekend" readonly="1"/>
+                            <field name="weekend_wh" readonly="1"/>
                             <field name="holiday" readonly="1"/>
                             <field name="leave" readonly="1"/>
 <!--                            <field name="unpaid_leave_deduction" invisible="1" />-->
