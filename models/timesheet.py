@@ -242,10 +242,9 @@ class HRTimesheet(models.Model):
             wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
             weekend_hours = False
             for day in wks:
-                for time in wt:
-                    if day.attendance_day == time.dayofweek:
-                        if time.day_type == 'weekend':
-
+                for wtime in wt:
+                    if day.attendance_day == wtime.dayofweek:
+                        if wtime.day_type == 'weekend':
                             weekend_hours = weekend_hours + day.work_hours
 
             item.weekend = weekend_hours
