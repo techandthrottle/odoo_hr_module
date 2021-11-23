@@ -223,7 +223,8 @@ class HRTimesheet(models.Model):
             td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
                                                          ('attendance_date', '<=', new_to_date)])
-
+            pprint("###############################################")
+            pprint(td)
             item.total_days = len(td) if td else 0
 
     @api.onchange('employee_id')
