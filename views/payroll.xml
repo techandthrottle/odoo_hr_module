@@ -39,7 +39,7 @@
             <field name="model">hr_china.payslip</field>
             <field name="arch" type="xml">
                 <tree string="Payslips">
-                    <field name="currency_id"/>
+                    <field name="currency_id" invisible="1"/>
                     <field name="name" />
                     <field name="wage_type" />
                     <field name="start_date" widget="date"/>
