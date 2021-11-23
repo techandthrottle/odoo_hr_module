@@ -47,11 +47,11 @@
                     <field name="total_days" />
                     <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" />
                     <field name="total_work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
-                    <field name="basic_pay" widget="monetary"/>
-                    <field name="total_benefits" widget="monetary"/>
-                    <field name="total_deductions" widget="monetary"/>
-                    <field name="net_pay" widget="monetary"/>
-                    <field name="gross_pay" widget="monetary"/>
+                    <field name="basic_pay" widget="monetary" sum="Total Basic Pay"/>
+                    <field name="total_benefits" widget="monetary" sum="Total Benefits"/>
+                    <field name="total_deductions" widget="monetary" sum="Total Deductions"/>
+                    <field name="net_pay" widget="monetary" sum="Total Net Pay"/>
+                    <field name="gross_pay" widget="monetary" sum="Total Gross Pay"/>
                     <field name="payslip_state" widget="tree_html"/>
                 </tree>
             </field>
