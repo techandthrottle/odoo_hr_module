@@ -235,15 +235,15 @@ class HRTimesheet(models.Model):
             new_date = base_date.split(' ')
             new_date[1] = '23:59:59'
             new_to_date = ' '.join(new_date)
-            wks = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
-                                                         ('attendance_date', '>=', item.period_from),
-                                                         ('attendance_date', '<=', new_to_date)])
+            wks = self.env['hr_china.attendance.trans'].search([('timesheet', '=', self.id),
+                                                         ('check_in_am', '!=', False),
+                                                         ('check_in_pm', '!=', False)])
 
             wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
             weekend_hours = False
             for day in wks:
                 for wtime in wt:
-                    if day.attendance_day == wtime.dayofweek:
+                    if day.day == wtime.dayofweek:
                         if wtime.day_type == 'weekend':
                             weekend_hours = weekend_hours + day.work_hours
 
