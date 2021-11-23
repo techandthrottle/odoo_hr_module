@@ -223,8 +223,6 @@ class HRTimesheet(models.Model):
             td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
                                                          ('attendance_date', '<=', new_to_date)])
-            pprint("###############################################")
-            pprint(td)
             item.total_days = len(td) if td else 0
 
     @api.onchange('employee_id')
@@ -236,7 +234,7 @@ class HRTimesheet(models.Model):
             new_date = base_date.split(' ')
             new_date[1] = '23:59:59'
             new_to_date = ' '.join(new_date)
-            wks = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.id),
+            wks = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
                                                          ('check_in_am', '!=', False),
                                                          ('check_in_pm', '!=', False)])
 
