@@ -30,6 +30,7 @@
         'static/src/lib/jquery.timepicker.js',
         'static/src/js/web_widget_timepicker.js',
         'static/src/js/edit_btn.js',
+        # 'static/src/js/alter_create.js',
         ],
 
     # always loaded
@@ -56,6 +57,7 @@
 
     'qweb': [
         'static/src/xml/web_widget_timepicker.xml',
+        # 'static/src/xml/web_widget_alter_create.xml',
         ],
     # only loaded in demonstration mode
     'demo': [

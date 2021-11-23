@@ -54,6 +54,9 @@ class HRTimesheet(models.Model):
     @api.multi
     def action_update_timesheet(self):
         self._get_overtime_work()
+        self._get_weekends()
+        self._get_holiday_list()
+        self._get_total_days()
 
     @api.multi
     def action_confirm(self):
@@ -212,10 +215,14 @@ class HRTimesheet(models.Model):
     @api.onchange('employee_id', 'attendance_trans')
     def _get_total_days(self):
         for item in self:
-
+            converted_date = datetime.strptime(item.period_to, '%Y-%m-%d %H:%M:%S')
+            base_date = converted_date.strftime('%Y-%m-%d %H:%M:%S')
+            new_date = base_date.split(' ')
+            new_date[1] = '23:59:59'
+            new_to_date = ' '.join(new_date)
             td = self.env['hr_china.attendance'].search([('employee_id', '=', item.employee_id.id),
                                                          ('attendance_date', '>=', item.period_from),
-                                                         ('attendance_date', '<=', item.period_to)])
+                                                         ('attendance_date', '<=', new_to_date)])
 
             item.total_days = len(td) if td else 0
 
@@ -965,6 +972,7 @@ class HRNewAttendance(models.Model):
                                                                ('check_out_pm', '=', False)])
         for rec in not_checkout:
             check_out_time = fields.Datetime.now()
+            rec.force_checkout = True
             if rec.check_in_am and not rec.check_out_am:
                 rec.check_out_am = check_out_time
             elif rec.check_in_pm and not rec.check_out_pm:

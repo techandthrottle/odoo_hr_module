@@ -39,6 +39,7 @@
             <field name="model">hr_china.payslip</field>
             <field name="arch" type="xml">
                 <tree string="Payslips">
+                    <field name="currency_id"/>
                     <field name="name" />
                     <field name="wage_type" />
                     <field name="start_date" widget="date"/>
@@ -46,6 +47,11 @@
                     <field name="total_days" />
                     <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" />
                     <field name="total_work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" />
+                    <field name="basic_pay" widget="monetary"/>
+                    <field name="total_benefits" widget="monetary"/>
+                    <field name="total_deductions" widget="monetary"/>
+                    <field name="net_pay" widget="monetary"/>
+                    <field name="gross_pay" widget="monetary"/>
                     <field name="payslip_state" widget="tree_html"/>
                 </tree>
             </field>
@@ -58,6 +64,14 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+<!--        <record id="action_hr_china_payslips_summary" model="ir.actions.act_window">-->
+<!--            <field name="name">Payslips Summary</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">hr_china.payslip_summary</field>-->
+<!--            <field name="view_type">form</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--        </record>-->
 
         <record id="hr_china_create_payslip_wiz" model="ir.ui.view">
             <field name="name">hr_china_create_payslip.wiz_form</field>
@@ -170,6 +184,23 @@
                 </form>
             </field>
         </record>
+
+<!--        <record id="view_hr_china_payslip_summary_tree" model="ir.ui.view">-->
+<!--            <field name="name">hr_china.payslip_summary.tree</field>-->
+<!--            <field name="model">hr_china.payslip_summary</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <tree string="Payslips Summary">-->
+<!--                    <field name="name" />-->
+<!--                    <field name="employee_id"/>-->
+<!--                    <field name="wage_type" />-->
+<!--                    <field name="basic_pay"/>-->
+<!--                    <field name="emp_benefits"/>-->
+<!--                    <field name="emp_deductions"/>-->
+<!--                    <field name="net_pay"/>-->
+<!--                    <field name="gross_pay"/>-->
+<!--                </tree>-->
+<!--            </field>-->
+<!--        </record>-->
 
     </data>
 </odoo>

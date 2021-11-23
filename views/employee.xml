@@ -28,38 +28,34 @@
         <record model="ir.ui.view" id="view_hr_china_employee_form">
             <field name="name">hr_china.view_employee_form</field>
             <field name="model">hr.employee</field>
-<!--            <field name="inherit_id" ref="hr.view_employee_form" />-->
             <field name="group_ids">[(6,0, [ref('hr_china.group_hr_china_manager_dropdown')])]</field>
             <field name="inherit_id" ref="zulu_attendance.employee_view_form_inherit" />
             <field name="sequence">3000</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
 
-                <xpath expr="//form/sheet/div/button[4]" position="replace">
-                    <button class="oe_stat_button" name="%(act_zulu_hr_payslip_tree)d"
-                            type="action" icon="fa-money">
-                        <field string="Payslips" name="payslips_count" widget="statinfo"/>
-                    </button>
-                </xpath>
-
                 <xpath expr="//form/sheet/div/button[3]" position="replace">
-                    <button class="oe_stat_button" name="%(act_zulu_hr_contract_tree)d"
-                            type="action" icon="fa-clock-o">
-                        <field string="Contracts" name="contract_count" widget="statinfo"/>
-                    </button>
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[3]" position="before">
                     <button class="oe_stat_button" name="%(act_zulu_hr_timesheet_tree)d"
                             type="action" icon="fa-calendar">
                         <field string="Timesheets" name="timesheet_count" widget="statinfo"/>
                     </button>
                 </xpath>
 
-                <xpath expr="//form/sheet/div/button[2]" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                <xpath expr="//form/sheet/div/button[4]" position="replace">
+                    <button class="oe_stat_button" name="%(act_zulu_hr_contract_tree)d"
+                            type="action" icon="fa-clock-o">
+                        <field string="Contracts" name="contract_count" widget="statinfo"/>
+                    </button>
                 </xpath>
-                <xpath expr="//form/sheet/div/button[5]" position="attributes">
+
+                <xpath expr="//form/sheet/div/button[5]" position="replace">
+                    <button class="oe_stat_button" name="%(act_zulu_hr_payslip_tree)d"
+                            type="action" icon="fa-money">
+                        <field string="Payslips" name="payslips_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//form/sheet/div/button[2]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
@@ -289,6 +285,31 @@
                     </button>
                 </xpath>
 
+            </field>
+        </record>
+
+        <record id="hr_china_employee_tree_inherit" model="ir.ui.view">
+            <field name="name">hr_china.employee_tree_inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Employees" decoration-bf="message_needaction==True">
+                        <field name="converted_wage_type" invisible="1"/>
+                        <field name="name"/>
+                        <field name="work_phone"/>
+                        <field name="work_email"/>
+                        <field name="c_wage_type"/>
+                        <field name="c_monthly_fee" string="Basic Pay" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
+                        <field name="c_weekday_daily_fee" string="Daily Fee" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
+                        <field name="department_id"/>
+                        <field name="job_new_id"/>
+                        <field name="parent_id"/>
+                        <field name="coach_id" invisible="1"/>
+                        <field name="message_needaction" invisible="1"/>
+                    </tree>
+                </xpath>
             </field>
         </record>
 
