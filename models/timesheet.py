@@ -235,7 +235,7 @@ class HRTimesheet(models.Model):
             new_date = base_date.split(' ')
             new_date[1] = '23:59:59'
             new_to_date = ' '.join(new_date)
-            wks = self.env['hr_china.attendance.trans'].search([('timesheet', '=', self.id),
+            wks = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.id),
                                                          ('check_in_am', '!=', False),
                                                          ('check_in_pm', '!=', False)])
 
