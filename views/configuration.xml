@@ -79,8 +79,6 @@
             <field name="arch" type="xml">
                 <tree string="Leave Configuration" create="1" editable="bottom">
                     <field name="name" />
-                    <field name="days_allowed" />
-                    <field name="leave_type" />
                 </tree>
             </field>
         </record>

@@ -60,7 +60,7 @@
                 </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">
-                    <page name="public" string="PUBLIC INFORMATION">
+                    <page name="public" string="GENERAL INFORMATION">
                         <group string="Position">
                             <field name="department_id"/>
                             <field name="job_new_id"/>
@@ -150,48 +150,48 @@
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}">
                                 <label for="c_monthly_fee" string="Monthly Fee"/>
                                 <div class="o_row">
-                                    <field name="c_monthly_fee"/>
+                                    <field name="c_monthly_fee" widget="monetary"/>
                                 </div>
                                 <label for="c_dayoff_deduction" string="Days Off Deduction"/>
                                 <div class="o_row">
-                                    <field name="c_dayoff_deduction"/>
+                                    <field name="c_dayoff_deduction" widget="monetary"/>
                                 </div>
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"></group>
                             <group string="Weekdays Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                                 <label for="c_hourly_rate" string="Hourly Rate"/>
                                 <div class="o_row">
-                                    <field name="c_hourly_rate"/>
+                                    <field name="c_hourly_rate" widget="monetary"/>
                                 </div>
                                 <label for="c_weekday_daily_fee" string="Daily Fee"/>
                                 <div class="o_row">
-                                    <field name="c_weekday_daily_fee"/>
+                                    <field name="c_weekday_daily_fee" widget="monetary"/>
                                 </div>
                                 <label for="c_weekday_overtime_fee" string="Overtime Fee"/>
                                 <div class="o_row">
-                                    <field name="c_weekday_overtime_fee"/>
+                                    <field name="c_weekday_overtime_fee" widget="monetary"/>
                                 </div>
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"></group>
                             <group string="Weekends Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                                 <label for="c_weekends_fee" string="Hourly Rate"/>
                                 <div class="o_row">
-                                    <field name="c_weekends_fee"/>
+                                    <field name="c_weekends_fee" widget="monetary"/>
                                 </div>
                                 <label for="c_weekends_daily_fee" string="Daily Fee"/>
                                 <div class="o_row">
-                                    <field name="c_weekends_daily_fee"/>
+                                    <field name="c_weekends_daily_fee" widget="monetary"/>
                                 </div>
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"></group>
                             <group string="Holiday Rate:" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}">
                                 <label for="c_holiday_fee" string="Hourly Rate"/>
                                 <div class="o_row">
-                                    <field name="c_holiday_fee"/>
+                                    <field name="c_holiday_fee" widget="monetary"/>
                                 </div>
                                 <label for="c_holiday_daily_fee" string="Daily Fee"/>
                                 <div class="o_row">
-                                    <field name="c_holiday_daily_fee"/>
+                                    <field name="c_holiday_daily_fee" widget="monetary"/>
                                 </div>
                             </group>
                             <group></group>

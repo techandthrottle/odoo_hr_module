@@ -138,6 +138,7 @@ class HRContractTemplate(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
 
     converted_wage_type = fields.Char()
+    allowed_leave = fields.Integer(string='Allowed Leave')
 
     @api.multi
     def _get_wagetype_info(self):
@@ -157,7 +158,7 @@ class HRContractTemplate(models.Model):
     @api.multi
     def _get_dayoff_info(self):
         for item in self:
-            item.dayoff_deduction_info = "Rate by day to be deducted if absent"
+            item.dayoff_deduction_info = "Day off deduction is calculated in the monthly fee divided by wage type monthly days (22 or 26)"
 
     @api.multi
     def _get_payment_info(self):
@@ -177,7 +178,7 @@ class HRContractTemplate(models.Model):
     @api.multi
     def _get_weekday_ot_fee_info(self):
         for item in self:
-            item.weekday_ot_fee_info = "Overtime rate per hour on Regular Days (Monday - Friday)"
+            item.weekday_ot_fee_info = "Overtime rate per hour on regular days (depends on the days of the week you set up in the tab below)"
 
     @api.multi
     def _get_weekend_hourly_fee_info(self):
@@ -199,6 +200,11 @@ class HRContractTemplate(models.Model):
         for item in self:
             item.holiday_daily_fee_info = "The total rate of an employee when they work on holiday"
 
+    @api.multi
+    def _get_allowed_leave_info(self):
+        for item in self:
+            item.allowed_leave_info = "The total allowed leave in a year"
+
     wage_type_info = fields.Text(compute=_get_wagetype_info)
     currency_info = fields.Text(compute=_get_currency_info)
     monthly_fee_info = fields.Text(compute=_get_monthly_info)
@@ -211,6 +217,7 @@ class HRContractTemplate(models.Model):
     weekend_daily_fee_info = fields.Text(compute=_get_weekend_daily_fee_info)
     holiday_fee_info = fields.Text(compute=_get_holiday_fee_info)
     holiday_daily_fee_info = fields.Text(compute=_get_holiday_daily_info)
+    allowed_leave_info = fields.Text(compute=_get_allowed_leave_info)
 
     @api.onchange('wage_type')
     def onchange_wage_type(self):
