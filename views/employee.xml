@@ -145,6 +145,7 @@
                                 <field name="start_date" widget="date" required="1"/>
                                 <field name="end_date" widget="date" required="1"/>
                                 <field name="is_contract_active"/>
+                                <field name="allowed_leave" invisible="1"/>
 
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}">

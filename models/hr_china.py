@@ -424,6 +424,7 @@ class HREmployee(models.Model):
     all_contracts = fields.Many2many('hr_china.contract', string='All Contracts')
     active_contract = fields.Many2one('hr_china.contract', string='Active Contract', compute=_get_active_contract)
     is_contract_active = fields.Boolean('Contract is Active')
+    allowed_leave = fields.Integer('Allowed Leave')
 
     @api.onchange('contract_template_id')
     def contract_templ_change(self):
