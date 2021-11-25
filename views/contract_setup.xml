@@ -94,13 +94,13 @@
                                 <label for="currency_id" string="Currency:"/>
                             </div>
                             <field name="currency_id" nolabel="1"/>
-                            <div class="o_row">
-                                <label for="allowed_leave" string="Allowed Leave"/>
-                                <span class="so_information_button">
-                                    <field name="allowed_leave_info" widget="show_info"/>
-                                </span>
-                            </div>
-                            <field name="allowed_leave" nolabel="1"/>
+<!--                            <div class="o_row">-->
+<!--                                <label for="allowed_leave" string="Allowed Leave"/>-->
+<!--                                <span class="so_information_button">-->
+<!--                                    <field name="allowed_leave_info" widget="show_info"/>-->
+<!--                                </span>-->
+<!--                            </div>-->
+<!--                            <field name="allowed_leave" nolabel="1"/>-->
                             <div class="o_row">
                                 <label for="payment_method" string="Payment Method"/>
                             </div>
