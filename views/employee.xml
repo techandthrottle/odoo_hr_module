@@ -145,8 +145,8 @@
                                 <field name="start_date" widget="date" required="1"/>
                                 <field name="end_date" widget="date" required="1"/>
                                 <field name="is_contract_active"/>
-                                <field name="allowed_leave" invisible="1"/>
-
+                                <field name="enable_allowed_leave" invisible="1"/>
+                                <field name="allowed_leave" attrs="{'invisible': [('enable_allowed_leave', '=', False)]}"/>
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}">
                                 <label for="c_monthly_fee" string="Monthly Fee"/>
