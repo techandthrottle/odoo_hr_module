@@ -39,6 +39,24 @@
             <field name="view_id" ref="view_payment_method_config"/>
         </record>
 
+        <record id="view_bank_list_config" model="ir.ui.view">
+            <field name="name">hr_china.bank_list.tree</field>
+            <field name="model">hr_china.bank_list</field>
+            <field name="arch" type="xml">
+                <tree string="Bank List" create="1" editable="bottom">
+                    <field name="name"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_hr_bank_list" model="ir.actions.act_window">
+            <field name="name">List of Bank</field>
+            <field name="res_model">hr_china.bank_list</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_bank_list_config"/>
+        </record>
+
         <record id="view_company_logo_config" model="ir.ui.view">
             <field name="name">hr_china.company_name_logo.tree</field>
             <field name="model">hr_china.company_name_logo</field>

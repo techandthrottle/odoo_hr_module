@@ -34,6 +34,27 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
 
+                <xpath expr="//form/sheet/div/button[2]" position="replace">
+                    <button type="object"
+                            class="oe_stat_button"
+                            icon="fa-calendar" string="Attendance"
+                            name="show_emp_attendance"
+                    />
+                </xpath>
+<!--                <xpath expr="//form/sheet/div/button[2]" position="replace">-->
+<!--                    <button type="object" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator"-->
+<!--                            class="oe_stat_button"-->
+<!--                            icon="fa-calendar" string="Attendance"-->
+<!--                            name="show_emp_attendance"-->
+<!--                    />-->
+<!--                </xpath>-->
+
+<!--                <xpath expr="//form/sheet/div/button[3]" position="before">-->
+<!--                    <button class="oe_stat_button" type="action" icon="fa-calendar">-->
+<!--                        <field string="Attendance" name="calendar_id" widget="statinfo"/>-->
+<!--                    </button>-->
+<!--                </xpath>-->
+
                 <xpath expr="//form/sheet/div/button[3]" position="replace">
                     <button class="oe_stat_button" name="%(act_zulu_hr_timesheet_tree)d"
                             type="action" icon="fa-calendar">
@@ -53,10 +74,6 @@
                             type="action" icon="fa-money">
                         <field string="Payslips" name="payslips_count" widget="statinfo"/>
                     </button>
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[2]" position="attributes">
-                    <attribute name="invisible">1</attribute>
                 </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='public']" position="replace">
@@ -270,20 +287,6 @@
                             <field name="manual_attendance" modifiers="{}"/>
                         </group>
                     </page>
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[2]" position="replace">
-                    <button type="object" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator"
-                            class="oe_stat_button"
-                            icon="fa-calendar" string="Attendance"
-                            name="show_emp_attendance"
-                    />
-                </xpath>
-
-                <xpath expr="//form/sheet/div/button[3]" position="before">
-                    <button class="oe_stat_button" type="action" icon="fa-calendar">
-                        <field string="Working Time" name="calendar_id" widget="statinfo"/>
-                    </button>
                 </xpath>
 
             </field>

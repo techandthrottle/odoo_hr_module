@@ -254,7 +254,7 @@ class HREmployee(models.Model):
     emergency_contact_name = fields.Char('Emergency Contact Name')
     emergency_contact_relation = fields.Char('Emergency Contact Relation')
     citizenship = fields.Char('Citizenship')
-    bank_name = fields.Char('Beneficiary Bank')
+    bank_name = fields.Many2one('hr_china.bank_list', string='Beneficiary Bank')
     bank_branch = fields.Char('Beneficiary Bank Branch')
     account_name = fields.Char('Beneficiary Account Name')
     account_number = fields.Char('Beneficiary Account Number')
@@ -817,7 +817,7 @@ class HRChinaAttendance(models.Model):
             'name': 'Attendance',
             'view_type': 'form',
             'view_mode': 'tree',
-            'res_model': 'hr.attendance',
+            'res_model': 'hr_china.attendance',
             'view_id': False,
             'type': 'ir.actions.act_window',
             'target': 'self',
@@ -825,3 +825,17 @@ class HRChinaAttendance(models.Model):
                 'search_default_employee_id': self.id
             }
         }
+
+    # def show_emp_attendance(self):
+    #     return {
+    #         'name': 'Attendance',
+    #         'view_type': 'form',
+    #         'view_mode': 'tree',
+    #         'res_model': 'hr.attendance',
+    #         'view_id': False,
+    #         'type': 'ir.actions.act_window',
+    #         'target': 'self',
+    #         'context': {
+    #             'search_default_employee_id': self.id
+    #         }
+    #     }

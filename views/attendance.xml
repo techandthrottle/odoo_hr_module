@@ -22,6 +22,16 @@
             </field>
         </record>
 
+        <record id="view_zulu_hr_attendance_filter" model="ir.ui.view">
+            <field name="name">zulu_hr.attendance.select</field>
+            <field name="model">hr_china.attendance</field>
+            <field name="arch" type="xml">
+                <search string="Search Attendance">
+                    <field name="employee_id"/>
+                </search>
+            </field>
+        </record>
+
         <record id="action_view_hr_china_emp_attendance" model="ir.actions.act_window">
             <field name="name">Attendance</field>
             <field name="res_model">hr_china.attendance</field>

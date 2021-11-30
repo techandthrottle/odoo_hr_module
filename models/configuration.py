@@ -25,6 +25,14 @@ class PaymentMethodConfiguration(models.Model):
     _name = 'hr_china.payment_method'
 
     name = fields.Char(string='Name')
+    is_active = fields.Char('Active')
+
+
+class BankInformationList(models.Model):
+    _name = 'hr_china.bank_list'
+
+    name = fields.Char(string='Bank Name')
+    is_active = fields.Boolean('Active', default=True)
 
 
 class CompanyNameLogoConfig(models.Model):
