@@ -944,7 +944,7 @@ class HRNewAttendance(models.Model):
     def _get_day(self):
         # return datetime.now().weekday()
         for attendance in self:
-            attendance.attendance_day = str(datetime.now().weekday())
+            attendance.attendance_day = str(datetime.strptime(attendance.attendance_date, '%Y-%m-%d %H:%M:%S').weekday())
 
     @api.depends('work_hours')
     def _compute_overtime(self):
