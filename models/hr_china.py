@@ -440,6 +440,7 @@ class HREmployee(models.Model):
     new_contract_id = fields.One2many('hr_china.contract', 'employee_id', string='Contract')
     all_contracts = fields.Many2many('hr_china.contract', string='All Contracts')
     active_contract = fields.Many2one('hr_china.contract', string='Active Contract', compute=_get_active_contract)
+    employee_contracts = fields.One2many('hr_china.employee_contract', 'employee_id', string='Contract')
     is_contract_active = fields.Boolean('Contract is Active')
     allowed_leave = fields.Integer('Allowed Leave')
     enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
@@ -552,7 +553,8 @@ class HREmployee(models.Model):
                     self.all_contracts = [[4, created_contract.id]]
 
                     working_time_lines = []
-                    for working_line in self.contract_template_id.working_time:
+                    contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', self.id), ('is_active', '=', True)])
+                    for working_line in contract_wt.working_time:
                         vals = {
                             'contract_id': created_contract.id,
                             'name': working_line.name,
@@ -566,8 +568,14 @@ class HREmployee(models.Model):
                         }
                         working_time_lines.append((0, 0, vals))
 
+                    if len(working_time_lines) > 0:
+                        for oldtime in self.employee_working_time:
+                            oldtime.unlink()
+
                     benefits_lines = []
-                    for benefit_line in self.contract_template_id.benefits_id:
+                    contract_benefits = self.env['hr_china.employee_contract'].search(
+                        [('employee_id', '=', self.id), ('is_active', '=', True)])
+                    for benefit_line in contract_benefits.benefits_id:
                         vals = {
                             'contract_id': created_contract.id,
                             'benefits_id': benefit_line.id,
@@ -576,8 +584,15 @@ class HREmployee(models.Model):
                         }
                         benefits_lines.append((0, 0, vals))
 
+                    if len(benefits_lines) > 0:
+                        for oldbenefits in self.employee_benefit:
+                            oldbenefits.unlink()
+
+
                     deductions_lines = []
-                    for deduction_line in self.contract_template_id.deductions_id:
+                    contract_deductions = self.env['hr_china.employee_contract'].search(
+                        [('employee_id', '=', self.id), ('is_active', '=', True)])
+                    for deduction_line in contract_deductions.deductions_id:
                         vals = {
                             'contract_id': created_contract.id,
                             'deductions_id': deduction_line.id,
@@ -585,6 +600,10 @@ class HREmployee(models.Model):
                             'amount': deduction_line.amount,
                         }
                         deductions_lines.append((0, 0, vals))
+
+                    if len(deductions_lines) > 0:
+                        for olddeduction in self.employee_deduction:
+                            olddeduction.unlink()
 
                     created_contract.benefits_id = benefits_lines
                     created_contract.deductions_id = deductions_lines
@@ -617,9 +636,7 @@ class HREmployee(models.Model):
             active_cont_dict['weekend_overtime_fee'] = vals['c_weekend_overtime_fee']
 
         if len(active_cont_dict) > 0:
-            #self.active_contract.write(active_cont_dict)
             self.new_contract_id.write(active_cont_dict)
-            # self.all_contracts.write(active_cont_dict)
 
         return ret_val
 
@@ -673,6 +690,184 @@ class HRChinaContract(models.Model):
     deductions_id = fields.One2many('hr_china.contract_deductions', 'contract_id',
                                     string='Deductions')
     currency_id = fields.Many2one('res.currency', string='Currency')
+
+
+class ZuluHREmployeeContract(models.Model):
+    _name = 'hr_china.employee_contract'
+    _order = 'id desc'
+
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+    start_date = fields.Datetime(string='Start Date')
+    end_date = fields.Datetime(string='End Date')
+    contract_template_id = fields.Many2one('hr_china.contracts_template', string='Contract Template ID')
+    name = fields.Char('Name')
+    wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type')
+    monthly_fee = fields.Float(string='Monthly Fee')
+    weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
+    weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
+    weekends_fee = fields.Float(string='Weekends Fee')
+    weekends_daily_fee = fields.Float(string='Weekends Daily Fee')
+    holiday_fee = fields.Float(string='Holiday Fee')
+    holiday_daily_fee = fields.Float(string='Holiday Daily Fee')
+    hourly_rate = fields.Float(string='Hourly Rate')
+    dayoff_deduction = fields.Float(string='Day Off Deduction')
+    other_info = fields.Text(string='Additional Information')
+
+    working_time = fields.One2many('zulu_hr.active_contract_work_time', 'employee_id', string='Working Time')
+    benefits_id = fields.One2many('zulu_hr.active_contract_benefits', 'employee_id', string='Benefits')
+    deductions_id = fields.One2many('zulu_hr.active_contract_deductions', 'employee_id', string='Deductions')
+    currency_id = fields.Many2one('res.currency', string='Currency')
+    payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
+
+    @api.multi
+    def check_contract_status(self):
+        for item in self:
+            contracts = self.env['hr_china.contract'].search([('employee_id', '=', item.id)], order='id asc', limit=1)
+            if contracts:
+                start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
+                now = datetime.today()
+
+                years = relativedelta(now, start_date).years
+
+                if years > 0:
+                    item.enable_allowed_leave = True
+                else:
+                    item.enable_allowed_leave = False
+
+    is_active = fields.Boolean('Active', default=True)
+    converted_wage_type = fields.Char()
+    allowed_leave = fields.Integer('Allowed Leave')
+    enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
+
+    @api.constrains('is_active')
+    def change_active_status(self):
+        if self.is_active:
+            records = self.env['hr_china.employee_contract'].search([('id', '!=', self.id)])
+            for rec in records:
+                rec.is_active = False
+            employee = self.env['hr.employee'].browse(int(self.employee_id.id))
+            employee.write({
+                'contract_template_id': self.contract_template_id.id,
+                'c_wage_type': self.wage_type.id,
+                'currency_id': self.currency_id.id,
+                'payment_method': self.payment_method.id,
+                'start_date': self.start_date,
+                'end_date': self.end_date
+            })
+
+        working_time_lines = []
+        for working_line in self.working_time:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'name': working_line.name,
+                'day_type': working_line.day_type,
+                'dayofweek': working_line.dayofweek,
+                'date_from': working_line.date_from,
+                'date_to': working_line.date_to,
+                'hour_from': working_line.hour_from,
+                'hour_to': working_line.hour_to,
+                'break_hours': working_line.break_hours,
+            }
+            working_time_lines.append((0, 0, vals))
+
+        benefits_line = []
+        for benefit_line in self.benefits_id:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'benefits_id': benefit_line.benefits_id.id,
+                'benefit_type': benefit_line.benefit_type,
+                'amount': benefit_line.amount,
+            }
+            benefits_line.append((0, 0, vals))
+
+        deductions_lines = []
+        for deduction_line in self.deductions_id:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'deductions_id': deduction_line.deductions_id.id,
+                'deduction_type': deduction_line.deduction_type,
+                'amount': deduction_line.amount,
+            }
+            deductions_lines.append((0, 0, vals))
+
+        self.employee_id.employee_benefit = benefits_line
+        self.employee_id.employee_deduction = deductions_lines
+        self.employee_id.employee_working_time = working_time_lines
+
+    @api.onchange('wage_type')
+    def onchange_wage_type(self):
+        for item in self:
+            item.converted_wage_type = item.wage_type.wage_type
+
+    @api.onchange('contract_template_id')
+    def contract_templ_change(self):
+        templ_contract = self.contract_template_id
+        working_time_lines = []
+        for working_line in self.contract_template_id.working_time:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'name': working_line.name,
+                'day_type': working_line.day_type,
+                'dayofweek': working_line.dayofweek,
+                'date_from': working_line.date_from,
+                'date_to': working_line.date_to,
+                'hour_from': working_line.hour_from,
+                'hour_to': working_line.hour_to,
+                'break_hours': working_line.break_hours,
+            }
+            working_time_lines.append((0, 0, vals))
+
+        benefits_lines = []
+        for benefit_line in self.contract_template_id.benefits_id:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'benefits_id': benefit_line.id,
+                'benefit_type': benefit_line.benefit_type,
+                'amount': benefit_line.amount,
+            }
+            benefits_lines.append((0, 0, vals))
+
+        deductions_lines = []
+        for deduction_line in self.contract_template_id.deductions_id:
+            vals = {
+                'employee_id': self.employee_id.id,
+                'deductions_id': deduction_line.id,
+                'deduction_type': deduction_line.deduction_type,
+                'amount': deduction_line.amount,
+            }
+            deductions_lines.append((0, 0, vals))
+
+        self.benefits_id = benefits_lines
+        self.deductions_id = deductions_lines
+        self.working_time = working_time_lines
+
+        if templ_contract:
+            self.name = self.employee_id.name + " - " + templ_contract.name
+            self.currency_id = templ_contract.currency_id
+            self.wage_type = templ_contract.wage_type.id
+            self.monthly_fee = templ_contract.monthly_fee
+            self.hourly_rate = templ_contract.hourly_rate
+            self.weekday_daily_fee = templ_contract.weekday_daily_fee
+            self.weekday_overtime_fee = templ_contract.weekday_overtime_fee
+            self.weekends_fee = templ_contract.weekends_fee
+            self.holiday_fee = templ_contract.holiday_fee
+            self.dayoff_deduction = templ_contract.dayoff_deduction
+            self.other_info = templ_contract.other_info
+
+        else:
+            self.name = False
+            self.currency_id = False
+            self.start_date = False
+            self.end_date = False
+            self.wage_type = False
+            self.monthly_fee = False
+            self.hourly_rate = False
+            self.weekday_daily_fee = False
+            self.weekday_overtime_fee = False
+            self.weekends_fee = False
+            self.holiday_fee = False
+            self.dayoff_deduction = False
+            self.other_info = False
 
 
 class HRChinaContractBenefits(models.Model):
@@ -788,6 +983,82 @@ class HRChinaEmployeeDeductions(models.Model):
 class HRChinaEmployeeWorkingTime(models.Model):
     _name = 'hr_china.employee_working_time'
     _description = 'List of Employee Working Time'
+
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    name = fields.Char(string='Name')
+    dayofweek = fields.Selection([
+        ('0', 'Monday'),
+        ('1', 'Tuesday'),
+        ('2', 'Wednesday'),
+        ('3', 'Thursday'),
+        ('4', 'Friday'),
+        ('5', 'Saturday'),
+        ('6', 'Sunday')
+    ], 'Day of Week', required=True, index=True, default='0')
+    date_from = fields.Date(string='Starting Date')
+    date_to = fields.Date(string='End Date')
+    hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
+    hour_to = fields.Float(string='Work to', required=True)
+    break_hours = fields.Integer('Break Hours')
+    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day")
+
+
+class ZuluHRActiveContractBenefits(models.Model):
+    _name = 'zulu_hr.active_contract_benefits'
+
+    @api.multi
+    @api.multi
+    def _get_currency_default(self):
+        cny = self.env['res.currency'].search([('name', '=', 'CNY')])
+        if cny:
+            return cny.id
+
+    @api.onchange('benefits_id')
+    def onchange_benefits_id(self):
+        if self.benefits_id:
+            self.benefits_id = self.benefits_id.id
+            self.benefit_type = self.benefits_id.benefit_type
+            self.amount = self.benefits_id.amount
+            self.currency = self.benefits_id.currency
+
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    benefit_type = fields.Selection([('one-time', 'One Time'), ('monthly', 'Monthly'), ('yearly', 'Yearly')],
+                                    string='Type')
+    benefits_id = fields.Many2one('hr_china.benefits', string='Name')
+    amount = fields.Float('Amount')
+    currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
+
+
+class ZuluHRActiveContractDeductions(models.Model):
+    _name = 'zulu_hr.active_contract_deductions'
+
+    @api.multi
+    def _get_currency_default(self):
+        cny = self.env['res.currency'].search([('name', '=', 'CNY')])
+        if cny:
+            return cny.id
+
+    @api.onchange('deductions_id')
+    def onchange_deductions_id(self):
+        if self.deductions_id:
+            self.deductions_id = self.deductions_id.id
+            self.deduction_type = self.deductions_id.deduction_type
+            self.amount = self.deductions_id.amount
+            self.currency = self.deductions_id.currency
+
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    deduction_type = fields.Selection([('one-time', 'One Time'), ('monthly', 'Monthly'), ('yearly', 'Yearly')],
+                                      string='Type')
+    deductions_id = fields.Many2one('hr_china.deductions', string='Name')
+    amount = fields.Float('Amount')
+    currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
+
+
+class ZuluHRActiveContractWorkTime(models.Model):
+    _name = 'zulu_hr.active_contract_work_time'
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
     contract_id = fields.Many2one('hr_china.contract', string='Contract')
