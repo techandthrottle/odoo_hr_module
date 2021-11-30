@@ -578,7 +578,7 @@ class HREmployee(models.Model):
                     for benefit_line in contract_benefits.benefits_id:
                         vals = {
                             'contract_id': created_contract.id,
-                            'benefits_id': benefit_line.id,
+                            'benefits_id': benefit_line.benefits_id.id,
                             'benefit_type': benefit_line.benefit_type,
                             'amount': benefit_line.amount,
                         }
@@ -588,14 +588,13 @@ class HREmployee(models.Model):
                         for oldbenefits in self.employee_benefit:
                             oldbenefits.unlink()
 
-
                     deductions_lines = []
                     contract_deductions = self.env['hr_china.employee_contract'].search(
                         [('employee_id', '=', self.id), ('is_active', '=', True)])
                     for deduction_line in contract_deductions.deductions_id:
                         vals = {
                             'contract_id': created_contract.id,
-                            'deductions_id': deduction_line.id,
+                            'deductions_id': deduction_line.deductions_id.id,
                             'deduction_type': deduction_line.deduction_type,
                             'amount': deduction_line.amount,
                         }
