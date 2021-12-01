@@ -722,7 +722,7 @@ class ZuluHREmployeeContract(models.Model):
     @api.multi
     def check_contract_status(self):
         for item in self:
-            contracts = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee.id),
+            contracts = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
                                                                        ('is_active', '=', True)], limit=1)
             if contracts:
                 start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
