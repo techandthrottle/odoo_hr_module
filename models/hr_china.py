@@ -747,15 +747,15 @@ class ZuluHREmployeeContract(models.Model):
             if records:
                 for rec in records:
                     rec.is_active = False
-                employee = self.env['hr.employee'].browse(int(self.employee_id.id))
-                employee.write({
-                    'contract_template_id': self.contract_template_id.id,
-                    'c_wage_type': self.wage_type.id,
-                    'currency_id': self.currency_id.id,
-                    'payment_method': self.payment_method.id,
-                    'start_date': self.start_date,
-                    'end_date': self.end_date
-                })
+            employee = self.env['hr.employee'].browse(int(self.employee_id.id))
+            employee.write({
+                'contract_template_id': self.contract_template_id.id,
+                'c_wage_type': self.wage_type.id,
+                'currency_id': self.currency_id.id,
+                'payment_method': self.payment_method.id,
+                'start_date': self.start_date,
+                'end_date': self.end_date
+            })
 
         working_time_lines = []
         for working_line in self.working_time:
