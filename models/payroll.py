@@ -86,6 +86,7 @@ class HRChinaPayroll(models.Model):
                 item.active_contract = active_contract.id
 
     active_contract = fields.Many2one('hr_china.employee_contract', compute=_get_active_emp_contract)
+
     # unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
 
     # @api.multi
@@ -186,23 +187,26 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id')
     def _get_overtime_pay(self):
         for item in self:
-            weekday_ot_pay = item.weekday_ot * item.active_contract.weekday_overtime_fee
-            weekend_ot_pay = item.weekend_ot * item.active_contract.weekends_fee
-            item.overtime_pay = weekday_ot_pay + weekend_ot_pay
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                weekday_ot_pay = item.weekday_ot * item.active_contract.weekday_overtime_fee
+                weekend_ot_pay = item.weekend_ot * item.active_contract.weekends_fee
+                item.overtime_pay = weekday_ot_pay + weekend_ot_pay
 
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
         for item in self:
-            regular_wh_rate = item.active_contract.hourly_rate * item.actual_work_hours
-            item.total_hourly_pay = regular_wh_rate
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                regular_wh_rate = item.active_contract.hourly_rate * item.actual_work_hours
+                item.total_hourly_pay = regular_wh_rate
 
     @api.onchange('employee_id')
     def _get_basic_pay(self):
         for item in self:
-            mf = item.active_contract.monthly_fee
-            wd = item.worked_days if item.worked_days else 1
-            dim = item.regular_days if item.regular_days else 1
-            item.basic_pay = (mf / dim) * wd
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                mf = item.active_contract.monthly_fee
+                wd = item.worked_days if item.worked_days else 1
+                dim = item.regular_days if item.regular_days else 1
+                item.basic_pay = (mf / dim) * wd
 
     @api.onchange('employee_id')
     def _get_holiday_pay(self):
