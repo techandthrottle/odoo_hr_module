@@ -99,7 +99,7 @@
                         </group>
                         <notebook>
                             <page string="WORKING TIME">
-                                <field name="working_time">
+                                <field name="working_time" mode="tree">
                                     <tree>
                                         <field name="name" />
                                         <field name="day_type"/>
@@ -112,7 +112,7 @@
                             </page>
                             <page string="BENEFITS">
                                 <field name="benefits_id" mode="tree">
-                                    <tree >
+                                    <tree editable="bottom">
                                         <field name="benefits_id"/>
                                         <field name="benefit_type"/>
                                         <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
@@ -121,7 +121,7 @@
                             </page>
                             <page string="DEDUCTIONS">
                                 <field name="deductions_id" mode="tree">
-                                    <tree >
+                                    <tree editable="bottom">
                                         <field name="deductions_id"/>
                                         <field name="deduction_type"/>
                                         <field name="amount" widget="monetary" options="{'currency_field': 'currency'}" />

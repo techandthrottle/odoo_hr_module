@@ -141,8 +141,6 @@
                                 <field name="contract_name" readonly="1"/>
                             </h1>
                         </group>
-                        <field name="converted_wage_type" invisible="1" />
-<!--                        <group>-->
                             <group string="General:">
                                 <field name="contract_template_id" readonly="1"/>
                                 <label for="c_wage_type" string="Wage Type:" />
