@@ -869,6 +869,24 @@ class ZuluHREmployeeContract(models.Model):
             self.dayoff_deduction = False
             self.other_info = False
 
+    # @api.multi
+    # def write(self, vals):
+    #     ret_val = super(ZuluHREmployeeContract, self).write(vals)
+    #     pprint("############################################")
+    #     pprint(vals)
+    #     if 'employee_id' in vals:
+    #         employee = self.env['hr.employee'].browse(int(vals['employee_id']))
+    #         employee.write({
+    #             'contract_template_id': vals['contract_template_id'],
+    #             'c_wage_type': vals['wage_type'],
+    #             'currency_id': vals['currency_id'],
+    #             'payment_method': vals['payment_method'],
+    #             'start_date': vals['start_date'],
+    #             'end_date': vals['end_date']
+    #         })
+    #
+    #     return ret_val
+
 
 class HRChinaContractBenefits(models.Model):
     _name = 'hr_china.contract_benefits'
