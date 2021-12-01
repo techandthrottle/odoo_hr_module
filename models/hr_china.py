@@ -555,19 +555,20 @@ class HREmployee(models.Model):
                     working_time_lines = []
                     contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', self.id),
                                                                                  ('is_active', '=', True)])
-                    for working_line in contract_wt.working_time:
-                        vals = {
-                            'contract_id': contract_wt.id,
-                            'name': working_line.name,
-                            'day_type': working_line.day_type,
-                            'dayofweek': working_line.dayofweek,
-                            'date_from': working_line.date_from,
-                            'date_to': working_line.date_to,
-                            'hour_from': working_line.hour_from,
-                            'hour_to': working_line.hour_to,
-                            'break_hours': working_line.break_hours,
-                        }
-                        working_time_lines.append((0, 0, vals))
+                    for cwt in contract_wt:
+                        for working_line in cwt.working_time:
+                            vals = {
+                                'contract_id': cwt.id,
+                                'name': working_line.name,
+                                'day_type': working_line.day_type,
+                                'dayofweek': working_line.dayofweek,
+                                'date_from': working_line.date_from,
+                                'date_to': working_line.date_to,
+                                'hour_from': working_line.hour_from,
+                                'hour_to': working_line.hour_to,
+                                'break_hours': working_line.break_hours,
+                            }
+                            working_time_lines.append((0, 0, vals))
 
                     if len(working_time_lines) > 0:
                         for oldtime in self.employee_working_time:
@@ -576,14 +577,15 @@ class HREmployee(models.Model):
                     benefits_lines = []
                     contract_benefits = self.env['hr_china.employee_contract'].search(
                         [('employee_id', '=', self.id), ('is_active', '=', True)])
-                    for benefit_line in contract_benefits.benefits_id:
-                        vals = {
-                            'contract_id': benefit_line.id,
-                            'benefits_id': benefit_line.benefits_id.id,
-                            'benefit_type': benefit_line.benefit_type,
-                            'amount': benefit_line.amount,
-                        }
-                        benefits_lines.append((0, 0, vals))
+                    for cb in contract_benefits:
+                        for benefit_line in cb.benefits_id:
+                            vals = {
+                                'contract_id': benefit_line.id,
+                                'benefits_id': benefit_line.benefits_id.id,
+                                'benefit_type': benefit_line.benefit_type,
+                                'amount': benefit_line.amount,
+                            }
+                            benefits_lines.append((0, 0, vals))
 
                     if len(benefits_lines) > 0:
                         for oldbenefits in self.employee_benefit:
@@ -592,14 +594,15 @@ class HREmployee(models.Model):
                     deductions_lines = []
                     contract_deductions = self.env['hr_china.employee_contract'].search(
                         [('employee_id', '=', self.id), ('is_active', '=', True)])
-                    for deduction_line in contract_deductions.deductions_id:
-                        vals = {
-                            'contract_id': contract_deductions.id,
-                            'deductions_id': deduction_line.deductions_id.id,
-                            'deduction_type': deduction_line.deduction_type,
-                            'amount': deduction_line.amount,
-                        }
-                        deductions_lines.append((0, 0, vals))
+                    for cd in contract_deductions:
+                        for deduction_line in cd.deductions_id:
+                            vals = {
+                                'contract_id': deduction_line.id,
+                                'deductions_id': deduction_line.deductions_id.id,
+                                'deduction_type': deduction_line.deduction_type,
+                                'amount': deduction_line.amount,
+                            }
+                            deductions_lines.append((0, 0, vals))
 
                     if len(deductions_lines) > 0:
                         for olddeduction in self.employee_deduction:
@@ -742,8 +745,10 @@ class ZuluHREmployeeContract(models.Model):
 
     @api.constrains('is_active')
     def change_active_status(self):
+
         if self.is_active:
-            records = self.env['hr_china.employee_contract'].search([('id', '!=', self.id)])
+            records = self.env['hr_china.employee_contract'].search([('id', '!=', self.id),
+                                                                     ('employee_id', '=', self.employee_id.id)])
             if records:
                 for rec in records:
                     rec.is_active = False
