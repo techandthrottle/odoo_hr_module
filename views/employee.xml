@@ -144,7 +144,7 @@
                         <field name="converted_wage_type" invisible="1" />
 <!--                        <group>-->
                             <group string="General:">
-                                <field name="contract_template_id" required="1" readonly="1"/>
+                                <field name="contract_template_id" readonly="1"/>
                                 <label for="c_wage_type" string="Wage Type:" />
                                 <div class="o_row">
                                     <field name="c_wage_type" readonly="1"/>
@@ -157,8 +157,8 @@
                                 <div class="o_row">
                                     <field name="payment_method" readonly="1"/>
                                 </div>
-                                <field name="start_date" widget="date" required="1" readonly="1"/>
-                                <field name="end_date" widget="date" required="1" readonly="1"/>
+                                <field name="start_date" widget="date" readonly="1"/>
+                                <field name="end_date" widget="date" readonly="1"/>
                             </group>
 <!--                            <group style="width:50%%" string=" ">-->
 <!--                                <field name="start_date" widget="date" required="1" readonly="1"/>-->
