@@ -447,6 +447,9 @@ class HREmployee(models.Model):
 
     # @api.onchange('contract_template_id')
     # def contract_templ_change(self):
+
+    # @api.onchange('contract_template_id')
+    # def contract_templ_change(self):
     #     templ_contract = self.contract_template_id
     #     working_time_lines = []
     #     for working_line in self.contract_template_id.working_time:
@@ -895,9 +898,13 @@ class ZuluHREmployeeContract(models.Model):
             employee.write({
                 'payment_method': vals['payment_method'],
             })
-        if 'c_wage_type' in vals:
+        if 'wage_type' in vals:
             employee.write({
                 'c_wage_type': vals['wage_type'],
+            })
+        if 'converted_wage_type' in vals:
+            employee.write({
+                'converted_wage_type': vals['converted_wage_type'],
             })
         if 'currency_id' in vals:
             employee.write({

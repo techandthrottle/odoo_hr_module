@@ -76,6 +76,16 @@ class HRChinaPayroll(models.Model):
 
     payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id', string='Benefits')
     payslip_deductions = fields.One2many('hr_china.payslip.deductions', 'payslip_id', string='Deductions')
+
+    @api.multi
+    def _get_active_emp_contract(self):
+        for item in self:
+            active_contract = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
+                                                                             ('is_active', '=', True)], limit=1)
+            if active_contract:
+                item.active_contract = active_contract.id
+
+    active_contract = fields.Many2one('hr_china.employee_contract', compute=_get_active_emp_contract)
     # unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
 
     # @api.multi
@@ -157,7 +167,7 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id')
     def _get_emp_currency(self):
         for item in self:
-            item.currency_id = item.employee_id.currency_id.id
+            item.currency_id = item.active_contract.currency_id.id
 
     @api.multi
     def _get_holiday_work_hours(self):
@@ -176,20 +186,20 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id')
     def _get_overtime_pay(self):
         for item in self:
-            weekday_ot_pay = item.weekday_ot * item.employee_id.c_weekday_overtime_fee
-            weekend_ot_pay = item.weekend_ot * item.employee_id.c_weekend_overtime_fee
+            weekday_ot_pay = item.weekday_ot * item.active_contract.weekday_overtime_fee
+            weekend_ot_pay = item.weekend_ot * item.active_contract.weekends_fee
             item.overtime_pay = weekday_ot_pay + weekend_ot_pay
 
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
         for item in self:
-            regular_wh_rate = item.employee_id.c_hourly_rate * item.actual_work_hours
+            regular_wh_rate = item.active_contract.hourly_rate * item.actual_work_hours
             item.total_hourly_pay = regular_wh_rate
 
     @api.onchange('employee_id')
     def _get_basic_pay(self):
         for item in self:
-            mf = item.employee_id.c_monthly_fee
+            mf = item.active_contract.monthly_fee
             wd = item.worked_days if item.worked_days else 1
             dim = item.regular_days if item.regular_days else 1
             item.basic_pay = (mf / dim) * wd
@@ -203,7 +213,7 @@ class HRChinaPayroll(models.Model):
             hol_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.start_date),
                                                             ('end_date', '<=', item.end_date)])
             emp = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
-            emp_hol_rate = emp.c_holiday_fee
+            emp_hol_rate = item.active_contract.holiday_fee
 
             for att in times:
                 for ls in hol_list:
@@ -214,7 +224,7 @@ class HRChinaPayroll(models.Model):
     @api.onchange('employee_id')
     def _get_weekend_pay(self):
         for item in self:
-            wk_pay = item.employee_id.c_weekends_fee if item.employee_id.c_weekends_fee else 0
+            wk_pay = item.active_contract.weekends_fee if item.active_contract.weekends_fee else 0
             item.weekend_pay = wk_pay * item.weekend_wh
 
     @api.onchange('employee_id', 'total_benefits')
