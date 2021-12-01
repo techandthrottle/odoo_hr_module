@@ -372,7 +372,7 @@ class HREmployee(models.Model):
     @api.multi
     def _get_contract_count(self):
         for item in self:
-            contract_count = self.env['hr_china.contract'].search([('employee_id', '=', item.id)])
+            contract_count = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.id)])
             item.contract_count = len(contract_count)
 
     @api.multi
@@ -735,7 +735,7 @@ class ZuluHREmployeeContract(models.Model):
                 else:
                     item.enable_allowed_leave = False
 
-    is_active = fields.Boolean('Active', default=True)
+    is_active = fields.Boolean(string='Active', default=True)
     converted_wage_type = fields.Char()
     allowed_leave = fields.Integer('Allowed Leave')
     enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
@@ -773,6 +773,9 @@ class ZuluHREmployeeContract(models.Model):
                 'break_hours': working_line.break_hours,
             }
             working_time_lines.append((0, 0, vals))
+        if len(working_time_lines) > 0:
+            for oldtime in self.employee_id.employee_working_time:
+                oldtime.unlink()
 
         benefits_line = []
         for benefit_line in self.benefits_id:
@@ -783,6 +786,9 @@ class ZuluHREmployeeContract(models.Model):
                 'amount': benefit_line.amount,
             }
             benefits_line.append((0, 0, vals))
+        if len(benefits_line) > 0:
+            for oldbenefit in self.employee_id.employee_benefit:
+                oldbenefit.unlink()
 
         deductions_lines = []
         for deduction_line in self.deductions_id:
@@ -793,6 +799,9 @@ class ZuluHREmployeeContract(models.Model):
                 'amount': deduction_line.amount,
             }
             deductions_lines.append((0, 0, vals))
+        if len(deductions_lines) > 0:
+            for olddeduction in self.employee_id.employee_deduction:
+                olddeduction.unlink()
 
         self.employee_id.employee_benefit = benefits_line
         self.employee_id.employee_deduction = deductions_lines
