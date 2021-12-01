@@ -307,7 +307,7 @@ class HRChinaPayroll(models.Model):
             self.worked_days = len(times)
             self.overtime_hours = ot_hours
             self.actual_work_hours = total_wh
-            self.total_work_hours = total_wh
+            self.total_work_hours = total_wh - ot_hours
             self.weekday_ot = weekday_ot
             self.weekend = weekend_count
             self.weekend_wh = weekend_wh
