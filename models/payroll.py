@@ -192,9 +192,8 @@ class HRChinaPayroll(models.Model):
     def _get_overtime_pay(self):
         for item in self:
             if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
-                weekday_ot_pay = item.weekday_ot * item.active_contract.weekday_overtime_fee
-                weekend_ot_pay = item.weekend_ot * item.active_contract.weekends_fee
-                item.overtime_pay = weekday_ot_pay + weekend_ot_pay
+                ot_pay = item.overtime_hours * item.active_contract.weekday_overtime_fee
+                item.overtime_pay = ot_pay
 
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
@@ -293,6 +292,7 @@ class HRChinaPayroll(models.Model):
             total_wh = False
             holiday_wh = False
             for rec in times:
+                ot_hours = ot_hours + rec.overtime_hours
                 for wtime in wt:
                     if rec.day == wtime.dayofweek:
                         if wtime.day_type == 'weekend':
@@ -300,15 +300,14 @@ class HRChinaPayroll(models.Model):
                             weekend_wh = weekend_wh + rec.work_hours
                         else:
                             total_wh = total_wh + rec.work_hours
-                            ot_hours = ot_hours + rec.overtime_hours
                             weekday_ot = weekday_ot + rec.weekday_ot
 
                 holiday_wh = holiday_wh + rec.holiday_work_hours
 
             self.worked_days = len(times)
             self.overtime_hours = ot_hours
-            self.actual_work_hours = total_wh
-            self.total_work_hours = total_wh - ot_hours
+            self.actual_work_hours = total_wh - ot_hours
+            self.total_work_hours = total_wh
             self.weekday_ot = weekday_ot
             self.weekend = weekend_count
             self.weekend_wh = weekend_wh
