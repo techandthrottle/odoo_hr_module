@@ -82,9 +82,10 @@ class HRChinaPayroll(models.Model):
         for item in self:
             # active_contract = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
             #                                                                  ('is_active', '=', True)], limit=1)
+
             active_contract = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
-                                                                             ('start_date', '>=', item.start_date),
-                                                                             ('end_date', '<=', item.end_date)])
+                                                                             ('start_date', '<=', item.start_date),
+                                                                             ('end_date', '>=', item.end_date)])
             if active_contract:
                 item.active_contract = active_contract.id
 
