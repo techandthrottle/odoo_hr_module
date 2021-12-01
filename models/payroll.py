@@ -80,8 +80,11 @@ class HRChinaPayroll(models.Model):
     @api.multi
     def _get_active_emp_contract(self):
         for item in self:
+            # active_contract = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
+            #                                                                  ('is_active', '=', True)], limit=1)
             active_contract = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
-                                                                             ('is_active', '=', True)], limit=1)
+                                                                             ('start_date', '>=', item.start_date),
+                                                                             ('end_date', '<=', item.end_date)])
             if active_contract:
                 item.active_contract = active_contract.id
 
@@ -276,39 +279,40 @@ class HRChinaPayroll(models.Model):
     @api.multi
     def action_update_payroll(self):
         self.ensure_one()
-        times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.timesheet_id.id), '|',
-                                                             ('check_in_am', '!=', False),
-                                                             ('check_in_pm', '!=', False)])
-        wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
-        ot_hours = False
-        hol_ot_hours = False
-        weekday_ot = False
-        weekend_wh = False
-        weekend_count = False
-        total_wh = False
-        holiday_wh = False
-        for rec in times:
-            for wtime in wt:
-                if rec.day == wtime.dayofweek:
-                    if wtime.day_type == 'weekend':
-                        weekend_count = weekend_count + 1
-                        weekend_wh = weekend_wh + rec.work_hours
-                    else:
-                        total_wh = total_wh + rec.work_hours
-                        ot_hours = ot_hours + rec.overtime_hours
-                        weekday_ot = weekday_ot + rec.weekday_ot
+        if self.state == 'draft':
+            times = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', self.timesheet_id.id), '|',
+                                                                 ('check_in_am', '!=', False),
+                                                                 ('check_in_pm', '!=', False)])
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
+            ot_hours = False
+            hol_ot_hours = False
+            weekday_ot = False
+            weekend_wh = False
+            weekend_count = False
+            total_wh = False
+            holiday_wh = False
+            for rec in times:
+                for wtime in wt:
+                    if rec.day == wtime.dayofweek:
+                        if wtime.day_type == 'weekend':
+                            weekend_count = weekend_count + 1
+                            weekend_wh = weekend_wh + rec.work_hours
+                        else:
+                            total_wh = total_wh + rec.work_hours
+                            ot_hours = ot_hours + rec.overtime_hours
+                            weekday_ot = weekday_ot + rec.weekday_ot
 
-            holiday_wh = holiday_wh + rec.holiday_work_hours
+                holiday_wh = holiday_wh + rec.holiday_work_hours
 
-        self.worked_days = len(times)
-        self.overtime_hours = ot_hours
-        self.actual_work_hours = total_wh
-        self.total_work_hours = total_wh
-        self.weekday_ot = weekday_ot
-        self.weekend = weekend_count
-        self.weekend_wh = weekend_wh
-        if self.wage_type == 'hourly':
-            self.holiday = holiday_wh
+            self.worked_days = len(times)
+            self.overtime_hours = ot_hours
+            self.actual_work_hours = total_wh
+            self.total_work_hours = total_wh
+            self.weekday_ot = weekday_ot
+            self.weekend = weekend_count
+            self.weekend_wh = weekend_wh
+            if self.wage_type == 'hourly':
+                self.holiday = holiday_wh
 
 
 class HRChinaPayslipBenefits(models.Model):
