@@ -265,7 +265,7 @@ class HREmployee(models.Model):
     end_date = fields.Datetime('End Date')
 
     contract_name = fields.Char()
-    c_wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type', required=True)
+    c_wage_type = fields.Many2one('hr_china.wage_type', string='Wage Type')
     c_monthly_fee = fields.Float(string='Monthly Fee')
     c_weekday_daily_fee = fields.Float(string='Weekly Daily Fee')
     c_weekday_overtime_fee = fields.Float(string='Weekday Overtime Fee')
@@ -721,7 +721,8 @@ class ZuluHREmployeeContract(models.Model):
     @api.multi
     def check_contract_status(self):
         for item in self:
-            contracts = self.env['hr_china.contract'].search([('employee_id', '=', item.id)], order='id asc', limit=1)
+            contracts = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.id),
+                                                                       ('is_active', '=', True)], limit=1)
             if contracts:
                 start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
                 now = datetime.today()
