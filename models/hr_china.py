@@ -280,7 +280,7 @@ class HREmployee(models.Model):
     c_weekend_overtime_fee = fields.Float(string='Weekend Overtime Fee')
 
     job_new_id = fields.Many2one('hr_china.job_titles', string='Job Title')
-    currency_id = fields.Many2one('res.currency', string='Currency', default=_get_currency_default)
+    currency_id = fields.Many2one('res.currency', string='Currency')
     payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
 
     new_attendance_ids = fields.One2many('hr_china.attendance', 'employee_id', help='List of Attendances for the Employee')
@@ -887,23 +887,35 @@ class ZuluHREmployeeContract(models.Model):
             self.dayoff_deduction = False
             self.other_info = False
 
-    # @api.multi
-    # def write(self, vals):
-    #     ret_val = super(ZuluHREmployeeContract, self).write(vals)
-    #     pprint("############################################")
-    #     pprint(vals)
-    #     if 'employee_id' in vals:
-    #         employee = self.env['hr.employee'].browse(int(vals['employee_id']))
-    #         employee.write({
-    #             'contract_template_id': vals['contract_template_id'],
-    #             'c_wage_type': vals['wage_type'],
-    #             'currency_id': vals['currency_id'],
-    #             'payment_method': vals['payment_method'],
-    #             'start_date': vals['start_date'],
-    #             'end_date': vals['end_date']
-    #         })
-    #
-    #     return ret_val
+    @api.multi
+    def write(self, vals):
+        ret_val = super(ZuluHREmployeeContract, self).write(vals)
+        employee = self.env['hr.employee'].browse(int(self.employee_id.id))
+        if 'payment_method' in vals:
+            employee.write({
+                'payment_method': vals['payment_method'],
+            })
+        if 'c_wage_type' in vals:
+            employee.write({
+                'c_wage_type': vals['wage_type'],
+            })
+        if 'currency_id' in vals:
+            employee.write({
+                'currency_id': vals['currency_id'],
+            })
+        if 'contract_template_id' in vals:
+            employee.write({
+                'contract_template_id': vals['contract_template_id'],
+            })
+        if 'start_date' in vals:
+            employee.write({
+                'start_date': vals['start_date'],
+            })
+        if 'end_date' in vals:
+            employee.write({
+                'end_date': vals['end_date']
+            })
+        return ret_val
 
 
 class HRChinaContractBenefits(models.Model):
