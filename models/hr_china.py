@@ -445,82 +445,82 @@ class HREmployee(models.Model):
     allowed_leave = fields.Integer('Allowed Leave')
     enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
 
-    @api.onchange('contract_template_id')
-    def contract_templ_change(self):
-        templ_contract = self.contract_template_id
-        working_time_lines = []
-        for working_line in self.contract_template_id.working_time:
-            vals = {
-                'employee_id': self.id,
-                'name': working_line.name,
-                'day_type': working_line.day_type,
-                'dayofweek': working_line.dayofweek,
-                'date_from': working_line.date_from,
-                'date_to': working_line.date_to,
-                'hour_from': working_line.hour_from,
-                'hour_to': working_line.hour_to,
-                'break_hours': working_line.break_hours,
-            }
-            working_time_lines.append((0, 0, vals))
-
-        benefits_lines = []
-        for benefit_line in self.contract_template_id.benefits_id:
-            vals = {
-                'employee_id': self.id,
-                'benefits_id': benefit_line.id,
-                'benefit_type': benefit_line.benefit_type,
-                'amount': benefit_line.amount,
-            }
-            benefits_lines.append((0, 0, vals))
-
-        deductions_lines = []
-        for deduction_line in self.contract_template_id.deductions_id:
-            vals = {
-                'employee_id': self.id,
-                'deductions_id': deduction_line.id,
-                'deduction_type': deduction_line.deduction_type,
-                'amount': deduction_line.amount,
-            }
-            deductions_lines.append((0, 0, vals))
-
-        self.employee_benefit = benefits_lines
-        self.employee_deduction = deductions_lines
-        self.employee_working_time = working_time_lines
-
-        if templ_contract:
-            self.contract_name = self.name + " - " + templ_contract.name
-            self.currency_id = templ_contract.currency_id
-            self.c_wage_type = templ_contract.wage_type.id
-            self.c_monthly_fee = templ_contract.monthly_fee
-            self.c_hourly_rate = templ_contract.hourly_rate
-            self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
-            self.c_weekday_overtime_fee = templ_contract.weekday_overtime_fee
-            self.c_weekends_fee = templ_contract.weekends_fee
-            self.c_holiday_fee = templ_contract.holiday_fee
-            self.c_dayoff_deduction = templ_contract.dayoff_deduction
-            self.c_other_info = templ_contract.other_info
-            self.c_working_time = templ_contract.working_time
-            self.c_benefits_id = templ_contract.benefits_id
-            self.c_deductions_id = templ_contract.deductions_id
-            self.c_weekend_overtime_fee = templ_contract.weekend_overtime_fee
-        else:
-            self.contract_name = False
-            self.currency_id = False
-            self.start_date = False
-            self.end_date = False
-            self.c_wage_type = False
-            self.c_monthly_fee = False
-            self.c_hourly_rate = False
-            self.c_weekday_daily_fee = False
-            self.c_weekday_overtime_fee = False
-            self.c_weekends_fee = False
-            self.c_holiday_fee = False
-            self.c_dayoff_deduction = False
-            self.c_other_info = False
-            self.c_working_time = False
-            self.c_benefits_id = False
-            self.c_deductions_id = False
-            self.c_weekend_overtime_fee = False
+    # @api.onchange('contract_template_id')
+    # def contract_templ_change(self):
+    #     templ_contract = self.contract_template_id
+    #     working_time_lines = []
+    #     for working_line in self.contract_template_id.working_time:
+    #         vals = {
+    #             'employee_id': self.id,
+    #             'name': working_line.name,
+    #             'day_type': working_line.day_type,
+    #             'dayofweek': working_line.dayofweek,
+    #             'date_from': working_line.date_from,
+    #             'date_to': working_line.date_to,
+    #             'hour_from': working_line.hour_from,
+    #             'hour_to': working_line.hour_to,
+    #             'break_hours': working_line.break_hours,
+    #         }
+    #         working_time_lines.append((0, 0, vals))
+    #
+    #     benefits_lines = []
+    #     for benefit_line in self.contract_template_id.benefits_id:
+    #         vals = {
+    #             'employee_id': self.id,
+    #             'benefits_id': benefit_line.id,
+    #             'benefit_type': benefit_line.benefit_type,
+    #             'amount': benefit_line.amount,
+    #         }
+    #         benefits_lines.append((0, 0, vals))
+    #
+    #     deductions_lines = []
+    #     for deduction_line in self.contract_template_id.deductions_id:
+    #         vals = {
+    #             'employee_id': self.id,
+    #             'deductions_id': deduction_line.id,
+    #             'deduction_type': deduction_line.deduction_type,
+    #             'amount': deduction_line.amount,
+    #         }
+    #         deductions_lines.append((0, 0, vals))
+    #
+    #     self.employee_benefit = benefits_lines
+    #     self.employee_deduction = deductions_lines
+    #     self.employee_working_time = working_time_lines
+    #
+    #     if templ_contract:
+    #         self.contract_name = self.name + " - " + templ_contract.name
+    #         self.currency_id = templ_contract.currency_id
+    #         self.c_wage_type = templ_contract.wage_type.id
+    #         self.c_monthly_fee = templ_contract.monthly_fee
+    #         self.c_hourly_rate = templ_contract.hourly_rate
+    #         self.c_weekday_daily_fee = templ_contract.weekday_daily_fee
+    #         self.c_weekday_overtime_fee = templ_contract.weekday_overtime_fee
+    #         self.c_weekends_fee = templ_contract.weekends_fee
+    #         self.c_holiday_fee = templ_contract.holiday_fee
+    #         self.c_dayoff_deduction = templ_contract.dayoff_deduction
+    #         self.c_other_info = templ_contract.other_info
+    #         self.c_working_time = templ_contract.working_time
+    #         self.c_benefits_id = templ_contract.benefits_id
+    #         self.c_deductions_id = templ_contract.deductions_id
+    #         self.c_weekend_overtime_fee = templ_contract.weekend_overtime_fee
+    #     else:
+    #         self.contract_name = False
+    #         self.currency_id = False
+    #         self.start_date = False
+    #         self.end_date = False
+    #         self.c_wage_type = False
+    #         self.c_monthly_fee = False
+    #         self.c_hourly_rate = False
+    #         self.c_weekday_daily_fee = False
+    #         self.c_weekday_overtime_fee = False
+    #         self.c_weekends_fee = False
+    #         self.c_holiday_fee = False
+    #         self.c_dayoff_deduction = False
+    #         self.c_other_info = False
+    #         self.c_working_time = False
+    #         self.c_benefits_id = False
+    #         self.c_deductions_id = False
+    #         self.c_weekend_overtime_fee = False
 
     @api.multi
     def write(self, vals):
