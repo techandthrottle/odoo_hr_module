@@ -553,10 +553,11 @@ class HREmployee(models.Model):
                     self.all_contracts = [[4, created_contract.id]]
 
                     working_time_lines = []
-                    contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', self.id), ('is_active', '=', True)])
+                    contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', self.id),
+                                                                                 ('is_active', '=', True)])
                     for working_line in contract_wt.working_time:
                         vals = {
-                            'contract_id': created_contract.id,
+                            'contract_id': contract_wt.id,
                             'name': working_line.name,
                             'day_type': working_line.day_type,
                             'dayofweek': working_line.dayofweek,
@@ -577,7 +578,7 @@ class HREmployee(models.Model):
                         [('employee_id', '=', self.id), ('is_active', '=', True)])
                     for benefit_line in contract_benefits.benefits_id:
                         vals = {
-                            'contract_id': created_contract.id,
+                            'contract_id': benefit_line.id,
                             'benefits_id': benefit_line.benefits_id.id,
                             'benefit_type': benefit_line.benefit_type,
                             'amount': benefit_line.amount,
@@ -593,7 +594,7 @@ class HREmployee(models.Model):
                         [('employee_id', '=', self.id), ('is_active', '=', True)])
                     for deduction_line in contract_deductions.deductions_id:
                         vals = {
-                            'contract_id': created_contract.id,
+                            'contract_id': contract_deductions.id,
                             'deductions_id': deduction_line.deductions_id.id,
                             'deduction_type': deduction_line.deduction_type,
                             'amount': deduction_line.amount,
