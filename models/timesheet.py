@@ -169,18 +169,27 @@ class HRTimesheet(models.Model):
             hol_weekday_ot = 0
             hol_weekend_ot = 0
             for overtime in ot:
-                for hol in holidays:
-                    if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
-                        if overtime.day == '6':
-                            hol_weekend_ot = hol_weekend_ot + overtime.overtime_hours
-                        else:
-                            hol_weekday_ot = hol_weekday_ot + overtime.overtime_hours
+                # for hol in holidays:
+                if overtime.day == '6':
+                    weekend_ot = weekend_ot + overtime.overtime_hours
+                    # break
+                else:
+                    weekday_ot = weekday_ot + overtime.overtime_hours
+                    # break
 
-                    else:
-                        if overtime.day == '6':
-                            weekend_ot = weekend_ot + overtime.overtime_hours
-                        else:
-                            weekday_ot = weekday_ot + overtime.overtime_hours
+                    # if overtime.date >= hol.start_date and overtime.date <= hol.end_date:
+                    #     if overtime.day == '6':
+                    #         hol_weekend_ot = hol_weekend_ot + overtime.overtime_hours
+                    #     else:
+                    #         hol_weekday_ot = hol_weekday_ot + overtime.overtime_hours
+                    #
+                    # else:
+                    #     if overtime.day == '6':
+                    #         weekend_ot = weekend_ot + overtime.overtime_hours
+                    #         # break
+                    #     else:
+                    #         weekday_ot = weekday_ot + overtime.overtime_hours
+                    #         # break
 
             hol_ot_hours = hol_weekday_ot + hol_weekend_ot
             ot_hours = weekday_ot + weekend_ot
