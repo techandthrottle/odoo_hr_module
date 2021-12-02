@@ -382,10 +382,11 @@ class HRChinaTrans(models.Model):
 
             item.weekday_ot = weekday_ot
             item.weekend_ot = weekend_ot
-            if ot_hours > 0:
-                item.overtime_hours = ot_hours
             if item.work_hours == ot_hours:
                 item.work_hours = 0
+            if ot_hours > 0:
+                item.overtime_hours = ot_hours
+
 
     @api.multi
     def _get_holiday_wh(self):
