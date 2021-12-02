@@ -192,7 +192,8 @@ class HRTimesheet(models.Model):
             if total < 1:
                 item.overtime_hours = total * (-1)
             else:
-                item.overtime_hours = total
+                # item.overtime_hours = total
+                item.overtime_hours = ot_hours
 
     @api.onchange('employee_id')
     def _get_work_time(self):
