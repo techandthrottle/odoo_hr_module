@@ -191,6 +191,7 @@ class HRTimesheet(models.Model):
                     #         weekday_ot = weekday_ot + overtime.overtime_hours
                     #         # break
 
+
             hol_ot_hours = hol_weekday_ot + hol_weekend_ot
             ot_hours = weekday_ot + weekend_ot
             item.weekday_ot_hours = weekday_ot - hol_weekday_ot
