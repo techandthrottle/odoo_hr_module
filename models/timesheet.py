@@ -179,10 +179,8 @@ class HRTimesheet(models.Model):
                     else:
                         if overtime.day == '6':
                             weekend_ot = weekend_ot + overtime.overtime_hours
-                            break
                         else:
                             weekday_ot = weekday_ot + overtime.overtime_hours
-                            break
 
             hol_ot_hours = hol_weekday_ot + hol_weekend_ot
             ot_hours = weekday_ot + weekend_ot
