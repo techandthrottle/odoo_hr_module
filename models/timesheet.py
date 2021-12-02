@@ -370,10 +370,8 @@ class HRChinaTrans(models.Model):
             working_time = self.env['hr_china.employee_working_time'].search([
                 ('employee_id', '=', item.timesheet.employee_id.id),
                 ('dayofweek', '=', item.day)
-            ], order='id DESC')
-            reg_hours = 0
-            if working_time:
-                reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
+            ], order='id DESC', limit=1)
+            reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
             weekend_ot = 0
             weekday_ot = 0
             if working_time.day_type == 'weekend':
