@@ -128,9 +128,11 @@
                         <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight" />
                         <button string="Approve" name="action_approve" states="draft,confirm" type="object" class="oe_highlight"/>
                         <button string="Set as Draft" name="action_draft" states="validate,confirm" type="object" />
-                        <button string="Update timesheet" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
+                        <button string="Update Timesheet" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
+                        <button string="Multiple Update" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
                     </header>
+
                     <sheet>
                         <div><h1><field name="name"/></h1></div>
                         <group style="width:50%%">
@@ -141,12 +143,13 @@
                         </group>
                         <group string="Total (days)" style="width:50%%">
                             <field name="contract_type" invisible="1"/>
+                            <field name="weekdays_day" attrs="{'invisible': [('contract_type', '=', 'hourly')]}" />
                             <field name="work_time" attrs="{'invisible': [('contract_type', '=', 'monthly')]}"/>
-                            <field name="regular_days" />
-                            <field name="overtime_hours" />
-                            <field name="weekend" />
-                            <field name="holiday" />
-                            <field name="leaves" />
+                            <field name="weekday_ot_hours" />
+                            <field name="weekends_day" attrs="{'invisible': [('contract_type', '=', 'monthly')]}" />
+                            <field name="weekend_ot_hours" />
+                            <field name="holiday" string="Holiday Work Time" attrs="{'invisible': [('contract_type', '=', 'monthly')]}"/>
+                            <field name="holiday_work_day" attrs="{'invisible': [('contract_type', '=', 'hourly')]}"/>
                         </group>
                         <field name="attendance_trans">
                             <tree create="false">
