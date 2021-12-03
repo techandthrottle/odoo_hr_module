@@ -41,19 +41,6 @@
                             name="show_emp_attendance"
                     />
                 </xpath>
-<!--                <xpath expr="//form/sheet/div/button[2]" position="replace">-->
-<!--                    <button type="object" groups="hr_china.group_hr_china_manager,hr_china.group_hr_china_timekeeper,hr_china.group_hr_china_coordinator"-->
-<!--                            class="oe_stat_button"-->
-<!--                            icon="fa-calendar" string="Attendance"-->
-<!--                            name="show_emp_attendance"-->
-<!--                    />-->
-<!--                </xpath>-->
-
-<!--                <xpath expr="//form/sheet/div/button[3]" position="before">-->
-<!--                    <button class="oe_stat_button" type="action" icon="fa-calendar">-->
-<!--                        <field string="Attendance" name="calendar_id" widget="statinfo"/>-->
-<!--                    </button>-->
-<!--                </xpath>-->
 
                 <xpath expr="//form/sheet/div/button[3]" position="replace">
                     <button class="oe_stat_button" name="%(act_zulu_hr_timesheet_tree)d"
@@ -135,29 +122,42 @@
                 </xpath>
 
                 <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">
-                    <page name="contract" string="CONTRACT">
-                        <group>
-                            <h1 style="width:50%%">
-                                <field name="contract_name" readonly="1"/>
-                            </h1>
-                        </group>
-                            <group string="General:">
-                                <field name="contract_template_id" readonly="1"/>
-                                <label for="c_wage_type" string="Wage Type:" />
-                                <div class="o_row">
-                                    <field name="c_wage_type" readonly="1"/>
-                                </div>
-                                <label for="currency_id" string="Currency:"/>
-                                <div class="o_row">
-                                    <field name="currency_id" readonly="1"/>
-                                </div>
-                                <label for="payment_method" string="Payment Method"/>
-                                <div class="o_row">
-                                    <field name="payment_method" readonly="1"/>
-                                </div>
-                                <field name="start_date" widget="date" readonly="1"/>
-                                <field name="end_date" widget="date" readonly="1"/>
-                            </group>
+                    <page name="contract" string="CONTRACTS">
+                        <field name="employee_contracts" mode="tree" >
+                            <tree>
+                                <field name="name" />
+                                <field name="start_date" widget="date" />
+                                <field name="end_date" widget="date" />
+                                <field name="is_active" string="Is Active" />
+                                <button
+                                    type="object"
+                                    string="View Contract"
+                                    name="show_contract"
+                                />
+                            </tree>
+                        </field>
+<!--                        <group>-->
+<!--                            <h1 style="width:50%%">-->
+<!--                                <field name="contract_name" readonly="1"/>-->
+<!--                            </h1>-->
+<!--                        </group>-->
+<!--                            <group string="General:">-->
+<!--                                <field name="contract_template_id" readonly="1"/>-->
+<!--                                <label for="c_wage_type" string="Wage Type:" />-->
+<!--                                <div class="o_row">-->
+<!--                                    <field name="c_wage_type" readonly="1"/>-->
+<!--                                </div>-->
+<!--                                <label for="currency_id" string="Currency:"/>-->
+<!--                                <div class="o_row">-->
+<!--                                    <field name="currency_id" readonly="1"/>-->
+<!--                                </div>-->
+<!--                                <label for="payment_method" string="Payment Method"/>-->
+<!--                                <div class="o_row">-->
+<!--                                    <field name="payment_method" readonly="1"/>-->
+<!--                                </div>-->
+<!--                                <field name="start_date" widget="date" readonly="1"/>-->
+<!--                                <field name="end_date" widget="date" readonly="1"/>-->
+<!--                            </group>-->
 <!--                            <group style="width:50%%" string=" ">-->
 <!--                                <field name="start_date" widget="date" required="1" readonly="1"/>-->
 <!--                                <field name="end_date" widget="date" required="1" readonly="1"/>-->
@@ -216,41 +216,41 @@
 <!--                        </group>-->
 
                         <notebook>
-                            <page string="WORKING TIME">
-                                <field name="employee_working_time" mode="tree">
-                                    <tree>
-                                        <field name="name" />
-                                        <field name="day_type"/>
-                                        <field name="dayofweek" />
-                                        <field name="hour_from" />
-                                        <field name="hour_to" />
-                                        <field name="break_hours" />
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="BENEFITS">
-                                <field name="employee_benefit" mode="tree">
-                                    <tree editable="bottom">
-                                        <field name="benefits_id"/>
-                                        <field name="benefit_type" />
-                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="DEDUCTIONS">
-                                <field name="employee_deduction" mode="tree">
-                                    <tree editable="bottom">
-                                        <field name="deductions_id"/>
-                                        <field name="deduction_type" />
-                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="OTHER INFORMATION">
-                                <group>
-                                    <field name="c_other_info" />
-                                </group>
-                            </page>
+<!--                            <page string="WORKING TIME">-->
+<!--                                <field name="employee_working_time" mode="tree">-->
+<!--                                    <tree>-->
+<!--                                        <field name="name" />-->
+<!--                                        <field name="day_type"/>-->
+<!--                                        <field name="dayofweek" />-->
+<!--                                        <field name="hour_from" />-->
+<!--                                        <field name="hour_to" />-->
+<!--                                        <field name="break_hours" />-->
+<!--                                    </tree>-->
+<!--                                </field>-->
+<!--                            </page>-->
+<!--                            <page string="BENEFITS">-->
+<!--                                <field name="employee_benefit" mode="tree">-->
+<!--                                    <tree editable="bottom">-->
+<!--                                        <field name="benefits_id"/>-->
+<!--                                        <field name="benefit_type" />-->
+<!--                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
+<!--                            </page>-->
+<!--                            <page string="DEDUCTIONS">-->
+<!--                                <field name="employee_deduction" mode="tree">-->
+<!--                                    <tree editable="bottom">-->
+<!--                                        <field name="deductions_id"/>-->
+<!--                                        <field name="deduction_type" />-->
+<!--                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency'}"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
+<!--                            </page>-->
+<!--                            <page string="OTHER INFORMATION">-->
+<!--                                <group>-->
+<!--                                    <field name="c_other_info" />-->
+<!--                                </group>-->
+<!--                            </page>-->
 <!--                            <page string="CONTRACTS OLD">-->
 <!--                                <field name="all_contracts" mode="tree" >-->
 <!--                                    <tree>-->
@@ -261,16 +261,9 @@
 <!--                                    </tree>-->
 <!--                                </field>-->
 <!--                            </page>-->
-                            <page string="CONTRACTS">
-                                <field name="employee_contracts" mode="tree" >
-                                    <tree>
-                                        <field name="name" />
-                                        <field name="start_date" widget="date" />
-                                        <field name="end_date" widget="date" />
-                                        <field name="is_active" string="Is Active" />
-                                    </tree>
-                                </field>
-                            </page>
+
+
+
                         </notebook>
                     </page>
 

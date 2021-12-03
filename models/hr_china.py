@@ -890,6 +890,18 @@ class ZuluHREmployeeContract(models.Model):
             self.dayoff_deduction = False
             self.other_info = False
 
+    def show_contract(self):
+        return {
+            'name': 'Contract',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'hr_china.employee_contract',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+            'res_id': self.id,
+        }
+
     @api.multi
     def write(self, vals):
         ret_val = super(ZuluHREmployeeContract, self).write(vals)
@@ -1062,7 +1074,6 @@ class HRChinaEmployeeWorkingTime(models.Model):
 class ZuluHRActiveContractBenefits(models.Model):
     _name = 'zulu_hr.active_contract_benefits'
 
-    @api.multi
     @api.multi
     def _get_currency_default(self):
         cny = self.env['res.currency'].search([('name', '=', 'CNY')])
