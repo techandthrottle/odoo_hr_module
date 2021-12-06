@@ -28,8 +28,6 @@ class HRChinaPayroll(models.Model):
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
     total_days = fields.Float(string='Total Days')
-    worked_days = fields.Float(string='Weekdays Worked Days')
-    weekend_worked_days = fields.Float(string='Weekend Worked Days')
     holiday_work_hours = fields.Float(string='Holiday Hours Worked', compute='_get_holiday_work_hours')
     total_work_hours = fields.Float(string='Hours Worked')
     actual_work_hours = fields.Float(string='Actual Work Hours', compute='_get_actual_wh')
@@ -63,10 +61,22 @@ class HRChinaPayroll(models.Model):
     holiday_pay = fields.Float(string='Holiday Pay', compute='_get_holiday_pay')
     weekend_pay = fields.Float(string='Weekend Pay', compute='_get_weekend_pay')
     regular_days = fields.Integer(string='Regular Days')
+
+    worked_days = fields.Float(string='Weekdays Worked Days')
     weekday_ot = fields.Float(string='Weekday Overtime Pay')
     weekend_ot = fields.Float(string='Weekend Overtime Pay')
     weekend_wh = fields.Float(string='Weekend Working Hours')
+    weekday_work_hours = fields.Float(string='Weekdays Work Hours', compute='_get_weekday_work_hour')
+    weekend_work_hours = fields.Float(string='Weekends Working Hours', compute='_get_weekend_work_hour')
+    weekend_worked_days = fields.Float(string='Weekends Worked Days', compute='_get_weekend_work_days')
+    weekday_worked_days = fields.Float(string='Weekdays Worked Days', compute='_get_weekday_work_days')
+    weekday_ot_hours = fields.Float(string='Weekdays Overtime Hours', compute='_get_weekday_ot')
+    weekend_ot_hours = fields.Float(string='Weekends Overtime Hours', compute='_get_weekend_ot')
 
+    weekday_hourly_pay = fields.Float(string='Weekday Hourly Pay', compute='_get_weekday_hourly_pay')
+    weekday_overtime_pay = fields.Float(string='Weekday Overtime Pay', compute='_get_weekday_overtime_pay')
+    weekend_hourly_pay = fields.Float(string='Weekends Hourly Pay', compute='_get_weekend_hourly_pay')
+    weekend_overtime_pay = fields.Float(string='Weekends Overtime Pay')
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_get_emp_currency')
     gross_pay = fields.Float(string='Gross Pay', compute='_get_gross_pay')
 
@@ -91,55 +101,6 @@ class HRChinaPayroll(models.Model):
                 item.active_contract = active_contract.id
 
     active_contract = fields.Many2one('hr_china.employee_contract', compute=_get_active_emp_contract)
-
-    # unpaid_leave_deduction = fields.Float(string='Unpaid Leave Deduction', compute='_unpaid_leave_deduction')
-
-    # @api.multi
-    # def _unpaid_leave_deduction(self):
-    #     self.ensure_one()
-    #
-    #     no_of_days = self.employee_id.c_wage_type.days
-    #     monthly_rate = self.employee_id.c_monthly_fee
-    #     leave_deduction = 0
-    #     leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', self.employee_id.id),
-    #                                                               ('paid_type', '=', 'unpaid'),
-    #                                                               ('start_date', '>=', self.start_date),
-    #                                                               ('end_date', '<=', self.end_date)])
-    #     for leave in leave_list:
-    #         if leave.half_day:
-    #             leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
-    #         else:
-    #             leave_deduction = leave_deduction + (monthly_rate / no_of_days)
-    #
-    #     vals = {
-    #         'payslip_id': self.id,
-    #         'amount': leave_deduction,
-    #         'currency': self.employee_id.currency_id.id
-    #     }
-    #     self.payslip_deductions = (0, 0, vals)
-    #
-    #     # for item in self:
-    #     #     no_of_days = item.employee_id.c_wage_type.days
-    #     #     monthly_rate = item.employee_id.c_monthly_fee
-    #     #     leave_deduction = 0
-    #     #     leave_list = self.env['zulu_leave.leave_request'].search([('employee_id', '=', item.employee_id.id),
-    #     #                                                               ('paid_type', '=', 'unpaid'),
-    #     #                                                               ('start_date', '>=', item.start_date),
-    #     #                                                               ('end_date', '<=', item.end_date)])
-    #     #     for leave in leave_list:
-    #     #         if leave.half_day:
-    #     #             leave_deduction = leave_deduction + ((monthly_rate / no_of_days) / 2)
-    #     #         else:
-    #     #             leave_deduction = leave_deduction + (monthly_rate / no_of_days)
-    #     #
-    #     #     vals = {
-    #     #         'payslip_id': item.id,
-    #     #         'amount': leave_deduction,
-    #     #         'currency': item.employee_id.currency_id.id
-    #     #     }
-    #     #     item.payslip_deductions = (0, 0, vals)
-    #
-    #         # item.unpaid_leave_deduction = leave_deduction
 
     @api.onchange('payslip_benefits')
     def sum_benefits(self):
@@ -185,6 +146,74 @@ class HRChinaPayroll(models.Model):
             item.holiday_work_hours = hol_wh
 
     @api.multi
+    def _get_weekday_work_days(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
+            weekday_counter = 0
+            for trans in timesheet_trans:
+                for wtime in wt:
+                    if trans.day == wtime.dayofweek:
+                        if wtime.day_type == 'weekday':
+                            weekday_counter = weekday_counter + 1
+
+            item.weekday_worked_days = weekday_counter
+
+    @api.multi
+    def _get_weekend_work_days(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
+            weekend_counter = 0
+            for trans in timesheet_trans:
+                for wtime in wt:
+                    if trans.day == wtime.dayofweek:
+                        if wtime.day_type == 'weekend':
+                            weekend_counter = weekend_counter + 1
+
+            item.weekend_worked_days = weekend_counter
+
+    @api.multi
+    def _get_weekday_work_hour(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            weekday_wh = 0
+            for trans in timesheet_trans:
+                weekday_wh = weekday_wh + trans.work_hours
+
+            item.weekday_work_hours = weekday_wh
+
+    @api.multi
+    def _get_weekend_work_hour(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            weekend_wh = 0
+            for trans in timesheet_trans:
+                weekend_wh = weekend_wh + trans.weekend_wh
+
+            item.weekend_work_hours = weekend_wh
+
+    @api.multi
+    def _get_weekday_ot(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            weekday_ot = 0
+            for trans in timesheet_trans:
+                weekday_ot = weekday_ot + trans.weekday_ot
+
+            item.weekday_ot_hours = weekday_ot
+
+    @api.multi
+    def _get_weekend_ot(self):
+        for item in self:
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            weekend_ot = 0
+            for trans in timesheet_trans:
+                weekend_ot = weekend_ot + trans.weekend_ot
+
+            item.weekend_ot_hours = weekend_ot
+
+    @api.multi
     def _get_actual_wh(self):
         for item in self:
             item.actual_work_hours = item.total_work_hours
@@ -195,6 +224,34 @@ class HRChinaPayroll(models.Model):
             if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
                 ot_pay = item.overtime_hours * item.active_contract.weekday_overtime_fee
                 item.overtime_pay = ot_pay
+
+    @api.onchange('employee_id')
+    def _get_weekday_hourly_pay(self):
+        for item in self:
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                weekday_hourly_pay = item.weekday_work_hours * item.active_contract.hourly_rate
+                item.weekday_hourly_pay = weekday_hourly_pay
+
+    @api.onchange('employee_id')
+    def _get_weekend_hourly_pay(self):
+        for item in self:
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                weekend_hourly_pay = item.weekend_work_hours * item.active_contract.weekends_fee
+                item.weekend_hourly_pay = weekend_hourly_pay
+
+    @api.onchange('employee_id')
+    def _get_weekday_overtime_pay(self):
+        for item in self:
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                weekday_overtime_pay = item.weekday_ot_hours * item.active_contract.weekday_overtime_fee
+                item.weekday_overtime_pay = weekday_overtime_pay
+
+    @api.onchange('employee_id')
+    def _get_weekday_overtime_pay(self):
+        for item in self:
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                weekend_overtime_pay = item.weekend_ot_hours * item.active_contract.weekends_fee
+                item.weekday_overtime_pay = weekend_overtime_pay
 
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
@@ -220,14 +277,17 @@ class HRChinaPayroll(models.Model):
                                                                  ('check_in_pm', '!=', False)])
             hol_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.start_date),
                                                             ('end_date', '<=', item.end_date)])
-            emp = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
-            emp_hol_rate = item.active_contract.holiday_fee
+            # emp = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
+            # emp_hol_rate = item.active_contract.holiday_fee
+            hol_rate = False
+            if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
+                hol_rate = item.active_contract.holiday_fee
 
             for att in times:
                 for ls in hol_list:
                     if att.date >= ls.start_date and att.date <= ls.end_date:
-                        if emp.converted_wage_type == 'hourly':
-                            item.holiday_pay = emp_hol_rate * att.holiday_work_hours
+                        if item.active_contract.converted_wage_type == 'hourly':
+                            item.holiday_pay = hol_rate * att.holiday_work_hours
 
     @api.onchange('employee_id')
     def _get_weekend_pay(self):
@@ -453,109 +513,6 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
     # wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')],
     #                              string='Type')
     wage_type = fields.Many2one('hr_china.wage_type', string='Type')
-
-    # def _update_timesheet_id(self):
-    #     self.ensure_one()
-    #     for item in self:
-    #         item.timesheet_id = item.my_id[0].timesheet_id.id
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_employee_id(self):
-    #     for item in self:
-    #         pprint("###########################")
-    #         pprint(item.my_id)
-    #         item.employee_id = item.my_id[0].employee_id.id
-    #         count = 0
-    #         if len(item.my_id) > 1:
-    #             if count > 0:
-    #                 for mi in item.my_id:
-    #                     new_temp = self.env['hr_china.payslip.create_temp'].create({})
-    #                     new_temp.my_id.create({})
-    #                     new_temp.close_dialog()
-    #             count += 1
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_department_id(self):
-    #     self.ensure_one()
-    #     for item in self:
-    #         item.department_id = item.my_id.department_id.id
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_job_title(self):
-    #     for item in self:
-    #         item.job_title_id = item.my_id.job_title_id.id
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_period_from(self):
-    #     for item in self:
-    #         item.period_from = item.my_id.period_from
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_period_to(self):
-    #     for item in self:
-    #         item.period_to = item.my_id.period_to
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_work_hours(self):
-    #     for item in self:
-    #         item.work_hours = item.my_id.work_hours
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_overtime_hours(self):
-    #     for item in self:
-    #         item.overtime_hours = item.my_id.overtime_hours
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_holiday(self):
-    #     for item in self:
-    #         item.holiday = item.my_id.holiday
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_weekend(self):
-    #     for item in self:
-    #         item.weekend = item.my_id.weekend
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_leave(self):
-    #     for item in self:
-    #         item.leave = item.my_id.leave
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_working_days(self):
-    #     for item in self:
-    #         item.working_days = item.my_id.working_days
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_regular_days(self):
-    #     for item in self:
-    #         item.regular_days = item.my_id.regular_days
-    #
-    # @api.onchange('timesheet_id')
-    # def _update_wage_type(self):
-    #     for item in self:
-    #         item.wage_type = item.my_id.wage_type
-
-    # @api.model
-    # def create(self, vals):
-    #     if 'my_id' in vals:
-    #         temp_ids = vals['my_id'][0][2]
-    #         for tid in temp_ids:
-    #             ttt = self.env['hr_china.payslip.ttt'].search([('id', '=', tid)])
-    #             trans_data = {
-    #                 'timesheet_id': ttt.timesheet_id.id,
-    #                 'employee_id': ttt.employee_id.id,
-    #                 'start_date': ttt.period_from,
-    #                 'end_date': ttt.period_to,
-    #                 'wage_type': ttt.wage_type,
-    #                 'worked_days': ttt.working_days,
-    #                 'work_hours': ttt.work_hours,
-    #                 'overtime_hours': ttt.overtime_hours,
-    #                 'weekend': ttt.weekend,
-    #                 'holiday': ttt.holiday,
-    #                 'leave': ttt.leave,
-    #                 'regular_days': ttt.regular_days
-    #             }
-    #             return super(HRChinaPayrollCreateTemp, self).create(trans_data)
 
     @api.multi
     def close_dialog(self):

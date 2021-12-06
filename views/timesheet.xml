@@ -129,10 +129,11 @@
                         <button string="Approve" name="action_approve" states="draft,confirm" type="object" class="oe_highlight"/>
                         <button string="Set as Draft" name="action_draft" states="validate,confirm" type="object" />
                         <button string="Update Timesheet" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
-                        <button string="Multiple Update" name="action_update_timesheet" states="draft,validate,confirm" type="object"/>
+                        <button string="Multiple Update" name="action_update_multiple" states="draft,validate,confirm" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
                     </header>
-
+                    <field name="contract_type" invisible="1"/>
+                    <field name="converted_wage_type" invisible="1"/>
                     <sheet>
                         <div><h1><field name="name"/></h1></div>
                         <group style="width:50%%">
@@ -142,14 +143,14 @@
                             <field name="period_to" widget="date"/>
                         </group>
                         <group string="Total (days)" style="width:50%%">
-                            <field name="contract_type" invisible="1"/>
-                            <field name="weekdays_day" attrs="{'invisible': [('contract_type', '=', 'hourly')]}" />
-                            <field name="work_time" attrs="{'invisible': [('contract_type', '=', 'monthly')]}"/>
+                            <field name="weekdays_day" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}" />
+                            <field name="work_time" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                             <field name="weekday_ot_hours" />
-                            <field name="weekends_day" attrs="{'invisible': [('contract_type', '=', 'monthly')]}" />
+                            <field name="weekends_day" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}" />
+                            <field name="work_time_weekend" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                             <field name="weekend_ot_hours" />
-                            <field name="holiday" string="Holiday Work Time" attrs="{'invisible': [('contract_type', '=', 'monthly')]}"/>
-                            <field name="holiday_work_day" attrs="{'invisible': [('contract_type', '=', 'hourly')]}"/>
+                            <field name="holiday" string="Holiday Work Time" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
+                            <field name="holiday_work_day" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
                         </group>
                         <field name="attendance_trans">
                             <tree create="false">
@@ -173,7 +174,7 @@
             <field name="name">view.hr_china_timesheet_trans.form</field>
             <field name="model">hr_china.timesheet.trans</field>
             <field name="arch" type="xml">
-                <form strig="Attendance">
+                <form string="Attendance">
                     <sheet>
                         <group>
                             <field name="timesheet" readonly="1"/>
@@ -189,6 +190,41 @@
                             <field name="check_out_am" widget="time" />
                             <field name="check_out_pm" widget="time" />
                         </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_china_timesheet_trans_multiple" model="ir.ui.view">
+            <field name="name">view.hr_china_timesheet_trans.multiple</field>
+            <field name="model">hr_china.timesshet_multiple</field>
+            <field name="arch" type="xml">
+                <form string="Multiple Attendance">
+                    <sheet>
+                        <field name="timesheet_id" context="default_timesheet_id" invisible="1"/>
+                        <group string="Use this form to update multiple days on the timesheet">
+                            <group style="width:50%%">
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                            <group style="width:50%%"></group>
+                            <group style="width:50%%">
+                                <field name="check_in_am" widget="float_time"/>
+                                <field name="check_in_pm" widget="float_time" />
+                            </group>
+                            <group>
+                                <field name="check_out_am" widget="float_time"/>
+                                <field name="check_out_pm" widget="float_time"/>
+                            </group>
+                            <group style="width:50%%" string="Apply a selection to the following work days">
+                            <field name="apply_weekday"/>
+                            <field name="apply_weekend"/>
+                        </group>
+                        </group>
+                        <footer>
+                            <button string="Update" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
                     </sheet>
                 </form>
             </field>
