@@ -22,8 +22,8 @@ class HRTimesheet(models.Model):
     attendance_id = fields.Many2many('hr_china.attendance', string='Attendance')
     regular_days = fields.Integer(string='Working Days', compute='_get_regular_days')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
-    weekday_ot_hours = fields.Float(string='Weekday Overtime Hours')
-    weekend_ot_hours = fields.Float(string='Weekend Overtime Hours')
+    weekday_ot_hours = fields.Float(string='Weekday Overtime Hours', compute='_get_weekday_ot_hours')
+    weekend_ot_hours = fields.Float(string='Weekend Overtime Hours', compute='_get_weekend_ot_hours')
     weekdays_day = fields.Float(string='Weekdays', compute='_get_weekdays')
     weekends_day = fields.Float(string='Weekends', compute='_get_weekends')
     weekend = fields.Float(string='Weekends', compute='_get_weekends')
@@ -193,6 +193,30 @@ class HRTimesheet(models.Model):
                 weekend_ot = weekend_ot + overtime.weekend_ot
 
             item.weekday_ot_hours = weekday_ot
+            item.weekend_ot_hours = weekend_ot
+
+    @api.onchange('employee_id')
+    def _get_weekday_ot_hours(self):
+        for item in self:
+            trans_ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+                                                                    ('date', '>=', item.period_from),
+                                                                    ('date', '<=', item.period_to)])
+            weekday_ot = 0
+            for overtime in trans_ot:
+                weekday_ot = weekday_ot + overtime.weekday_ot
+
+            item.weekday_ot_hours = weekday_ot
+
+    @api.onchange('employee_id')
+    def _get_weekend_ot_hours(self):
+        for item in self:
+            trans_ot = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.id),
+                                                                    ('date', '>=', item.period_from),
+                                                                    ('date', '<=', item.period_to)])
+            weekend_ot = 0
+            for overtime in trans_ot:
+                weekend_ot = weekend_ot + overtime.weekend_ot
+
             item.weekend_ot_hours = weekend_ot
 
     @api.onchange('employee_id')
@@ -441,7 +465,8 @@ class HRChinaTrans(models.Model):
     check_in_pm = fields.Datetime(string='Afternoon Check-In')
     check_out_pm = fields.Datetime(string='Afternoon Check-Out')
     break_hours = fields.Float(string='Break Hours', compute=compute_break_hours)
-    work_hours = fields.Float(string='Weekday Worked Hours', compute='_get_work_time')
+    work_hours = fields.Float(string='Worked Hours', compute='_get_work_time')
+    weekday_wh = fields.Float(string='Weekday Worked Hours', compute='_get_weekday_work_time')
     weekend_wh = fields.Float(string='Weekend Worked Hours', compute='_get_weekend_work_time')
     holiday_work_hours = fields.Float(string='Holiday Work Hours', compute='_get_holiday_wh')
     overtime_hours = fields.Float(string='Overtime Hours', compute='_get_overtime_work')
@@ -549,11 +574,39 @@ class HRChinaTrans(models.Model):
                 morning_wh = 0
             if not afternoon_wh:
                 afternoon_wh = 0
-            if working_time.day_type == 'weekday':
-                weekday_wt = morning_wh + afternoon_wh
+            weekday_wt = morning_wh + afternoon_wh
 
             # total_wh = afternoon_wh + morning_wh
             item.work_hours = weekday_wt
+
+    @api.onchange('check_in_am', 'check_out_am', 'check_in_pm', 'check_out_pm')
+    def _get_weekday_work_time(self):
+        for item in self:
+            morning_wh = False
+            afternoon_wh = False
+            if item.check_out_am and item.check_in_am:
+                morning_wh_delta = datetime.strptime(item.check_out_am, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                   datetime.strptime(item.check_in_am, DEFAULT_SERVER_DATETIME_FORMAT)
+                morning_wh = morning_wh_delta.total_seconds() / 3600.0
+            if item.check_out_pm and item.check_in_pm:
+                afternoon_wh_delta = datetime.strptime(item.check_out_pm, DEFAULT_SERVER_DATETIME_FORMAT) - \
+                                     datetime.strptime(item.check_in_pm, DEFAULT_SERVER_DATETIME_FORMAT)
+                afternoon_wh = afternoon_wh_delta.total_seconds() / 3600.0
+
+            working_time = self.env['hr_china.employee_working_time'].search([
+                ('employee_id', '=', item.timesheet.employee_id.id),
+                ('dayofweek', '=', item.day)
+            ], order='id DESC', limit=1)
+            reg_hours = (working_time.hour_to - working_time.hour_from) - working_time.break_hours
+            weekday_wt = 0
+            if not morning_wh:
+                morning_wh = 0
+            if not afternoon_wh:
+                afternoon_wh = 0
+            if working_time.day_type == 'weekday':
+                weekday_wt = morning_wh + afternoon_wh
+
+            item.weekday_wh = weekday_wt
 
     @api.onchange('check_in_am', 'check_out_am', 'check_in_pm', 'check_out_pm')
     def _get_weekend_work_time(self):

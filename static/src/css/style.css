@@ -11,7 +11,15 @@
 .new_ot_logo img {
     max-height: 150px;
     max-width: 150px;
-    margin-left: 5%;
+
+}
+
+.timesheet_logo img {
+    max-height: 100px;
+    width: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header_label {
