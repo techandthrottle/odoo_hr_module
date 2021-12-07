@@ -6,89 +6,186 @@
                 <div class="page" style="margin:0px;">
                     <link rel="stylesheet" href="/hr_china/static/src/css/style.css" />
                     <div>
-                        <table class="payslip_table">
-                            <tr style="border:1px solid black;">
-                                <td style="font-weight:600;padding:5px" t-att-colspan="2">
-                                    <div class="header_label">PAYSLIP</div>
-                                </td>
-                                <td style="padding:5px" t-att-colspan="2">
-                                    <div class="company_logo">
-                                        <t t-if="company_id">
-                                            <img t-attf-src="data:image/*;base64,{{company_id.logo}}" style="max-height:70px; max-width:150px;" />
-                                        </t>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr style="border:1px solid black;text-align:center;background-color:#585858;color:#ffffff;">
-                                <td t-att-colspan="4" style="padding:5px">
-                                    <div>
-                                        Payslip for
-                                        <t t-esc="datetime.datetime.strptime(payslip_data.start_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d,%Y')" /> -
-                                        <t t-esc="datetime.datetime.strptime(payslip_data.end_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d,%Y')" />
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black">
-                                <td class="t_label">Name: </td>
-                                <td><t t-esc="payslip_data.emp_name" /> </td>
-                                <td class="t_label">Work Days: </td>
-                                <td><t t-esc="payslip_data.worked_days" /> </td>
-                            </tr>
-                            <tr style="border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black">
-                                <td class="t_label">Position: </td>
-                                <td><t t-esc="payslip_data.emp_position" /> </td>
-                                <td class="t_label">Leave: </td>
-                                <td><t t-esc="payslip_data.leave" /> </td>
-                            </tr>
-                            <tr style="border-left:1px solid black;border-right:1px solid black;">
-                                <td class="t_label">Basic Pay </td>
-                                <td>
-                                    <span t-field="payslip_data.basic_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
-                                <td class="t_label">Deductions </td>
-                                <td>
-                                    <span t-field="payslip_data.total_deductions" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}' />
-                                </td>
-                            </tr>
-                            <tr style="border-left:1px solid black;border-right:1px solid black;">
-                                <td class="t_label">Overtime Pay </td>
-                                <td>
-                                    <span t-field="payslip_data.overtime_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
-                            </tr>
-                            <tr style="border-left:1px solid black;border-right:1px solid black;">
-                                <td class="t_label">Holiday Pay </td>
-                                <td>
-                                    <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}' />
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr style="border-left:1px solid black;border-right:1px solid black;">
-                                <td class="t_label">Benefits </td>
-                                <td>
-                                    <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr style="border:1px solid black;">
-                                <td class="t_label">Total Pay</td>
-                                <td>
-                                    <span t-field="payslip_data.gross_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
-                                <td class="t_label">Total Deductions:</td>
-                                <td>
-                                    <span class="slip_deductions" t-field="payslip_data.total_deductions" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
-                            </tr>
-                            <tr style="border:1px solid black;">
-                                <td t-att-colspan="3" style="font-weight:600;padding:5px">NET PAY</td>
-                                <td style="padding:5px">
-                                    <span t-field="payslip_data.net_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
-                                </td>
+                         <div class="timesheet_logo">
+                             <t t-if="company_id">
+                                <div t-field="company_id.logo" t-field-options='{"widget": "image"}'/>
+                            </t>
+                         </div>
+                        <table class="overtime_header">
+                            <tr>
                             </tr>
                         </table>
+                        <div class="ot_title_header">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="ot_header_label">PAYSLIP<t t-esc="cn_1"/></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table class="overtime_form_page table1 table-show timesheet_lis">
+                                <tr>
+                                    <td colspan="4" style="font-weight:600;">
+                                        <div style="text-align:center;">
+                                            Payslip for
+                                            <t t-esc="datetime.datetime.strptime(payslip_data.start_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y')"/> -
+                                            <t t-esc="datetime.datetime.strptime(payslip_data.end_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y')"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:11.3%;font-weight:600;">
+                                        <div>
+                                            <div>Employee - 员工姓名</div>
+                                        </div>
+                                    </td>
+                                    <td colspan="3" style="width:80%; font-weight:600;" class="empty_td">
+                                        <t t-esc="payslip_data.employee_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:11.3%;font-weight:600;">
+                                        <div>
+                                            <div>Department</div>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%; font-weight:600;" class="empty_td">
+                                        <t t-esc="payslip_data.employee_id.department_id.name"/>
+                                    </td>
+                                    <td style="width:15%; font-weight:600;">
+                                        <div>
+                                            <div>Position</div>
+                                        </div>
+                                    </td>
+                                    <td style="width:15%; font-weight:600;" class="empty_td">
+                                        <t t-esc="payslip_data.employee_id.job_new_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:600;">
+                                        Income
+                                    </td>
+                                    <td colspan="2" style="font-weight:600;">
+                                        Deductions
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <t t-if="payslip_data.wage_type == 'monthly'">
+                                            <table style="cellspacing='0';cellpadding='0';border:none;">
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Basic Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.basic_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </t>
+                                        <t t-if="payslip_data.wage_type == 'hourly'">
+                                            <table style="cellspacing='0';cellpadding='0';border:none;">
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Weekdays Hourly Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.weekday_hourly_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Weekdays Overtime Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.weekday_overtime_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Weekends Hourly Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.weekend_overtime_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Weekends Overtime Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.weekend_overtime_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border:none">
+                                                    <td style="border:none">
+                                                        Holiday Hourly Pay
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="payslip_data.holiday_pay" t-field-options='{"widget":"monetary","display_currency":"payslip_data.currency_id"}'/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </t>
+                                    </td>
+                                    <td colspan="2" rowspan="3">
+                                        <table style="border:none;">
+                                            <t t-foreach="payslip_data.payslip_deductions" t-as="pslip">
+                                                <tr style="border:none;">
+                                                    <td style="border:none;">
+                                                        <t t-esc="pslip.deductions_id.name" />
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="pslip.amount" t-field-options='{"widget": "monetary","display_currency":"payslip_data.currency_id"}' />
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:600;">
+                                        Benefits
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <table style="border:none;">
+                                            <t t-foreach="payslip_data.payslip_benefits" t-as="pslip">
+                                                <tr style="border:none;">
+                                                    <td style="border:none;">
+                                                        <t t-esc="pslip.benefits_id.name" />
+                                                    </td>
+                                                    <td style="border:none;text-align:right;">
+                                                        <span t-field="pslip.amount" t-field-options='{"widget": "monetary","display_currency":"payslip_data.currency_id"}' />
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:600;">
+                                        Gross Pay
+                                        <span style="float:right" t-field="payslip_data.gross_pay" t-field-options='{"widget": "monetary","display_currency":"payslip_data.currency_id"}' />
+                                    </td>
+                                    <td colspan="2" style="font-weight:600;">
+                                        Total Deductions
+                                        <span style="float:right" t-field="payslip_data.total_deductions" t-field-options='{"widget": "monetary","display_currency":"payslip_data.currency_id"}' />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="font-weight:600;">
+                                        Net Pay
+                                        <span style="float:right" t-field="payslip_data.net_pay" t-field-options='{"widget": "monetary","display_currency":"payslip_data.currency_id"}' />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
                     </div>
 
                     <div class="ot_after_table">
@@ -101,7 +198,6 @@
                             <div class="ot_sig">HR Signature - 人力资源签名</div>
                         </div>
                     </div>
-
                 </div>
             </t>
         </template>

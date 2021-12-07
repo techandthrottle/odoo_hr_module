@@ -150,22 +150,13 @@
                             <field name="weekend_ot_hours" readonly="1"/>
                             <field name="holiday" readonly="1"/>
                         </group>
-<!--                        <group style="width: 50%%">-->
-<!--                            <field name="worked_days" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" string="Working Days" readonly="1"/>-->
-<!--                            <field name="total_work_hours" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" string="Working Hours" readonly="1"/>-->
-<!--                            <field name="overtime_hours" readonly="1"/>-->
-<!--                            <field name="weekend_wh" readonly="1"/>-->
-<!--                            <field name="holiday" readonly="1"/>-->
-<!--                            <field name="leave" readonly="1"/>-->
-<!--&lt;!&ndash;                            <field name="unpaid_leave_deduction" invisible="1" />&ndash;&gt;-->
-<!--                        </group>-->
                         <group string="Income">
                             <field name="basic_pay" string="Basic Pay" attrs="{'invisible': [('wage_type', '=', 'hourly')]}" widget="monetary" readonly="1"/>
                             <field name="weekday_hourly_pay" string="Weekday Hourly Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1"/>
                             <field name="weekday_overtime_pay" string="Weekday Overtime Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1"/>
                             <field name="weekend_hourly_pay" string="Weekends Hourly Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1" />
                             <field name="weekend_overtime_pay" string="Weekends Overtime Pay" attrs="{'invisible': [('wage_type', '=', 'monthly')]}" widget="monetary" readonly="1" />
-                            <field name="holiday_pay" string="Holiday Pay" widget="monetary" readonly="1"/>
+                            <field name="holiday_pay" string="Holiday Pay" widget="monetary" readonly="1" attrs="{'invisible': [('wage_type', '=', 'monthly')]}"/>
                         </group>
                         <group>
                             <field name="payslip_benefits" nolabel="1" mode="tree">

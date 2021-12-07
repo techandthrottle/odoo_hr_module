@@ -4,6 +4,7 @@
         <template id="assets_backend" name="edit_hr_china btn assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/hr_china/static/src/js/edit_btn.js" />
+                <script type="text/javascript" src="/hr_china/static/src/js/info_widget_cn.js" />
             </xpath>
         </template>
 
@@ -11,14 +12,9 @@
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/hr_china/static/src/js/edit_btn.js" />
                 <script type="text/javascript" src="/hr_china/static/src/js/employee_kanban_handler.js" />
+                <script type="text/javascript" src="/hr_china/static/src/js/info_widget_cn.js" />
             </xpath>
         </template>
-
-<!--        <template id="assets_backend" name="edit_bi_analysis btn assets" inherit_id="web.assets_backend">-->
-<!--            <xpath expr="." position="inside">-->
-<!--                <script type="text/javascript" src="/hr_china/static/src/js/alter_create.js" />-->
-<!--            </xpath>-->
-<!--        </template>-->
 
         <record id="hr_china_action_my_attendances" model="ir.actions.act_window">
             <field name="name">Attendance</field>

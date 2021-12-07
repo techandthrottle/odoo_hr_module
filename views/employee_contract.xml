@@ -56,7 +56,7 @@
                                 <div class="o_row">
                                     <label for="monthly_fee" string="Monthly Fee"/>
                                     <span class="so_information_button">
-                                        <field name="monthly_fee_info" widget="show_info"/>
+                                        <field name="monthly_fee_info" widget="show_info_hr_cn" text="whatever" options="{'text': 'Monthly fixed rate'}"/>
                                     </span>
                                 </div>
                                 <field name="monthly_fee" nolabel="1" widget="monetary"/>
@@ -64,7 +64,7 @@
                                 <div class="o_row">
                                     <label for="dayoff_deduction" string="Days Off Deduction"/>
                                     <span class="so_information_button">
-                                        <field name="dayoff_deduction_info" widget="show_info"/>
+                                        <field name="dayoff_deduction_info" widget="show_info_hr_cn" options="{'text': 'Rate by day to be deducted if absent'}"/>
                                     </span>
                                 </div>
                                 <field name="dayoff_deduction" nolabel="1" widget="monetary"/>
@@ -76,7 +76,7 @@
                                 <div class="o_row">
                                     <label for="hourly_rate" string="Hourly Rate"/>
                                     <span class="so_information_button">
-                                        <field name="weekday_hourly_rate_info" widget="show_info"/>
+                                        <field name="weekday_hourly_rate_info" widget="show_info_hr_cn" options="{'text': 'Hourly rate weekdays'}"/>
                                     </span>
                                 </div>
                                 <field name="hourly_rate" nolabel="1" widget="monetary"/>
@@ -85,7 +85,7 @@
                                 <div class="o_row">
                                     <label for="weekday_daily_fee" string="Daily Fee"/>
                                     <span class="so_information_button">
-                                        <field name="weekday_daily_fee_info" widget="show_info"/>
+                                        <field name="weekday_daily_fee_info" widget="show_info_hr_cn" options="{'text': 'The daily rate of the employee (e.i, if hourly rate is 10 multiplied by 8 hours. Daily fee is 80.00)'}"/>
                                     </span>
                                 </div>
                                 <field name="weekday_daily_fee" nolabel="1" widget="monetary"/>
@@ -94,7 +94,7 @@
                                 <div class="o_row">
                                     <label for="weekday_overtime_fee" string="Overtime Fee"/>
                                     <span class="so_information_button">
-                                        <field name="weekday_ot_fee_info" widget="show_info"/>
+                                        <field name="weekday_ot_fee_info" widget="show_info_hr_cn" options="{'text': 'Overtime rate per hour on Regular Days (Monday - Friday)'}"/>
                                     </span>
                                 </div>
                                 <field name="weekday_overtime_fee" nolabel="1" widget="monetary"/>
@@ -105,7 +105,7 @@
                                 <div class="o_row">
                                     <label for="weekends_fee" string="Hourly Rate"/>
                                     <span class="so_information_button">
-                                        <field name="weekend_hourly_rate_info" widget="show_info"/>
+                                        <field name="weekend_hourly_rate_info" widget="show_info_hr_cn" options="{'text': 'Hourly rate of the employee during weekends'}"/>
                                     </span>
                                 </div>
                                 <field name="weekends_fee" nolabel="1" widget="monetary"/>
@@ -114,7 +114,7 @@
                                 <div class="o_row">
                                     <label for="weekends_daily_fee" string="Daily Fee"/>
                                     <span class="so_information_button">
-                                        <field name="weekend_daily_fee_info" widget="show_info"/>
+                                        <field name="weekend_daily_fee_info" widget="show_info_hr_cn" options="{'text': 'The daily rate of the employee during weekends. It will be equivalent to the hourly rate multiplied by the regular work hours'}"/>
                                     </span>
                                 </div>
                                 <field name="weekends_daily_fee" nolabel="1" widget="monetary"/>
@@ -125,7 +125,7 @@
                                 <div class="o_row">
                                     <label for="holiday_fee" string="Hourly Rate"/>
                                     <span class="so_information_button">
-                                        <field name="holiday_fee_info" widget="show_info"/>
+                                        <field name="holiday_fee_info" widget="show_info_hr_cn" options="{'text': 'Special rate is given during holidays'}"/>
                                     </span>
                                 </div>
                                 <field name="holiday_fee" nolabel="1" widget="monetary"/>
@@ -134,7 +134,7 @@
                                 <div class="o_row">
                                     <label for="holiday_daily_fee" string="Daily Fee"/>
                                     <span class="so_information_button">
-                                        <field name="holiday_daily_fee_info" widget="show_info"/>
+                                        <field name="holiday_daily_fee_info" widget="show_info_hr_cn" options="{'text': 'The total rate of an employee when they work on holiday'}"/>
                                     </span>
                                 </div>
                                 <field name="holiday_daily_fee" nolabel="1" widget="monetary"/>

@@ -439,12 +439,25 @@ class HRChinaTrans(models.Model):
         for attendance in self:
             attendance.day = str(datetime.strptime(attendance.date, '%Y-%m-%d %H:%M:%S').weekday())
 
+
+    # def get_default_date(self):
+    #     # for attendance in self:
+    #         # attendance.check_in_am = attendance.date
+    #         # attendance.check_out_am = attendance.date
+    #         # attendance.check_in_pm = attendance.date
+    #         # attendance.check_out_pm = attendance.date
+    #     return self.date
+
+    @api.depends('date')
     def get_default_date(self):
-        for attendance in self:
-            attendance.check_in_am = attendance.date
-            attendance.check_out_am = attendance.date
-            attendance.check_in_pm = attendance.date
-            attendance.check_out_pm = attendance.date
+        for item in self:
+            pprint("#####################################")
+            pprint(item.date)
+            if item.date:
+                item.check_in_am = item.date
+                item.check_out_am = item.date
+                item.check_in_pm = item.date
+                item.check_out_pm = item.date
 
     date = fields.Datetime(string='Date')
     hr_attendance = fields.Many2one('hr_china.attendance')
