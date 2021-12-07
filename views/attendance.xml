@@ -62,6 +62,7 @@
                             <field name="check_in_pm" />
                             <field name="check_out_pm" />
                         </group>
+                        <button name="put_date" type="object" string="Set Date" class="btn btn-primary"/>
                         <group>
                             <field name="break_hours" />
                             <field name="work_hours" />

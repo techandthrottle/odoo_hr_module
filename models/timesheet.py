@@ -1167,6 +1167,15 @@ class HRNewAttendance(models.Model):
         for item in self:
             item.name = item.employee_id.name
 
+    @api.multi
+    def put_date(self):
+        self.ensure_one()
+        if self.attendance_date:
+            self.check_in_am = self.attendance_date
+            self.check_out_am = self.attendance_date
+            self.check_in_pm = self.attendance_date
+            self.check_out_pm = self.attendance_date
+
     name = fields.Char('Name', compute=_set_default_name)
     attendance_date = fields.Datetime(string='Date', default=fields.Datetime.now, required=True, store=True)
     attendance_day = fields.Selection([
