@@ -76,7 +76,7 @@ class HRChinaPayroll(models.Model):
     weekday_hourly_pay = fields.Float(string='Weekday Hourly Pay', compute='_get_weekday_hourly_pay')
     weekday_overtime_pay = fields.Float(string='Weekday Overtime Pay', compute='_get_weekday_overtime_pay')
     weekend_hourly_pay = fields.Float(string='Weekends Hourly Pay', compute='_get_weekend_hourly_pay')
-    weekend_overtime_pay = fields.Float(string='Weekends Overtime Pay')
+    weekend_overtime_pay = fields.Float(string='Weekends Overtime Pay', compute='_get_weekend_overtime_pay')
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_get_emp_currency')
     gross_pay = fields.Float(string='Gross Pay', compute='_get_gross_pay')
 
@@ -247,11 +247,11 @@ class HRChinaPayroll(models.Model):
                 item.weekday_overtime_pay = weekday_overtime_pay
 
     @api.onchange('employee_id')
-    def _get_weekday_overtime_pay(self):
+    def _get_weekend_overtime_pay(self):
         for item in self:
             if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
                 weekend_overtime_pay = item.weekend_ot_hours * item.active_contract.weekends_fee
-                item.weekday_overtime_pay = weekend_overtime_pay
+                item.weekend_overtime_pay = weekend_overtime_pay
 
     @api.onchange('employee_id')
     def _get_hourly_pay(self):
@@ -533,7 +533,6 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
                     'holiday': timesheet.holiday,
                     'leave': timesheet.leave,
                     'regular_days': timesheet.regular_days,
-
                 }
                 payrolls = self.env['hr_china.payslip'].create(trans_data)
                 benefits_lines = []

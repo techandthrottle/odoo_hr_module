@@ -1240,17 +1240,3 @@ class HRChinaAttendance(models.Model):
                 'search_default_employee_id': self.id
             }
         }
-
-    # def show_emp_attendance(self):
-    #     return {
-    #         'name': 'Attendance',
-    #         'view_type': 'form',
-    #         'view_mode': 'tree',
-    #         'res_model': 'hr.attendance',
-    #         'view_id': False,
-    #         'type': 'ir.actions.act_window',
-    #         'target': 'self',
-    #         'context': {
-    #             'search_default_employee_id': self.id
-    #         }
-    #     }

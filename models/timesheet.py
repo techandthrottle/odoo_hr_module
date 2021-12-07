@@ -434,6 +434,15 @@ class HRChinaTrans(models.Model):
                                     datetime.strptime(attendance.check_out_am, DEFAULT_SERVER_DATETIME_FORMAT)
                 attendance.break_hours = break_hours_delta.total_seconds() / 3600.0
 
+    @api.multi
+    def put_date(self):
+        self.ensure_one()
+        if self.date:
+            self.check_in_am = self.date
+            self.check_out_am = self.date
+            self.check_in_pm = self.date
+            self.check_out_pm = self.date
+
     @api.depends('date')
     def get_current_day(self):
         for attendance in self:
@@ -1230,7 +1239,6 @@ class HRNewAttendance(models.Model):
 
     @api.depends('attendance_date')
     def _get_day(self):
-        # return datetime.now().weekday()
         for attendance in self:
             attendance.attendance_day = str(datetime.strptime(attendance.attendance_date, '%Y-%m-%d %H:%M:%S').weekday())
 

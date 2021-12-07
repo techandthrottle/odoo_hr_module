@@ -190,6 +190,7 @@
                             <field name="check_out_am" widget="time" />
                             <field name="check_out_pm" widget="time" />
                         </group>
+                        <button name="put_date" type="object" string="Set Date" class="btn btn-primary"/>
                     </sheet>
                 </form>
             </field>
