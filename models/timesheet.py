@@ -460,13 +460,15 @@ class HRChinaTrans(models.Model):
     @api.depends('date')
     def get_default_date(self):
         for item in self:
-            pprint("#####################################")
-            pprint(item.date)
             if item.date:
-                item.check_in_am = item.date
-                item.check_out_am = item.date
-                item.check_in_pm = item.date
-                item.check_out_pm = item.date
+                if not item.check_in_am:
+                    item.check_in_am = item.date
+                if not item.check_out_am:
+                    item.check_out_am = item.date
+                if not item.check_in_pm:
+                    item.check_in_pm = item.date
+                if not item.check_out_pm:
+                    item.check_out_pm = item.date
 
     date = fields.Datetime(string='Date')
     hr_attendance = fields.Many2one('hr_china.attendance')
@@ -1171,10 +1173,14 @@ class HRNewAttendance(models.Model):
     def put_date(self):
         self.ensure_one()
         if self.attendance_date:
-            self.check_in_am = self.attendance_date
-            self.check_out_am = self.attendance_date
-            self.check_in_pm = self.attendance_date
-            self.check_out_pm = self.attendance_date
+            if not self.check_in_am:
+                self.check_in_am = self.attendance_date
+            if not self.check_out_am:
+                self.check_out_am = self.attendance_date
+            if not self.check_in_pm:
+                self.check_in_pm = self.attendance_date
+            if not self.check_out_pm:
+                self.check_out_pm = self.attendance_date
 
     name = fields.Char('Name', compute=_set_default_name)
     attendance_date = fields.Datetime(string='Date', default=fields.Datetime.now, required=True, store=True)

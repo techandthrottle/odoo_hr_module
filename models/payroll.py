@@ -168,7 +168,7 @@ class HRChinaPayroll(models.Model):
             for trans in timesheet_trans:
                 for wtime in wt:
                     if trans.day == wtime.dayofweek:
-                        if wtime.day_type == 'weekend':
+                        if wtime.day_type != 'weekday':
                             weekend_counter = weekend_counter + 1
 
             item.weekend_worked_days = weekend_counter
