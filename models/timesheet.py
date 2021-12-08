@@ -192,7 +192,10 @@ class HRTimesheet(models.Model):
                                                                        ('start_date', '>=', item.period_from),
                                                                        ('end_date', '<=', item.period_to),
                                                                        ('state', '=', 'approved')])
-            item.leaves = len(leave_lists)
+            count = 0
+            for leave in leave_lists:
+                count = count + leave.total_days
+            item.leaves = count
 
     @api.onchange('employee_id')
     def _get_overtime_work(self):
