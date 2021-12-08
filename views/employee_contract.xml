@@ -49,8 +49,7 @@
                                 <field name="start_date" widget="date" required="1"/>
                                 <field name="end_date" widget="date" required="1"/>
                                 <field name="is_active"/>
-                                <field name="enable_allowed_leave" invisible="1"/>
-                                <field name="allowed_leave" attrs="{'invisible': [('enable_allowed_leave', '=', False)]}"/>
+                                <field name="allowed_leave"/>
                             </group>
                             <group attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}">
                                 <div class="o_row">
@@ -144,7 +143,7 @@
                         <notebook>
                             <page string="WORKING TIME">
                                 <field name="working_time" mode="tree">
-                                    <tree>
+                                    <tree editable="bottom">
                                         <field name="name" />
                                         <field name="day_type"/>
                                         <field name="dayofweek" />

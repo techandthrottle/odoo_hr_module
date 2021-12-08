@@ -576,8 +576,8 @@ class HRChinaTrans(models.Model):
             if not afternoon_wh:
                 afternoon_wh = 0
 
-            hol_list = self.env['hr_china.holiday'].search([('start_date', '>=', item.date),
-                                                            ('end_date', '<=', item.date)])
+            hol_list = self.env['hr_china.holiday'].search([('start_date', '<=', item.date),
+                                                            ('end_date', '>=', item.date)])
             total_wh = afternoon_wh + morning_wh
             if hol_list:
                 item.holiday_work_hours = total_wh

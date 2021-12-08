@@ -952,6 +952,8 @@ class ZuluHREmployeeContract(models.Model):
             self.holiday_fee = templ_contract.holiday_fee
             self.dayoff_deduction = templ_contract.dayoff_deduction
             self.other_info = templ_contract.other_info
+            self.weekends_daily_fee = templ_contract.weekends_daily_fee
+            self.holiday_daily_fee = templ_contract.holiday_daily_fee
 
         else:
             self.name = False
@@ -967,6 +969,8 @@ class ZuluHREmployeeContract(models.Model):
             self.holiday_fee = False
             self.dayoff_deduction = False
             self.other_info = False
+            self.weekends_daily_fee = False
+            self.holiday_daily_fee = False
 
     def show_contract(self):
         return {
