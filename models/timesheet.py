@@ -759,7 +759,6 @@ class HRChinaTimesheetMultiple(models.TransientModel):
                 ('employee_id', '=', self.timesheet_id.employee_id.id),
                 ('dayofweek', '=', trans.day)
             ], order='id DESC', limit=1)
-
             check_in_am_hour, check_in_am_minute = self.float_time_convert(self.check_in_am)
             check_out_am_hour, check_out_am_minute = self.float_time_convert(self.check_out_am)
             check_in_pm_hour, check_in_pm_minute = self.float_time_convert(self.check_in_pm)

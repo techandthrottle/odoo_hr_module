@@ -725,26 +725,9 @@ class ZuluHREmployeeContract(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency')
     payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
 
-    @api.multi
-    def check_contract_status(self):
-        for item in self:
-            contracts = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.employee_id.id),
-                                                                       ('is_active', '=', True)], limit=1)
-            if contracts:
-                start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
-                now = datetime.today()
-
-                years = relativedelta(now, start_date).years
-
-                if years > 0:
-                    item.enable_allowed_leave = True
-                else:
-                    item.enable_allowed_leave = False
-
     is_active = fields.Boolean(string='Active', default=True)
     converted_wage_type = fields.Char()
     allowed_leave = fields.Integer('Allowed Leave')
-    enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
 
     @api.multi
     def _get_wagetype_info(self):
