@@ -887,7 +887,7 @@ class ZuluHREmployeeContract(models.Model):
         working_time_lines = []
         for working_line in self.contract_template_id.working_time:
             vals = {
-                'employee_id': self.employee_id.id,
+                # 'employee_id': self.employee_id.id,
                 'name': working_line.name,
                 'day_type': working_line.day_type,
                 'dayofweek': working_line.dayofweek,
@@ -902,7 +902,7 @@ class ZuluHREmployeeContract(models.Model):
         benefits_lines = []
         for benefit_line in self.contract_template_id.benefits_id:
             vals = {
-                'employee_id': self.employee_id.id,
+                # 'employee_id': self.employee_id.id,
                 'benefits_id': benefit_line.id,
                 'benefit_type': benefit_line.benefit_type,
                 'amount': benefit_line.amount,
@@ -912,7 +912,7 @@ class ZuluHREmployeeContract(models.Model):
         deductions_lines = []
         for deduction_line in self.contract_template_id.deductions_id:
             vals = {
-                'employee_id': self.employee_id.id,
+                # 'employee_id': self.employee_id.id,
                 'deductions_id': deduction_line.id,
                 'deduction_type': deduction_line.deduction_type,
                 'amount': deduction_line.amount,
@@ -971,9 +971,6 @@ class ZuluHREmployeeContract(models.Model):
     def write(self, vals):
         ret_val = super(ZuluHREmployeeContract, self).write(vals)
         employee = self.env['hr.employee'].browse(int(self.employee_id.id))
-        pprint("#################################################")
-        pprint(self.employee_id)
-        pprint(employee)
         if 'payment_method' in vals:
             employee.write({
                 'payment_method': vals['payment_method'],
@@ -1163,6 +1160,11 @@ class ZuluHRActiveContractBenefits(models.Model):
     benefits_id = fields.Many2one('hr_china.benefits', string='Name')
     amount = fields.Float('Amount')
     currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
+
+    @api.model
+    def create(self, vals):
+        ret_val = super(ZuluHRActiveContractBenefits, self).create(vals)
+        return  ret_val
 
 
 class ZuluHRActiveContractDeductions(models.Model):
