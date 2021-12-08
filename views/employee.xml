@@ -116,6 +116,7 @@
                             <field name="gender"/>
                             <field name="marital"/>
                             <field name="children" />
+                            <field name="id" invisible="1"/>
                         </group>
 
                     </page>
@@ -123,8 +124,9 @@
 
                 <xpath expr="//form/sheet/notebook/page[@name='personal_information']" position="after">
                     <page name="contract" string="CONTRACTS">
-                        <field name="employee_contracts" mode="tree" >
+                        <field name="employee_contracts" mode="tree" context="{'active_id': active_id}">
                             <tree>
+                                <field name="employee_id" invisible="1"/>
                                 <field name="name" />
                                 <field name="start_date" widget="date" />
                                 <field name="end_date" widget="date" />

@@ -895,10 +895,12 @@ class ZuluHREmployeeContract(models.Model):
     @api.onchange('contract_template_id')
     def contract_templ_change(self):
         templ_contract = self.contract_template_id
+        context = self.env.context
         working_time_lines = []
         for working_line in self.contract_template_id.working_time:
+            employee_id = context.get('active_id') if 'active' in context and context.get('active_id') else False
             vals = {
-                'employee_id': self.employee_id.id,
+                'employee_id': employee_id,
                 'name': working_line.name,
                 'day_type': working_line.day_type,
                 'dayofweek': working_line.dayofweek,
@@ -913,7 +915,7 @@ class ZuluHREmployeeContract(models.Model):
         benefits_lines = []
         for benefit_line in self.contract_template_id.benefits_id:
             vals = {
-                'employee_id': self.employee_id.id,
+                'employee_id': employee_id,
                 'benefits_id': benefit_line.id,
                 'benefit_type': benefit_line.benefit_type,
                 'amount': benefit_line.amount,
@@ -923,7 +925,7 @@ class ZuluHREmployeeContract(models.Model):
         deductions_lines = []
         for deduction_line in self.contract_template_id.deductions_id:
             vals = {
-                'employee_id': self.employee_id.id,
+                'employee_id': employee_id,
                 'deductions_id': deduction_line.id,
                 'deduction_type': deduction_line.deduction_type,
                 'amount': deduction_line.amount,
