@@ -570,6 +570,7 @@ class HREmployee(models.Model):
                                 'hour_from': working_line.hour_from,
                                 'hour_to': working_line.hour_to,
                                 'break_hours': working_line.break_hours,
+                                'employee_id': self.id,
                             }
                             working_time_lines.append((0, 0, vals))
 
@@ -587,6 +588,7 @@ class HREmployee(models.Model):
                                 'benefits_id': benefit_line.benefits_id.id,
                                 'benefit_type': benefit_line.benefit_type,
                                 'amount': benefit_line.amount,
+                                'employee_id': self.id,
                             }
                             benefits_lines.append((0, 0, vals))
 
@@ -604,6 +606,7 @@ class HREmployee(models.Model):
                                 'deductions_id': deduction_line.deductions_id.id,
                                 'deduction_type': deduction_line.deduction_type,
                                 'amount': deduction_line.amount,
+                                'employee_id': self.id,
                             }
                             deductions_lines.append((0, 0, vals))
 
@@ -849,6 +852,7 @@ class ZuluHREmployeeContract(models.Model):
         benefits_line = []
         for benefit_line in self.benefits_id:
             vals = {
+
                 'employee_id': self.employee_id.id,
                 'benefits_id': benefit_line.benefits_id.id,
                 'benefit_type': benefit_line.benefit_type,
@@ -887,7 +891,7 @@ class ZuluHREmployeeContract(models.Model):
         working_time_lines = []
         for working_line in self.contract_template_id.working_time:
             vals = {
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'name': working_line.name,
                 'day_type': working_line.day_type,
                 'dayofweek': working_line.dayofweek,
@@ -902,7 +906,7 @@ class ZuluHREmployeeContract(models.Model):
         benefits_lines = []
         for benefit_line in self.contract_template_id.benefits_id:
             vals = {
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'benefits_id': benefit_line.id,
                 'benefit_type': benefit_line.benefit_type,
                 'amount': benefit_line.amount,
@@ -912,7 +916,7 @@ class ZuluHREmployeeContract(models.Model):
         deductions_lines = []
         for deduction_line in self.contract_template_id.deductions_id:
             vals = {
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'deductions_id': deduction_line.id,
                 'deduction_type': deduction_line.deduction_type,
                 'amount': deduction_line.amount,
