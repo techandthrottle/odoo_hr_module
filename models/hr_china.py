@@ -1208,6 +1208,16 @@ class ZuluHRActiveContractDeductions(models.Model):
     amount = fields.Float('Amount')
     currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
 
+    @api.model
+    def create(self, vals):
+        if 'employee_id' in vals and vals['employee_id']:
+            employee_exist = self.env['hr.employee'].search(
+                [('id', '=', vals['employee_id'])], limit=1)
+            if len(employee_exist) == 0:
+                vals['employee_id'] = False
+        ret_val = super(ZuluHRActiveContractDeductions, self).create(vals)
+        return ret_val
+
 
 class ZuluHRActiveContractWorkTime(models.Model):
     _name = 'zulu_hr.active_contract_work_time'
@@ -1230,6 +1240,16 @@ class ZuluHRActiveContractWorkTime(models.Model):
     hour_to = fields.Float(string='Work to', required=True)
     break_hours = fields.Integer('Break Hours')
     day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day", default='weekend')
+
+    @api.model
+    def create(self, vals):
+        if 'employee_id' in vals and vals['employee_id']:
+            employee_exist = self.env['hr.employee'].search(
+                [('id', '=', vals['employee_id'])], limit=1)
+            if len(employee_exist) == 0:
+                vals['employee_id'] = False
+        ret_val = super(ZuluHRActiveContractWorkTime, self).create(vals)
+        return ret_val
 
 
 class HRChinaAttendance(models.Model):
