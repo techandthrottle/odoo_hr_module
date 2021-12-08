@@ -897,7 +897,7 @@ class ZuluHREmployeeContract(models.Model):
         templ_contract = self.contract_template_id
         context = self.env.context
         working_time_lines = []
-        employee_id = context.get('active_id') if 'active' in context and context.get('active_id') else False
+        employee_id = context.get('active_id')
         for working_line in self.contract_template_id.working_time:
             vals = {
                 'employee_id': employee_id,
