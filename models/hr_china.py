@@ -1167,6 +1167,11 @@ class ZuluHRActiveContractBenefits(models.Model):
 
     @api.model
     def create(self, vals):
+        if 'employee_id' in vals and vals['employee_id']:
+            employee_exist = self.env['hr.employee'].search(
+                [('id', '=', vals['employee_id'])], limit=1)
+            if len(employee_exist) == 0:
+                vals['employee_id'] = False
         ret_val = super(ZuluHRActiveContractBenefits, self).create(vals)
         return  ret_val
 
