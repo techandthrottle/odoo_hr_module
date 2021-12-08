@@ -375,6 +375,26 @@ class HRChinaPayroll(models.Model):
             if self.wage_type == 'hourly':
                 self.holiday = holiday_wh
 
+            self._get_holiday_work_hours()
+            self._get_weekday_work_days()
+            self._get_weekend_work_days()
+            self._get_weekday_work_hour()
+            self._get_weekend_work_hour()
+            self._get_weekday_ot()
+            self._get_weekend_ot()
+            self._get_actual_wh()
+            self._get_overtime_pay()
+            self._get_weekday_hourly_pay()
+            self._get_weekend_hourly_pay()
+            self._get_weekday_overtime_pay()
+            self._get_weekend_overtime_pay()
+            self._get_hourly_pay()
+            self._get_basic_pay()
+            self._get_holiday_pay()
+            self._get_weekend_pay()
+            self._get_gross_pay()
+            self._get_net_pay()
+
 
 class HRChinaPayslipBenefits(models.Model):
     _name = 'hr_china.payslip.benefits'
