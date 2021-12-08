@@ -971,6 +971,9 @@ class ZuluHREmployeeContract(models.Model):
     def write(self, vals):
         ret_val = super(ZuluHREmployeeContract, self).write(vals)
         employee = self.env['hr.employee'].browse(int(self.employee_id.id))
+        pprint("#################################################")
+        pprint(self.employee_id)
+        pprint(employee)
         if 'payment_method' in vals:
             employee.write({
                 'payment_method': vals['payment_method'],
