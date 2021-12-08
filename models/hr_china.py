@@ -621,9 +621,9 @@ class HREmployee(models.Model):
                         for olddeduction in self.employee_deduction:
                             olddeduction.unlink()
 
-                    created_contract.benefits_id = benefits_lines
-                    created_contract.deductions_id = deductions_lines
-                    created_contract.working_time = working_time_lines
+                    # created_contract.benefits_id = benefits_lines
+                    # created_contract.deductions_id = deductions_lines
+                    # created_contract.working_time = working_time_lines
 
         active_cont_dict = {}
         if 'c_holiday_fee' in vals:
