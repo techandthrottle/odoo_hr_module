@@ -897,8 +897,8 @@ class ZuluHREmployeeContract(models.Model):
         templ_contract = self.contract_template_id
         context = self.env.context
         working_time_lines = []
+        employee_id = context.get('active_id') if 'active' in context and context.get('active_id') else False
         for working_line in self.contract_template_id.working_time:
-            employee_id = context.get('active_id') if 'active' in context and context.get('active_id') else False
             vals = {
                 'employee_id': employee_id,
                 'name': working_line.name,
@@ -1176,11 +1176,11 @@ class ZuluHRActiveContractBenefits(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'employee_id' in vals and vals['employee_id']:
-            employee_exist = self.env['hr.employee'].search(
-                [('id', '=', vals['employee_id'])], limit=1)
-            if len(employee_exist) == 0:
-                vals['employee_id'] = False
+        # if 'employee_id' in vals and vals['employee_id']:
+        #     employee_exist = self.env['hr.employee'].search(
+        #         [('id', '=', vals['employee_id'])], limit=1)
+        #     if len(employee_exist) == 0:
+        #         vals['employee_id'] = False
         ret_val = super(ZuluHRActiveContractBenefits, self).create(vals)
         return  ret_val
 
@@ -1212,11 +1212,11 @@ class ZuluHRActiveContractDeductions(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'employee_id' in vals and vals['employee_id']:
-            employee_exist = self.env['hr.employee'].search(
-                [('id', '=', vals['employee_id'])], limit=1)
-            if len(employee_exist) == 0:
-                vals['employee_id'] = False
+        # if 'employee_id' in vals and vals['employee_id']:
+        #     employee_exist = self.env['hr.employee'].search(
+        #         [('id', '=', vals['employee_id'])], limit=1)
+        #     if len(employee_exist) == 0:
+        #         vals['employee_id'] = False
         ret_val = super(ZuluHRActiveContractDeductions, self).create(vals)
         return ret_val
 
@@ -1245,11 +1245,11 @@ class ZuluHRActiveContractWorkTime(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'employee_id' in vals and vals['employee_id']:
-            employee_exist = self.env['hr.employee'].search(
-                [('id', '=', vals['employee_id'])], limit=1)
-            if len(employee_exist) == 0:
-                vals['employee_id'] = False
+        # if 'employee_id' in vals and vals['employee_id']:
+        #     employee_exist = self.env['hr.employee'].search(
+        #         [('id', '=', vals['employee_id'])], limit=1)
+        #     if len(employee_exist) == 0:
+        #         vals['employee_id'] = False
         ret_val = super(ZuluHRActiveContractWorkTime, self).create(vals)
         return ret_val
 
