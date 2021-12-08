@@ -898,6 +898,12 @@ class ZuluHREmployeeContract(models.Model):
         context = self.env.context
         working_time_lines = []
         employee_id = context.get('active_id')
+        employee = self.env['hr.employee'].browse(employee_id)
+
+        pprint('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+        pprint(employee_id)
+
+        self.employee_id = employee_id
         for working_line in self.contract_template_id.working_time:
             vals = {
                 'employee_id': employee_id,
@@ -937,7 +943,6 @@ class ZuluHREmployeeContract(models.Model):
         self.working_time = working_time_lines
 
         if templ_contract:
-            employee = self.env['hr.employee'].browse(employee_id)
             self.name = employee.name + " - " + templ_contract.name
             self.currency_id = templ_contract.currency_id
             self.wage_type = templ_contract.wage_type.id
