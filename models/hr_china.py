@@ -532,9 +532,16 @@ class HREmployee(models.Model):
         if 'all_contracts' not in vals and 'new_contract_id' not in vals:
             if 'contract_template_id' in vals:
 
+                employee_id = self.id
+                if employee_id:
+                    employee_exist = self.env['hr.employee'].search(
+                        [('id', '=', employee_id)], limit=1)
+                    if len(employee_exist) == 0:
+                        employee_id = False
+
                 if vals['contract_template_id']:
                     created_contract = self.env['hr_china.contract'].create({
-                        'employee_id': self.id,
+                        'employee_id': employee_id,
                         'name': self.contract_name,
                         'currency_id': self.currency_id.id,
                         'wage_type': self.contract_template_id.wage_type.id,
@@ -556,7 +563,7 @@ class HREmployee(models.Model):
                     self.all_contracts = [[4, created_contract.id]]
 
                     working_time_lines = []
-                    contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', self.id),
+                    contract_wt = self.env['hr_china.employee_contract'].search([('employee_id', '=', employee_id),
                                                                                  ('is_active', '=', True)])
                     for cwt in contract_wt:
                         for working_line in cwt.working_time:
@@ -570,7 +577,7 @@ class HREmployee(models.Model):
                                 'hour_from': working_line.hour_from,
                                 'hour_to': working_line.hour_to,
                                 'break_hours': working_line.break_hours,
-                                'employee_id': self.id,
+                                'employee_id': employee_id,
                             }
                             working_time_lines.append((0, 0, vals))
 
@@ -580,7 +587,7 @@ class HREmployee(models.Model):
 
                     benefits_lines = []
                     contract_benefits = self.env['hr_china.employee_contract'].search(
-                        [('employee_id', '=', self.id), ('is_active', '=', True)])
+                        [('employee_id', '=', employee_id), ('is_active', '=', True)])
                     for cb in contract_benefits:
                         for benefit_line in cb.benefits_id:
                             vals = {
@@ -588,7 +595,7 @@ class HREmployee(models.Model):
                                 'benefits_id': benefit_line.benefits_id.id,
                                 'benefit_type': benefit_line.benefit_type,
                                 'amount': benefit_line.amount,
-                                'employee_id': self.id,
+                                'employee_id': employee_id,
                             }
                             benefits_lines.append((0, 0, vals))
 
@@ -598,7 +605,7 @@ class HREmployee(models.Model):
 
                     deductions_lines = []
                     contract_deductions = self.env['hr_china.employee_contract'].search(
-                        [('employee_id', '=', self.id), ('is_active', '=', True)])
+                        [('employee_id', '=', employee_id), ('is_active', '=', True)])
                     for cd in contract_deductions:
                         for deduction_line in cd.deductions_id:
                             vals = {
@@ -606,7 +613,7 @@ class HREmployee(models.Model):
                                 'deductions_id': deduction_line.deductions_id.id,
                                 'deduction_type': deduction_line.deduction_type,
                                 'amount': deduction_line.amount,
-                                'employee_id': self.id,
+                                'employee_id': employee_id,
                             }
                             deductions_lines.append((0, 0, vals))
 
@@ -1167,11 +1174,6 @@ class ZuluHRActiveContractBenefits(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'employee_id' in vals and vals['employee_id']:
-            employee_exist = self.env['hr.employee'].search(
-                [('id', '=', vals['employee_id'])], limit=1)
-            if len(employee_exist) == 0:
-                vals['employee_id'] = False
         ret_val = super(ZuluHRActiveContractBenefits, self).create(vals)
         return  ret_val
 
