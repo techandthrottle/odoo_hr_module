@@ -132,10 +132,10 @@
                         <button string="Multiple Update" name="action_update_multiple" states="draft,validate,confirm" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate"/>
                     </header>
-                    <field name="contract_type" invisible="1"/>
-                    <field name="converted_wage_type" invisible="1"/>
                     <sheet>
                         <div><h1><field name="name"/></h1></div>
+                        <field name="contract_type" invisible="1"/>
+                        <field name="converted_wage_type" invisible="1"/>
                         <group style="width:50%%">
                             <field name="department_id" />
                             <field name="job_title_id" />

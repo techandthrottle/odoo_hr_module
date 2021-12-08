@@ -39,7 +39,7 @@ class HRTimesheet(models.Model):
 
     attendance_trans = fields.One2many('hr_china.timesheet.trans', 'timesheet')
     contract_type = fields.Many2one('hr_china.wage_type', string='Contract Type', compute='_get_contract_type')
-    converted_wage_type = fields.Char()
+    converted_wage_type = fields.Char(compute='_update_wage_type')
     work_time = fields.Float(string='Weekday Work Time', compute='_get_work_time', digits=(12, 2))
     work_time_weekend = fields.Float(string='Weekend Work Time', compute='_get_weekend_work_time', digits=(12, 2))
     holiday_work_time = fields.Float(string='Holiday Work Time', compute='_get_holiday_wt')
