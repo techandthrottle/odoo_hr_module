@@ -419,20 +419,20 @@ class HREmployee(models.Model):
             if active_contract:
                 item.active_contract = active_contract
 
-    @api.multi
-    def check_contract_status(self):
-        for item in self:
-            contracts = self.env['hr_china.contract'].search([('employee_id', '=', item.id)], order='id asc', limit=1)
-            if contracts:
-                start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
-                now = datetime.today()
-
-                years = relativedelta(now, start_date).years
-
-                if years > 0:
-                    item.enable_allowed_leave = True
-                else:
-                    item.enable_allowed_leave = False
+    # @api.multi
+    # def check_contract_status(self):
+    #     for item in self:
+    #         contracts = self.env['hr_china.contract'].search([('employee_id', '=', item.id)], order='id asc', limit=1)
+    #         if contracts:
+    #             start_date = datetime.strptime(contracts.start_date, '%Y-%m-%d %H:%M:%S')
+    #             now = datetime.today()
+    #
+    #             years = relativedelta(now, start_date).years
+    #
+    #             if years > 0:
+    #                 item.enable_allowed_leave = True
+    #             else:
+    #                 item.enable_allowed_leave = False
 
     employee_benefit = fields.One2many('hr_china.employee_benefits', 'employee_id', string='Benefits')
     employee_deduction = fields.One2many('hr_china.employee_deductions', 'employee_id', string='Deductions')
@@ -442,8 +442,8 @@ class HREmployee(models.Model):
     active_contract = fields.Many2one('hr_china.contract', string='Active Contract', compute=_get_active_contract)
     employee_contracts = fields.One2many('hr_china.employee_contract', 'employee_id', string='Contract')
     is_contract_active = fields.Boolean('Contract is Active')
-    allowed_leave = fields.Integer('Allowed Leave')
-    enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
+    # allowed_leave = fields.Integer('Allowed Leave')
+    # enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
 
     # @api.onchange('contract_template_id')
     # def contract_templ_change(self):
