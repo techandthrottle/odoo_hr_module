@@ -1221,7 +1221,7 @@ class ZuluHRActiveContractWorkTime(models.Model):
     hour_from = fields.Float(string='Work from', required=True, index=True, help="Start and End time of working.")
     hour_to = fields.Float(string='Work to', required=True)
     break_hours = fields.Integer('Break Hours')
-    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day")
+    day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day", default='weekend')
 
 
 class HRChinaAttendance(models.Model):

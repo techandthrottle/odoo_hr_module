@@ -25,7 +25,7 @@ class HRTimesheet(models.Model):
     weekday_ot_hours = fields.Float(string='Weekday Overtime Hours', compute='_get_weekday_ot_hours', digits=(12, 2))
     weekend_ot_hours = fields.Float(string='Weekend Overtime Hours', compute='_get_weekend_ot_hours', digits=(12, 2))
     weekdays_day = fields.Float(string='Weekdays', compute='_get_weekdays')
-    weekends_day = fields.Float(string='Weekends', compute='_get_weekends')
+    weekends_day = fields.Float(string='Weekends', compute='_get_weekends_day')
     weekend = fields.Float(string='Weekends', compute='_get_weekends')
     holiday = fields.Float(string='Holidays', compute='_get_holiday_list', digits=(12, 2))
     leaves = fields.Float(string='Leaves', compute='_get_leave_list')
@@ -62,6 +62,16 @@ class HRTimesheet(models.Model):
         self._get_holiday_list()
         self._get_total_days()
         self._update_wage_type()
+        self._get_weekday_ot_hours()
+        self._get_weekend_ot_hours()
+        self._get_weekend_work_time()
+        self._get_work_time()
+        self._get_total_days()
+        self._get_weekends()
+        self._get_weekdays()
+        self._get_weekends_day()
+        self._get_holiday_wd()
+        self._get_regular_days()
 
     @api.depends('employee_id')
     def _update_wage_type(self):
@@ -279,12 +289,16 @@ class HRTimesheet(models.Model):
                                                          ('check_in_am', '!=', False),
                                                          ('check_in_pm', '!=', False)])
 
-            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
             weekend_hours = False
+            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
+
             for day in wks:
                 for wtime in wt:
                     if day.day == wtime.dayofweek:
                         if wtime.day_type == 'weekend':
+                            weekend_hours = weekend_hours + day.work_hours
+                    else:
+                        if wtime.day_type != 'weekday':
                             weekend_hours = weekend_hours + day.work_hours
 
             item.weekend = weekend_hours
@@ -323,15 +337,13 @@ class HRTimesheet(models.Model):
                                                                ('check_in_am', '!=', False),
                                                                ('check_in_pm', '!=', False)])
 
-            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id)])
-            weekend_day = False
+            weekend_day = 0
             for day in wks:
-                for wtime in wt:
-                    if day.day == wtime.dayofweek:
-                        if wtime.day_type == 'weekend':
-                            weekend_day = weekend_day + 1
-
-            item.weekend_day = weekend_day
+                wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', item.employee_id.id),
+                                                                        ('dayofweek', '=', day.day)])
+                if wt.day_type != 'weekday':
+                    weekend_day = weekend_day + 1
+            item.weekends_day = weekend_day
 
     @api.multi
     def create_attendance_trans(self):
@@ -438,24 +450,19 @@ class HRChinaTrans(models.Model):
     def put_date(self):
         self.ensure_one()
         if self.date:
-            self.check_in_am = self.date
-            self.check_out_am = self.date
-            self.check_in_pm = self.date
-            self.check_out_pm = self.date
+            if not self.check_in_am:
+                self.check_in_am = self.date
+            if not self.check_out_am:
+                self.check_out_am = self.date
+            if not self.check_in_pm:
+                self.check_in_pm = self.date
+            if not self.check_out_pm:
+                self.check_out_pm = self.date
 
     @api.depends('date')
     def get_current_day(self):
         for attendance in self:
             attendance.day = str(datetime.strptime(attendance.date, '%Y-%m-%d %H:%M:%S').weekday())
-
-
-    # def get_default_date(self):
-    #     # for attendance in self:
-    #         # attendance.check_in_am = attendance.date
-    #         # attendance.check_out_am = attendance.date
-    #         # attendance.check_in_pm = attendance.date
-    #         # attendance.check_out_pm = attendance.date
-    #     return self.date
 
     @api.depends('date')
     def get_default_date(self):

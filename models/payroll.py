@@ -162,14 +162,17 @@ class HRChinaPayroll(models.Model):
     @api.multi
     def _get_weekend_work_days(self):
         for item in self:
-            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
-            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
+            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id),
+                                                                           ('check_in_am', '!=', False),
+                                                                           ('check_in_pm', '!=', False)])
+
             weekend_counter = 0
             for trans in timesheet_trans:
-                for wtime in wt:
-                    if trans.day == wtime.dayofweek:
-                        if wtime.day_type != 'weekday':
-                            weekend_counter = weekend_counter + 1
+                wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id),
+                                                                        ('dayofweek', '=', trans.day)])
+
+                if wt.day_type != 'weekday':
+                    weekend_counter = weekend_counter + 1
 
             item.weekend_worked_days = weekend_counter
 
