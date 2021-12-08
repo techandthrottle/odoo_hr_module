@@ -937,7 +937,8 @@ class ZuluHREmployeeContract(models.Model):
         self.working_time = working_time_lines
 
         if templ_contract:
-            self.name = self.employee_id.name + " - " + templ_contract.name
+            employee = self.env['hr.employee'].browse(employee_id)
+            self.name = employee.name + " - " + templ_contract.name
             self.currency_id = templ_contract.currency_id
             self.wage_type = templ_contract.wage_type.id
             self.monthly_fee = templ_contract.monthly_fee
