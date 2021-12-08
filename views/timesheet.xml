@@ -149,7 +149,7 @@
                             <field name="weekends_day" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}" />
                             <field name="work_time_weekend" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                             <field name="weekend_ot_hours" />
-                            <field name="holiday" string="Holiday Work Time" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
+                            <field name="holiday_work_time" string="Holiday Work Time" attrs="{'invisible': [('converted_wage_type', '=', 'monthly')]}"/>
                             <field name="holiday_work_day" attrs="{'invisible': [('converted_wage_type', '=', 'hourly')]}"/>
                         </group>
                         <field name="attendance_trans">

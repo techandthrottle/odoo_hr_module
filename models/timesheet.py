@@ -772,28 +772,36 @@ class HRChinaTimesheetMultiple(models.TransientModel):
 
             if working_time:
                 if self.apply_weekend and self.apply_weekday:
-                    trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
-                    trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
-                    trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
-                    trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
+                    if not trans.check_in_am:
+                        trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
+                    if not trans.check_out_am:
+                        trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
+                    if not trans.check_in_pm:
+                        trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
+                    if not trans.check_out_pm:
+                        trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
 
                 if self.apply_weekday and not self.apply_weekend:
                     if working_time.day_type == 'weekday':
-                        trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
-                        trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
-                        trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
-                        trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
-                    else:
-                        pass
+                        if not trans.check_in_am:
+                            trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
+                        if not trans.check_out_am:
+                            trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
+                        if not trans.check_in_pm:
+                            trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
+                        if not trans.check_out_pm:
+                            trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
 
                 if self.apply_weekend and not self.apply_weekday:
                     if working_time.day_type == 'weekend':
-                        trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
-                        trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
-                        trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
-                        trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
-                    else:
-                        pass
+                        if not trans.check_in_am:
+                            trans.check_in_am = new_check_in_am - timedelta(hours=8, minutes=0)
+                        if not trans.check_out_am:
+                            trans.check_out_am = new_check_out_am - timedelta(hours=8, minutes=0)
+                        if not trans.check_in_pm:
+                            trans.check_in_pm = new_check_in_pm - timedelta(hours=8, minutes=0)
+                        if not trans.check_out_pm:
+                            trans.check_out_pm = new_check_out_pm - timedelta(hours=8, minutes=0)
 
 
 class HRChinaTimesheetCreate(models.TransientModel):
