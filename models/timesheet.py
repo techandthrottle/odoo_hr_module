@@ -188,7 +188,11 @@ class HRTimesheet(models.Model):
     @api.onchange('employee_id')
     def _get_leave_list(self):
         for item in self:
-            pass
+            leave_lists = self.env['zulu_leave.leave_request'].search([('employee_id', '=', item.employee_id.id),
+                                                                       ('start_date', '>=', item.period_from),
+                                                                       ('end_date', '<=', item.period_to),
+                                                                       ('state', '=', 'approved')])
+            item.leaves = len(leave_lists)
 
     @api.onchange('employee_id')
     def _get_overtime_work(self):
