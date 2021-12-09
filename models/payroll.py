@@ -82,7 +82,7 @@ class HRChinaPayroll(models.Model):
 
     net_pay = fields.Float(string='Net Pay', compute='_get_net_pay')
 
-    total_benefits = fields.Float(string='Total Benefits', store=True, compute='sum_benefits')
+    total_benefits = fields.Float(string='Total Benefits', compute='get_sum_benefits')
     total_deductions = fields.Float(string='Total Deduction', compute='get_sum_deductions')
 
     payslip_benefits = fields.One2many('hr_china.payslip.benefits', 'payslip_id', string='Benefits')
@@ -103,7 +103,7 @@ class HRChinaPayroll(models.Model):
     active_contract = fields.Many2one('hr_china.employee_contract', compute=_get_active_emp_contract)
 
     @api.onchange('payslip_benefits')
-    def sum_benefits(self):
+    def get_sum_benefits(self):
         for benefits in self:
             total_benefits = False
             for line in benefits.payslip_benefits:
