@@ -290,7 +290,8 @@ class HRChinaPayroll(models.Model):
                 for ls in hol_list:
                     if att.date >= ls.start_date and att.date <= ls.end_date:
                         if item.active_contract.converted_wage_type == 'hourly':
-                            item.holiday_pay = hol_rate * att.holiday_work_hours
+                            # item.holiday_pay = hol_rate * att.holiday_work_hours
+                            item.holiday_pay = hol_rate * att.holiday
 
     @api.onchange('employee_id')
     def _get_weekend_pay(self):
@@ -509,7 +510,6 @@ class HRChinaPayrollTimesheetTempTrans(models.TransientModel):
     leave = fields.Float(string='Leaves')
     working_days = fields.Float(string='Working Days') #TOTAL DAYS EQUIVALENT
     work_hours = fields.Float(string='Work Hours') #WORK TIME EQUIVALENT
-    # wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')], string='Type')
     wage_type = fields.Many2one('hr_china.wage_type', string='Type')
     name = fields.Char()
 
@@ -533,8 +533,6 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
     leave = fields.Float(string='Leaves')
     working_days = fields.Float(string='Working Days')
     regular_days = fields.Integer(string='Regular Days')
-    # wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')],
-    #                              string='Type')
     wage_type = fields.Many2one('hr_china.wage_type', string='Type')
 
     @api.multi
