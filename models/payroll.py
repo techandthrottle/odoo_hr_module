@@ -283,6 +283,7 @@ class HRChinaPayroll(models.Model):
             # emp = self.env['hr.employee'].search([('id', '=', item.employee_id.id)])
             # emp_hol_rate = item.active_contract.holiday_fee
             hol_rate = False
+            hol_wh = False
             if item.start_date >= item.active_contract.start_date and item.end_date <= item.active_contract.end_date:
                 hol_rate = item.active_contract.holiday_fee
 
@@ -290,8 +291,10 @@ class HRChinaPayroll(models.Model):
                 for ls in hol_list:
                     if att.date >= ls.start_date and att.date <= ls.end_date:
                         if item.active_contract.converted_wage_type == 'hourly':
-                            # item.holiday_pay = hol_rate * att.holiday_work_hours
-                            item.holiday_pay = hol_rate * att.holiday
+                            hol_wh = hol_wh + att.holiday_work_hours
+
+            item.holiday_pay = hol_rate * hol_wh
+                            #item.holiday_pay = hol_rate * att.holiday
 
     @api.onchange('employee_id')
     def _get_weekend_pay(self):
