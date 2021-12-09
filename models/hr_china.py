@@ -729,9 +729,9 @@ class ZuluHREmployeeContract(models.Model):
     dayoff_deduction = fields.Float(string='Day Off Deduction')
     other_info = fields.Text(string='Additional Information')
 
-    working_time = fields.One2many('zulu_hr.active_contract_work_time', 'employee_id', string='Working Time')
-    benefits_id = fields.One2many('zulu_hr.active_contract_benefits', 'employee_id', string='Benefits')
-    deductions_id = fields.One2many('zulu_hr.active_contract_deductions', 'employee_id', string='Deductions')
+    working_time = fields.One2many('zulu_hr.active_contract_work_time', 'contract_id', string='Working Time')
+    benefits_id = fields.One2many('zulu_hr.active_contract_benefits', 'contract_id', string='Benefits')
+    deductions_id = fields.One2many('zulu_hr.active_contract_deductions', 'contract_id', string='Deductions')
     currency_id = fields.Many2one('res.currency', string='Currency')
     payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
 
@@ -841,7 +841,7 @@ class ZuluHREmployeeContract(models.Model):
         working_time_lines = []
         for working_line in self.working_time:
             vals = {
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'name': working_line.name,
                 'day_type': working_line.day_type,
                 'dayofweek': working_line.dayofweek,
@@ -860,7 +860,7 @@ class ZuluHREmployeeContract(models.Model):
         for benefit_line in self.benefits_id:
             vals = {
 
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'benefits_id': benefit_line.benefits_id.id,
                 'benefit_type': benefit_line.benefit_type,
                 'amount': benefit_line.amount,
@@ -873,7 +873,7 @@ class ZuluHREmployeeContract(models.Model):
         deductions_lines = []
         for deduction_line in self.deductions_id:
             vals = {
-                # 'employee_id': self.employee_id.id,
+                'employee_id': self.employee_id.id,
                 'deductions_id': deduction_line.deductions_id.id,
                 'deduction_type': deduction_line.deduction_type,
                 'amount': deduction_line.amount,
@@ -1173,7 +1173,7 @@ class ZuluHRActiveContractBenefits(models.Model):
             self.currency = self.benefits_id.currency
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
-    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    contract_id = fields.Many2one('hr_china.employee_contract', string='Contract')
     benefit_type = fields.Selection([('one-time', 'One Time'), ('monthly', 'Monthly'), ('yearly', 'Yearly')],
                                     string='Type')
     benefits_id = fields.Many2one('hr_china.benefits', string='Name')
@@ -1210,7 +1210,7 @@ class ZuluHRActiveContractDeductions(models.Model):
             self.currency = self.deductions_id.currency
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
-    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    contract_id = fields.Many2one('hr_china.employee_contract', string='Contract')
     deduction_type = fields.Selection([('one-time', 'One Time'), ('monthly', 'Monthly'), ('yearly', 'Yearly')],
                                       string='Type')
     deductions_id = fields.Many2one('hr_china.deductions', string='Name')
@@ -1233,7 +1233,7 @@ class ZuluHRActiveContractWorkTime(models.Model):
     _name = 'zulu_hr.active_contract_work_time'
 
     employee_id = fields.Many2one('hr.employee', string='Employee')
-    contract_id = fields.Many2one('hr_china.contract', string='Contract')
+    contract_id = fields.Many2one('hr_china.employee_contract', string='Contract')
     name = fields.Char(string='Name')
     dayofweek = fields.Selection([
         ('0', 'Monday'),
@@ -1253,6 +1253,8 @@ class ZuluHRActiveContractWorkTime(models.Model):
 
     # @api.model
     # def create(self, vals):
+    #     pprint('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    #     pprint(self.env.context)
     #     if 'employee_id' in vals and vals['employee_id']:
     #         employee_exist = self.env['hr.employee'].search(
     #             [('id', '=', vals['employee_id'])], limit=1)
