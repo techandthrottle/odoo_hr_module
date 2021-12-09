@@ -28,7 +28,6 @@
                         <field name="employee_id" invisible="1"/>
                         <group>
                             <group string="General:">
-
                                 <field name="contract_template_id" required="1"/>
                                 <label for="wage_type" string="Wage Type:"/>
                                 <div class="o_row">

@@ -142,7 +142,7 @@
                                         </h1>
                                     </group>
                                     <field name="converted_wage_type" invisible="1"/>
-                                    <field name="employee_id" />
+                                    <field name="employee_id" invisible="1"/>
                                     <group>
                                         <group string="General:">
 

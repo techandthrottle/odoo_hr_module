@@ -729,9 +729,9 @@ class ZuluHREmployeeContract(models.Model):
     dayoff_deduction = fields.Float(string='Day Off Deduction')
     other_info = fields.Text(string='Additional Information')
 
-    working_time = fields.One2many('zulu_hr.active_contract_work_time', 'contract_id', string='Working Time')
-    benefits_id = fields.One2many('zulu_hr.active_contract_benefits', 'contract_id', string='Benefits')
-    deductions_id = fields.One2many('zulu_hr.active_contract_deductions', 'contract_id', string='Deductions')
+    working_time = fields.One2many('zulu_hr.active_contract_work_time', 'employee_id', string='Working Time')
+    benefits_id = fields.One2many('zulu_hr.active_contract_benefits', 'employee_id', string='Benefits')
+    deductions_id = fields.One2many('zulu_hr.active_contract_deductions', 'employee_id', string='Deductions')
     currency_id = fields.Many2one('res.currency', string='Currency')
     payment_method = fields.Many2one('hr_china.payment_method', string='Payment Method')
 
