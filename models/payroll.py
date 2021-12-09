@@ -148,16 +148,17 @@ class HRChinaPayroll(models.Model):
     @api.multi
     def _get_weekday_work_days(self):
         for item in self:
-            timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
-            wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
-            weekday_counter = 0
-            for trans in timesheet_trans:
-                for wtime in wt:
-                    if trans.day == wtime.dayofweek:
-                        if wtime.day_type == 'weekday':
-                            weekday_counter = weekday_counter + 1
+            # timesheet_trans = self.env['hr_china.timesheet.trans'].search([('timesheet', '=', item.timesheet_id.id)])
+            # wt = self.env['hr_china.employee_working_time'].search([('employee_id', '=', self.employee_id.id)])
+            # weekday_counter = 0
+            # for trans in timesheet_trans:
+            #     for wtime in wt:
+            #         if trans.day == wtime.dayofweek:
+            #             if wtime.day_type == 'weekday':
+            #                 weekday_counter = weekday_counter + 1
+            timesheet_data = self.env['hr_china.timesheet'].search([('id', '=', item.timesheet_id.id)])
 
-            item.weekday_worked_days = weekday_counter
+            item.weekday_worked_days = timesheet_data.weekdays_day
 
     @api.multi
     def _get_weekend_work_days(self):
