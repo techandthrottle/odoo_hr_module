@@ -12,9 +12,10 @@ class HRChinaPayslipFormRPT(models.AbstractModel):
     _name = 'report.hr_china.payslip_form'
 
     @api.model
-    def render_html(self, payslip_id, data=None):
+    def render_html(self, payslip_ids, data=None):
+
         company_id = self.env['hr_china.company_name_logo'].search([('is_active', '=', True)], limit=1, order='id DESC')
-        payslip_data = self.env['hr_china.payslip'].browse(payslip_id[0])
+        payslip_data = self.env['hr_china.payslip'].browse(payslip_ids[0])
 
         dict_data = {
             'company_id': company_id,

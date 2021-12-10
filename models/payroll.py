@@ -321,6 +321,7 @@ class HRChinaPayroll(models.Model):
             item.net_pay = item.gross_pay - item.total_deductions
 
     def print_payslip_form(self):
+        payslip_ids = self.env.context.get('active_ids')
         payslip_id = str(self.id)
         payslip_name = self.employee_id.first_name
 

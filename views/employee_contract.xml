@@ -53,7 +53,7 @@
                                 <div class="o_row">
                                     <label for="monthly_fee" string="Monthly Fee"/>
                                     <span class="so_information_button">
-                                        <field name="monthly_fee_info" widget="show_info_hr_cn" text="whatever" options="{'text': 'Monthly fixed rate'}"/>
+                                        <field name="monthly_fee_info" widget="show_info_hr_cn" options="{'text': 'Monthly fixed rate'}"/>
                                     </span>
                                 </div>
                                 <field name="monthly_fee" nolabel="1" widget="monetary"/>
