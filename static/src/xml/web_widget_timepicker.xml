@@ -21,6 +21,16 @@
         </t>
     </t>
 
+    <t t-extend="ListView.buttons">
+        <t t-jquery="button.o_list_button_add" t-operation="before">
+            <t t-if="widget.model== 'hr_china.payslip_summary'">
+                <button class="btn btn-primary btn-sm hr_china_payslip_summary" type="button">
+                    Create
+                </button>
+            </t>
+        </t>
+    </t>
+
     <t t-name="TimePickerField">
         <span t-att-class="'o_form_field '+widget.widget_class" t-att-style="widget.node.attrs.style">
             <t t-if="!widget.get('effective_readonly')">

@@ -18,17 +18,17 @@ odoo.define('hr_china.alter_create', function (require) {
                 import_btn.hide();
             }
             if (this.$buttons){
-                var btn = this.$buttons.find('button.hr_china_summary_update')
+                var btn = this.$buttons.find('button.hr_china_payslip_summary')
                 btn.on('click', this.proxy('hr_china_summary_create'))
             }
         },
         hr_china_summary_create: function() {
             var self = this
             var context = this.dataset._model;
-            new Model('hr_china.payslip_summary')
-                .call('get_payslip_summary', [], {})
+            new Model('hr_china.payslip_summary.wiz')
+                .call('display_wizard', [], {})
                 .then(function(response) {
-
+                    self.do_action(response);
                 });
         }
     });

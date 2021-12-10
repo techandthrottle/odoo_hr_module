@@ -65,13 +65,13 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-<!--        <record id="action_hr_china_payslips_summary" model="ir.actions.act_window">-->
-<!--            <field name="name">Payslips Summary</field>-->
-<!--            <field name="type">ir.actions.act_window</field>-->
-<!--            <field name="res_model">hr_china.payslip_summary</field>-->
-<!--            <field name="view_type">form</field>-->
-<!--            <field name="view_mode">tree,form</field>-->
-<!--        </record>-->
+        <record id="action_hr_china_payslips_summary" model="ir.actions.act_window">
+            <field name="name">Payslips Summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr_china.payslip_summary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
         <record id="hr_china_create_payslip_wiz" model="ir.ui.view">
             <field name="name">hr_china_create_payslip.wiz_form</field>
@@ -186,22 +186,82 @@
             </field>
         </record>
 
-<!--        <record id="view_hr_china_payslip_summary_tree" model="ir.ui.view">-->
-<!--            <field name="name">hr_china.payslip_summary.tree</field>-->
-<!--            <field name="model">hr_china.payslip_summary</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree string="Payslips Summary">-->
-<!--                    <field name="name" />-->
-<!--                    <field name="employee_id"/>-->
-<!--                    <field name="wage_type" />-->
-<!--                    <field name="basic_pay"/>-->
-<!--                    <field name="emp_benefits"/>-->
-<!--                    <field name="emp_deductions"/>-->
-<!--                    <field name="net_pay"/>-->
-<!--                    <field name="gross_pay"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
+        <record id="view_hr_china_payslip_summary_tree" model="ir.ui.view">
+            <field name="name">hr_china.payslip_summary.tree</field>
+            <field name="model">hr_china.payslip_summary</field>
+            <field name="arch" type="xml">
+                <tree string="Payslips Summary">
+                    <field name="name" />
+                    <field name="start_date" widget="date"/>
+                    <field name="end_date" widget="date"/>
+                    <field name="payslip_total"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_china_payslip_summary_form" model="ir.ui.view">
+            <field name="name">hr_china.payslip_summary.form</field>
+            <field name="model">hr_china.payslip_summary</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Summary">
+                    <sheet>
+                        <div><h2>Payroll Summary <field name="name" /></h2></div>
+                        <field name="pslip_trans">
+                            <tree>
+                                <field name="name" />
+                                <field name="net_pay" sum="Total"/>
+                                <field name="bank_name" />
+                                <field name="account_number" />
+                                <field name="account_name" />
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_china_payslip_summary_trans_form" model="ir.ui.view">
+            <field name="name">hr_china.payslip_summary_trans.form</field>
+            <field name="model">hr_china.payslip_summary.trans</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Summary">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="net_pay" />
+                            <field name="bank_name" />
+                            <field name="account_number" />
+                            <field name="account_name" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="hr_china_payslip_summary_wiz" model="ir.ui.view">
+            <field name="name">hr_china_payslip_summary.wiz_form</field>
+            <field name="model">hr_china.payslip_summary.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Summary">
+                    <sheet>
+                        <h3>Choose the Payslip Period</h3>
+
+                        <div class="oe_edit_only" style="padding-bottom: 50px; padding-right: 10px; padding-top: 25px">
+                            <label string="Choose Date: " class="oe_inline"/>
+                            <field name="start_date" class="oe_inline" required="1" widget="date" />
+                            <label string=" - " class="oe_inline" />
+                            <field name="end_date" class="oe_inline" required="1" widget="date" />
+                        </div>
+
+                        <footer>
+                            <button string="Update" name="create_summary" type="object" class="btn-primary" />
+                            <button string="Cancel" class="btn-default" special="cancel" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
     </data>
 </odoo>

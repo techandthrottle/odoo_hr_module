@@ -592,66 +592,93 @@ class HRChinaPayrollCreateTemp(models.TransientModel):
 class HRChinaPayrollSummary(models.Model):
     _name = 'hr_china.payslip_summary'
 
+    @api.multi
+    @api.depends('start_date', 'end_date')
+    def _generate_name(self):
+        for item in self:
+            item.name = datetime.strptime(item.start_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y') + \
+                        datetime.strptime(item.end_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y')
+
+    @api.depends('start_date', 'end_date')
+    def _get_total_payslip_amount(self):
+        for item in self:
+            payslips = self.env['hr_china.payslip'].search([('start_date', '>=', item.start_date),
+                                                            ('end_date', '<=', item.end_date)])
+            total_amount = False
+            for pay in payslips:
+                total_amount = total_amount + pay.net_pay
+            item.payslip_total = total_amount
+
+    name = fields.Char(string='Name')
+    start_date = fields.Datetime('Start Date')
+    end_date = fields.Datetime('End Date')
+    payslip_total = fields.Float('Total Amount', compute=_get_total_payslip_amount)
+    pslip_trans = fields.One2many('hr_china.payslip_summary.trans', 'summary_id', string='Payslip Details')
+
+    @api.multi
+    def create_summary_trans(self):
+        for item in self:
+            payslips = self.env['hr_china.payslip'].search([('start_date', '>=', item.start_date),
+                                                            ('end_date', '<=', item.end_date)])
+            for pay in payslips:
+                summary_trans = {
+                    'employee_id': pay.employee_id.id,
+                    'summary_id': item.id,
+                    'name': pay.employee_id.name,
+                    'bank_name': pay.employee_id.bank_name.id,
+                    'account_number': pay.employee_id.account_number,
+                    'account_name': pay.employee_id.account_name,
+                    'net_pay': pay.net_pay,
+                }
+                self.env['hr_china.payslip_summary.trans'].create(summary_trans)
+        return True
+
+    @api.multi
+    def create(self, vals):
+        summary_trans = super(HRChinaPayrollSummary, self).create(vals)
+        summary_trans.create_summary_trans()
+
+
+class HRChinaPayrollSummaryTrans(models.Model):
+    _name = 'hr_china.payslip_summary.trans'
+
+    summary_id = fields.Many2one('hr_china.payslip_summary')
+    employee_id = fields.Many2one('hr.employee')
+    name = fields.Char(string='Name')
+    net_pay = fields.Float(string='Net Pay')
+    bank_name = fields.Many2one('hr_china.bank_list', string='Bank Name')
+    account_number = fields.Char(string='Account Number')
+    account_name = fields.Char(string='Account Name')
+
+
+class HRChinaPayrollSummaryWiz(models.TransientModel):
+    _name = 'hr_china.payslip_summary.wiz'
+
+    start_date = fields.Datetime('Start Date')
+    end_date = fields.Datetime('End Date')
+
     @api.model
-    def get_payslip_summary(self):
-        self.env['hr_china.payslip_summary'].search([]).unlink()
-        emp_list = self.env['hr.employee'].search([])
-        for emp in emp_list:
+    def display_wizard(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr_china.payslip_summary.wiz',
+            'name': 'Payroll Summary',
+            'views': [(False, 'form')],
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
 
+    def create_summary(self):
+        self.ensure_one()
 
-
-            trans_data = {
-                'employee_id': emp.id,
-                # 'wage_type': emp.c_wage_type.wage_type,
-                # 'basic_pay': total_working_days,
-                # 'emp_benefits': total_working_hours,
-                # 'emp_deductions': payslip_gross_total,
-                # 'net_pay': payslip_net_total,
-                # 'gross_pay':
-            }
-            self.env['hr_china.payslip_summary'].create(trans_data)
-
-            # pay_list = self.env['hr_china.payslip'].search([('employee_id', '=', emp.id)])
-            # payslip_net_total = False
-            # payslip_gross_total = False
-            # total_working_days = False
-            # total_working_hours = False
-            # for payslip in pay_list:
-            #     payslip_net_total = payslip_net_total + payslip.net_pay
-            #     payslip_gross_total = payslip_gross_total + payslip.gross_pay
-            #     total_working_days = total_working_days + payslip.total_days
-            #     total_working_hours = total_working_hours + payslip.total_work_hours
-            #
-            # trans_data = {
-            #     'employee_id': emp.id,
-            #     'wage_type': emp.c_wage_type.wage_type,
-            #     'total_working_days': total_working_days,
-            #     'total_working_hours': total_working_hours,
-            #     'payslip_gross_total': payslip_gross_total,
-            #     'payslip_net_total': payslip_net_total,
-            # }
-            # self.env['hr_china.payslip_summary'].create(trans_data)
+        summary = self.env['hr_china.payslip_summary'].create({
+            'name': datetime.strptime(self.start_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y') + ' - ' + datetime.strptime(self.end_date, '%Y-%m-%d %H:%M:%S').strftime('%b %d, %Y'),
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+        })
 
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
-
-    @api.multi
-    def _generate_name(self):
-        for item in self:
-            item.name = item.employee_id.name + ' - Total Payslip Summary'
-
-    name = fields.Char(string='Name', compute=_generate_name)
-    employee_id = fields.Many2one('hr.employee', 'Employee')
-    wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')], string='Type')
-    total_working_days = fields.Float('Total Working Days')
-    total_working_hours = fields.Float('Total Working Hours')
-    emp_deductions = fields.Float('Monthly Benefits')
-    emp_benefits = fields.Float('Monthly Deductions')
-    basic_pay = fields.Float('Basic Pay')
-    gross_pay = fields.Float('Gross Pay')
-    net_pay = fields.Float('Net Pay')
-
-    payslip_gross_total = fields.Float('Payslip Gross Total')
-    payslip_net_total = fields.Float('Payslip Net Total')

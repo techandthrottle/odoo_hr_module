@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from datetime import datetime
+from odoo.addons.report_xlsx.report.report_xlsx import ReportXlsx
+from base64 import b64decode
+from io import BytesIO
+import re
 from pprint import pprint
 
 

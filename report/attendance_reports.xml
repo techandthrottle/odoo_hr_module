@@ -84,5 +84,12 @@
                 paperformat="hr_china_timesheet_paper"
                 menu="False" />
 
+        <report string="Payroll Summary"
+                id="hr_china_payroll_summary_xlsx"
+                model="hr_china.payslip_summary"
+                report_type="xlsx"
+                name="hr_china.payslip_summary_xlsx"
+                file="hr_china.payslip_summary_xlsx"
+                attachment_use="False" />
     </data>
 </odoo>
