@@ -327,7 +327,7 @@ class HRChinaPayroll(models.Model):
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/report/pdf/hr_china.payslip_form/%s?filename=%s' % (payslip_id, payslip_name),
+            'url': '/report/pdf/hr_china.payslip_form/%s?filename=%s&ids=%s' % (payslip_id, payslip_name, payslip_ids),
             'target': 'new'
         }
 

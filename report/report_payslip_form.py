@@ -5,6 +5,7 @@ from odoo.addons.report_xlsx.report.report_xlsx import ReportXlsx
 from base64 import b64decode
 from io import BytesIO
 import re
+import ast
 from pprint import pprint
 
 
@@ -12,14 +13,16 @@ class HRChinaPayslipFormRPT(models.AbstractModel):
     _name = 'report.hr_china.payslip_form'
 
     @api.model
-    def render_html(self, payslip_ids, data=None):
+    def render_html(self, payslip_id, data=None):
 
+        payslip_ids = ast.literal_eval(data['ids'])
         company_id = self.env['hr_china.company_name_logo'].search([('is_active', '=', True)], limit=1, order='id DESC')
-        payslip_data = self.env['hr_china.payslip'].browse(payslip_ids[0])
-
+        payslip_data = self.env['hr_china.payslip'].browse(payslip_id[0])
+        payslip_datas = self.env['hr_china.payslip'].search([('id', 'in', payslip_ids)])
         dict_data = {
             'company_id': company_id,
             'payslip_data': payslip_data,
+            'payslip_datas': payslip_datas,
             'data': data
         }
 
