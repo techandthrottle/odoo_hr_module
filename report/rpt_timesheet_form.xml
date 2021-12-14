@@ -39,7 +39,7 @@
                             <tr>
                                 <td style="width:11.3%;font-weight:600;">
                                     <div>
-                                        <div>Department</div>
+                                        <div>Department - 部门</div>
                                     </div>
                                 </td>
                                 <td style="width:25%; font-weight:600;" class="empty_td">
@@ -47,7 +47,7 @@
                                 </td>
                                 <td style="width:15%; font-weight:600;">
                                     <div>
-                                        <div>Position</div>
+                                        <div>Position - 职位</div>
                                     </div>
                                 </td>
                                 <td style="width:15%; font-weight:600;" class="empty_td">
@@ -72,9 +72,9 @@
                             <tr style="text-align:center;">
                                 <td style="width:10%; font-weight:600;">Date<br/>日期</td>
                                 <td style="width:7%; font-weight:600;">Day<br/>天</td>
-                                <td align="center" style="width:20%; font-weight:600;text-align:center;" t-att-colspan="2">Morning</td>
+                                <td align="center" style="width:20%; font-weight:600;text-align:center;" t-att-colspan="2">Morning 早上</td>
                                 <td style="font-weight:600;">Break<br/>休息时间</td>
-                                <td align="center" style="width:20%; font-weight:600;text-align:center;" t-att-colspan="2">Afternoon</td>
+                                <td align="center" style="width:20%; font-weight:600;text-align:center;" t-att-colspan="2">Afternoon 下午</td>
                                 <td style="font-weight:600;">Overtime<br/>加班</td>
                                 <td style="font-weight:600;">Notes<br/>笔记</td>
                                 <td style="font-weight:600;">Total<br/>工作时间</td>
@@ -113,31 +113,31 @@
                         </table>
                         <table class="overtime_form_page table2 table-show timesheet_lis">
                             <tr>
-                                <td style="width:26.5%; font-weight:600;">Weekdays Work Hours</td>
+                                <td style="width:26.5%; font-weight:600;">Weekdays Work Hours<br/>工作时间</td>
                                 <td style="width:20%;">
                                     <t t-esc="timesheet_lis.work_time"/>
                                 </td>
-                                <td style="width:31%; font-weight:600;">Weekends Work Hours</td>
+                                <td style="width:31%; font-weight:600;">Weekends Work Hours<br/>周末工作时间</td>
                                 <td style="width:20%;">
                                     <t t-esc="timesheet_lis.work_time_weekend"/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="width:26.5%; font-weight:600;">Weekdays Overtime Hours</td>
+                                <td style="width:26.5%; font-weight:600;">Weekdays Overtime Hours<br/>加班时间</td>
                                 <td style="width:19%;">
                                     <t t-esc="timesheet_lis.weekday_ot_hours"/>
                                 </td>
-                                <td style="width:31%; font-weight:600;">Weekends Overtime Hours</td>
+                                <td style="width:31%; font-weight:600;">Weekends Overtime Hours<br/>周末加班时间</td>
                                 <td style="width:20%;">
                                     <t t-esc="timesheet_lis.weekend_ot_hours"/>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="width:26.5%; font-weight:600;">Holiday Hours</td>
+                                <td style="width:26.5%; font-weight:600;">Holiday Hours<br/>法定节假日加班时间</td>
                                 <td style="width:19%">
                                     <t t-esc="timesheet_lis.holiday"/>
                                 </td>
-                                <td style="width:31%; font-weight:600;">Leaves</td>
+                                <td style="width:31%; font-weight:600;">Leaves<br/>请假</td>
                                 <td style="width:20%">
                                     <t t-esc="timesheet_lis.leaves"/>
                                 </td>
