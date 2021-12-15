@@ -734,6 +734,18 @@ class ZuluHREmployeeContract(models.Model):
     _name = 'hr_china.employee_contract'
     _order = 'id desc'
 
+    @api.multi
+    @api.depends('start_date')
+    def _get_contract_year(self):
+        for item in self:
+            c_date = datetime.strptime(item.start_date, '%Y-%m-%d %H:%M:%S')
+            item.contract_year = c_date.year
+
+    @api.depends('start_date')
+    def _value_to_search(self, operator, value):
+        rec = self.search([]).filtered(lambda x: x.contract_year == value)
+        return [('id', operator, [x.id for x in rec] if rec else False)]
+
     employee_id = fields.Many2one('hr.employee', string='Employee')
     start_date = fields.Datetime(string='Start Date')
     end_date = fields.Datetime(string='End Date')
@@ -760,6 +772,7 @@ class ZuluHREmployeeContract(models.Model):
     is_active = fields.Boolean(string='Active', default=True)
     converted_wage_type = fields.Char()
     allowed_leave = fields.Integer('Allowed Leave')
+    contract_year = fields.Integer('Contract Year', compute=_get_contract_year, search=_value_to_search)
 
     @api.multi
     def _get_wagetype_info(self):

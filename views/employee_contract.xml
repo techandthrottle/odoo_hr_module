@@ -1,20 +1,21 @@
 <odoo>
     <data>
 
-         <record id="view_employee_contract_filter" model="ir.ui.view">
-             <field name="name">hr_china.employee_contract.filter</field>
-             <field name="model">hr_china.employee_contract</field>
-             <field name="arch" type="xml">
-                 <search string="Employee Contracts">
-                     <filter string="Active" name="is_active" domain="[('is_active', '=', True)]"/>
-                     <separator/>
-                     <field name="employee_id"/>
-                     <group expand="0" string="Group By">
-                         <filter string="Employee" name="employee_id" context="{'group_by':'employee_id'}"/>
-                     </group>
-                 </search>
-             </field>
-         </record>
+        <record id="view_employee_contract_filter" model="ir.ui.view">
+         <field name="name">hr_china.employee_contract.filter</field>
+         <field name="model">hr_china.employee_contract</field>
+         <field name="arch" type="xml">
+             <search string="Employee Contracts">
+                 <filter string="Active" name="is_active" domain="[('is_active', '=', True)]"/>
+                 <separator/>
+                 <field string="Employee" name="employee_id"/>
+                 <field string="Contract Year" name="contract_year"/>
+                 <group expand="0" string="Group By">
+                     <filter string="Employee" name="employee_id" context="{'group_by':'employee_id'}"/>
+                 </group>
+             </search>
+         </field>
+        </record>
 
         <record id="view_hr_china_contract_list" model="ir.ui.view">
             <field name="name">hr_china.contract_list.tree</field>
@@ -28,6 +29,7 @@
                     <field name="start_date" widget="date"/>
                     <field name="end_date" widget="date"/>
                     <field name="is_active"/>
+                    <field name="contract_year" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -64,6 +66,7 @@
                         </group>
                         <field name="converted_wage_type" invisible="1"/>
                         <field name="employee_id" invisible="1"/>
+                        <field name="contract_year" invisible="1"/>
                         <group>
                             <group string="General:">
                                 <field name="contract_template_id" required="1"/>
