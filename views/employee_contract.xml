@@ -16,13 +16,6 @@
              </field>
          </record>
 
-         <record id="action_view_hr_china_contract" model="ir.actions.act_window">
-            <field name="name">Contract</field>
-            <field name="res_model">hr_china.employee_contract</field>
-            <field name="view_type">form</field>
-            <field name="view_id" ref="view_hr_china_contract_list"/>
-        </record>
-
         <record id="view_hr_china_contract_list" model="ir.ui.view">
             <field name="name">hr_china.contract_list.tree</field>
             <field name="model">hr_china.employee_contract</field>
@@ -37,6 +30,13 @@
                     <field name="is_active"/>
                 </tree>
             </field>
+        </record>
+
+        <record id="action_view_hr_china_contract" model="ir.actions.act_window">
+            <field name="name">Contract</field>
+            <field name="res_model">hr_china.employee_contract</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_china.view_hr_china_contract_list"/>
         </record>
 
         <record id="hr_china_employee_contract_tree" model="ir.ui.view">
