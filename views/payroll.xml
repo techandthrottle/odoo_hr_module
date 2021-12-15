@@ -211,6 +211,7 @@
                                 <field name="name" />
                                 <field name="net_pay" sum="Total"/>
                                 <field name="bank_name" />
+                                <field name="bank_branch" />
                                 <field name="account_number" />
                                 <field name="account_name" />
                             </tree>
@@ -230,6 +231,7 @@
                             <field name="name" />
                             <field name="net_pay" />
                             <field name="bank_name" />
+                            <field name="bank_branch" />
                             <field name="account_number" />
                             <field name="account_name" />
                         </group>

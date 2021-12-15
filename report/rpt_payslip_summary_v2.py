@@ -10,7 +10,7 @@ import dateutil.parser
 import json
 
 
-class PayrollSummaryXlsx(ReportXlsx):
+class PayrollSummaryV2Xlsx(ReportXlsx):
     def generate_xlsx_report(self, workbook, data, ids):
         for id in ids:
 
@@ -123,37 +123,36 @@ class PayrollSummaryXlsx(ReportXlsx):
             sheet.merge_range('A2:F2', 'PAYROLL SUMMARY', main_header_format)
             sheet.merge_range('A3:F3', id.name, sub_header_format)
             sheet.write('A4', 'Name', table_header_format)
-            sheet.write('B4', 'Net Pay', table_header_format)
-            sheet.write('C4', 'Bank Name', table_header_format)
-            sheet.write('D4', 'Branch', table_header_format)
-            sheet.write('E4', 'Account Number', table_header_format)
-            sheet.write('F4', 'Account Name', table_header_format)
+            sheet.write('B4', 'Bank Name', table_header_format)
+            sheet.write('C4', 'Branch', table_header_format)
+            sheet.write('D4', 'Account Number', table_header_format)
+            sheet.write('E4', 'Account Name', table_header_format)
+            sheet.write('F4', 'Signature', table_header_format)
             s_row = 5
             row = 5
             for summary in summary_trans:
-                sheet.set_row(row - 1, 21)
+                sheet.set_row(row - 1, 30)
                 emp_name = summary.name if summary.name else ''
-                net_pay = summary.net_pay if summary.net_pay else ''
                 bank_name = summary.bank_name.name if summary.bank_name else ''
                 bank_branch = summary.bank_branch if summary.bank_branch else ''
                 account_number = summary.account_number if summary.account_number else ''
                 account_name = summary.account_name if summary.account_name else ''
 
                 sheet.write('A%s' % row, emp_name, left_content_format)
-                sheet.write('B%s' % row, net_pay, right_content_format)
-                sheet.write('C%s' % row, bank_name, center_content_format)
-                sheet.write('D%s' % row, bank_branch, center_content_format)
-                sheet.write('E%s' % row, account_number, center_content_format)
-                sheet.write('F%s' % row, account_name, center_content_format)
+                sheet.write('B%s' % row, bank_name, center_content_format)
+                sheet.write('C%s' % row, bank_branch, center_content_format)
+                sheet.write('D%s' % row, account_number, center_content_format)
+                sheet.write('E%s' % row, account_name, center_content_format)
+                sheet.write('F%s' % row, '', center_content_format)
                 row = row + 1
             sheet.set_row(row - 1, 21)
             sheet.write('A%s' % row, '', right_bottom_left_content_format)
-            sheet.write_formula('B%s' % row, '=SUM(B%s:B%s)' % (s_row, row - 1), right_bottom_total_format)
+            sheet.write('B%s' % row, '', right_bottom_total_format)
             sheet.write('C%s' % row, '', right_bottom_content_format)
             sheet.write('D%s' % row, '', right_bottom_content_format)
             sheet.write('E%s' % row, '', right_bottom_content_format)
             sheet.write('F%s' % row, '', right_bottom_right_content_format)
 
 
-PayrollSummaryXlsx('report.hr_china.payslip_summary_xlsx', 'hr_china.payslip_summary')
+PayrollSummaryV2Xlsx('report.hr_china.payslip_summary_v2_xlsx', 'hr_china.payslip_summary')
 

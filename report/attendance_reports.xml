@@ -91,5 +91,13 @@
                 name="hr_china.payslip_summary_xlsx"
                 file="hr_china.payslip_summary_xlsx"
                 attachment_use="False" />
+
+        <report string="Payroll Summary (Without Net Pay)"
+                id="hr_china_payroll_summary_v2_xlsx"
+                model="hr_china.payslip_summary"
+                report_type="xlsx"
+                name="hr_china.payslip_summary_v2_xlsx"
+                file="hr_china.payslip_summary_v2_xlsx"
+                attachment_use="False" />
     </data>
 </odoo>

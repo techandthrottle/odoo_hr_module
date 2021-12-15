@@ -46,12 +46,13 @@ class HRTimesheet(models.Model):
     holiday_work_day = fields.Float(string='Holiday Work Day', compute='_get_holiday_wd')
 
     def print_timesheet_form(self):
+        timesheet_ids = self.env.context.get('active_ids')
         timesheet_id = str(self.id)
         timesheet_name = self.name
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/report/pdf/hr_china.timesheet_form_rpt/%s?filename=%s' % (timesheet_id, timesheet_name),
+            'url': '/report/pdf/hr_china.timesheet_form_rpt/%s?filename=%s&ids=%s' % (timesheet_id, timesheet_name, timesheet_ids),
             'target': 'new'
         }
 

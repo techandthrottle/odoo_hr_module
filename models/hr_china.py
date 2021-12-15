@@ -433,6 +433,27 @@ class HREmployee(models.Model):
     #                 item.enable_allowed_leave = True
     #             else:
     #                 item.enable_allowed_leave = False
+    def _get_total_years(self):
+        for item in self:
+            contract_list = self.env['hr_china.employee_contract'].search([('employee_id', '=', item.id)])
+            months = False
+            for contract in contract_list:
+                diff_in_months = False
+                now = fields.Datetime.now()
+                if contract.start_date >= now <= contract.end_date:
+                    start = datetime.strptime(contract.start_date, '%Y-%m-%d %H:%M:%S')
+                    end = datetime.strptime(now, '%Y-%m-%d %H:%M:%S')
+                    diff = relativedelta(end, start)
+                    diff_in_months = (diff.months + diff.years * 12) + 1
+                else:
+                    start = datetime.strptime(contract.start_date, '%Y-%m-%d %H:%M:%S')
+                    end = datetime.strptime(contract.end_date, '%Y-%m-%d %H:%M:%S')
+                    diff = relativedelta(end, start)
+                    diff_in_months = (diff.months + diff.years * 12) + 1
+
+                months = months + diff_in_months
+
+            item.years_total = float(months / 12.0)
 
     employee_benefit = fields.One2many('hr_china.employee_benefits', 'employee_id', string='Benefits')
     employee_deduction = fields.One2many('hr_china.employee_deductions', 'employee_id', string='Deductions')
@@ -442,6 +463,7 @@ class HREmployee(models.Model):
     active_contract = fields.Many2one('hr_china.contract', string='Active Contract', compute=_get_active_contract)
     employee_contracts = fields.One2many('hr_china.employee_contract', 'employee_id', string='Contract')
     is_contract_active = fields.Boolean('Contract is Active')
+    years_total = fields.Float('Total Years', compute=_get_total_years)
     # allowed_leave = fields.Integer('Allowed Leave')
     # enable_allowed_leave = fields.Boolean('Enable', default=False, compute=check_contract_status)
 
@@ -1180,17 +1202,6 @@ class ZuluHRActiveContractBenefits(models.Model):
     amount = fields.Float('Amount')
     currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
 
-    # @api.model
-    # def create(self, vals):
-    #     if 'employee_id' in vals and vals['employee_id']:
-    #         employee_exist = self.env['hr.employee'].search(
-    #             [('id', '=', vals['employee_id'])], limit=1)
-    #         if len(employee_exist) == 0:
-    #             vals['employee_id'] = False
-    #     ret_val = super(ZuluHRActiveContractBenefits, self).create(vals)
-    #     ret_val.write({ 'employee_id': self.env.context.get('employee_id') })
-    #     return  ret_val
-
 
 class ZuluHRActiveContractDeductions(models.Model):
     _name = 'zulu_hr.active_contract_deductions'
@@ -1217,17 +1228,6 @@ class ZuluHRActiveContractDeductions(models.Model):
     amount = fields.Float('Amount')
     currency = fields.Many2one('res.currency', string="Currency", default=_get_currency_default)
 
-    # @api.model
-    # def create(self, vals):
-    #     if 'employee_id' in vals and vals['employee_id']:
-    #         employee_exist = self.env['hr.employee'].search(
-    #             [('id', '=', vals['employee_id'])], limit=1)
-    #         if len(employee_exist) == 0:
-    #             vals['employee_id'] = False
-    #     ret_val = super(ZuluHRActiveContractDeductions, self).create(vals)
-    #     ret_val.write({'employee_id': self.env.context.get('employee_id')})
-    #     return ret_val
-
 
 class ZuluHRActiveContractWorkTime(models.Model):
     _name = 'zulu_hr.active_contract_work_time'
@@ -1250,19 +1250,6 @@ class ZuluHRActiveContractWorkTime(models.Model):
     hour_to = fields.Float(string='Work to', required=True)
     break_hours = fields.Integer('Break Hours')
     day_type = fields.Selection([('weekday', 'Weekday'), ('weekend', 'Weekend')], string="Type of Day", default='weekend')
-
-    # @api.model
-    # def create(self, vals):
-    #     pprint('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-    #     pprint(self.env.context)
-    #     if 'employee_id' in vals and vals['employee_id']:
-    #         employee_exist = self.env['hr.employee'].search(
-    #             [('id', '=', vals['employee_id'])], limit=1)
-    #         if len(employee_exist) == 0:
-    #             vals['employee_id'] = False
-    #     ret_val = super(ZuluHRActiveContractWorkTime, self).create(vals)
-    #     ret_val.write({'employee_id': self.env.context.get('employee_id')})
-    #     return ret_val
 
 
 class HRChinaAttendance(models.Model):

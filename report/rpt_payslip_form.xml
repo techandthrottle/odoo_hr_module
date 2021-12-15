@@ -39,7 +39,7 @@
                                     <tr>
                                         <td style="width:11.3%;font-weight:600;">
                                             <div>
-                                                <div>Employee - 员工姓名</div>
+                                                <div>Employee (员工姓名)</div>
                                             </div>
                                         </td>
                                         <td colspan="3" style="width:80%; font-weight:600;" class="empty_td">
@@ -49,7 +49,7 @@
                                     <tr>
                                         <td style="width:11.3%;font-weight:600;">
                                             <div>
-                                                <div>Department - 部门</div>
+                                                <div>Department (部门)</div>
                                             </div>
                                         </td>
                                         <td style="width:25%; font-weight:600;" class="empty_td">
@@ -57,7 +57,7 @@
                                         </td>
                                         <td style="width:15%; font-weight:600;">
                                             <div>
-                                                <div>Position - 职位</div>
+                                                <div>Position (职位)</div>
                                             </div>
                                         </td>
                                         <td style="width:15%; font-weight:600;" class="empty_td">
@@ -66,10 +66,10 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="font-weight:600;">
-                                            Income - 应领工资
+                                            Income (应领工资)
                                         </td>
                                         <td colspan="2" style="font-weight:600;">
-                                            Deductions - 扣除
+                                            Deductions (扣除)
                                         </td>
                                     </tr>
                                     <tr>
@@ -78,7 +78,7 @@
                                                 <table style="cellspacing='0';cellpadding='0';border:none;">
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Basic Pay - 基本工资
+                                                            Basic Pay (基本工资)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.basic_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -90,7 +90,7 @@
                                                 <table style="cellspacing='0';cellpadding='0';border:none;">
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Weekdays Hourly Pay - 工作时薪
+                                                            Weekdays Hourly Pay (工作时薪)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.weekday_hourly_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -98,7 +98,7 @@
                                                     </tr>
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Weekdays Overtime Pay - 加班时薪
+                                                            Weekdays Overtime Pay (加班时薪)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.weekday_overtime_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -106,7 +106,7 @@
                                                     </tr>
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Weekends Hourly Pay - 周末工作时薪
+                                                            Weekends Hourly Pay (周末工作时薪)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.weekend_overtime_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -114,7 +114,7 @@
                                                     </tr>
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Weekends Overtime Pay - 周末加班时薪
+                                                            Weekends Overtime Pay (周末加班时薪)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.weekend_overtime_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -122,7 +122,7 @@
                                                     </tr>
                                                     <tr style="border:none">
                                                         <td style="border:none">
-                                                            Holiday Hourly Pay - 节假日加班时薪
+                                                            Holiday Hourly Pay (节假日加班时薪)
                                                         </td>
                                                         <td style="border:none;text-align:right;">
                                                             <span t-field="pd.holiday_pay" t-field-options='{"widget":"monetary","display_currency":pd.currency_id}'/>
@@ -149,7 +149,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="font-weight:600;">
-                                            Benefits - 奖金
+                                            Benefits (奖金)
                                         </td>
                                     </tr>
                                     <tr>
@@ -170,17 +170,17 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="font-weight:600;">
-                                            Gross Pay - 应发工资
+                                            Gross Pay (应发工资)
                                             <span style="float:right" t-field="pd.gross_pay" t-field-options='{"widget": "monetary","display_currency":pd.currency_id}' />
                                         </td>
                                         <td colspan="2" style="font-weight:600;">
-                                            Total Deductions - 应扣工资
+                                            Total Deductions (应扣工资)
                                             <span style="float:right" t-field="pd.total_deductions" t-field-options='{"widget": "monetary","display_currency":pd.currency_id}' />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="4" style="font-weight:600;">
-                                            Net Pay - 实发工资
+                                            Net Pay (实发工资)
                                             <span style="float:right" t-field="pd.net_pay" t-field-options='{"widget": "monetary","display_currency":pd.currency_id}' />
                                         </td>
                                     </tr>

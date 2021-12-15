@@ -17,7 +17,7 @@ class WageTypeConfiguration(models.Model):
 
     name = fields.Char(string='Name', computed=generate_wage_name)
     wage_type = fields.Selection([('monthly', 'Monthly'), ('hourly', 'Hourly')], string='Type', required=True)
-    days = fields.Integer(string='Days (In a month)', default=30)
+    days = fields.Float(string='Days (In a month)', default=30)
     formula = fields.Char(string='Formula')
 
 

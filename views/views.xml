@@ -27,12 +27,13 @@
         <menuitem id="menu_hr_china_root" name="HR China" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" sequence="95" web_icon="hr_china,static/description/zulu_hr.jpg"/>
 
         <menuitem id="menu_hr_china_employees" name="Employees" parent="menu_hr_china_root" sequence="101" groups="hr_china.group_hr_china_manager_dropdown" action="hr.open_view_employee_list_my"/>
-        <menuitem id="menu_hr_china_attendances" name="Attendance" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" />
+        <menuitem id="menu_hr_china_contract" name="Contract" parent="menu_hr_china_root" sequence="102" groups="hr_china.group_hr_china_manager_dropdown" action="hr_china.action_view_hr_china_contract"/>
+        <menuitem id="menu_hr_china_attendances" name="Attendance" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown" />
             <menuitem id="menu_hr_china_my_attendances" name="Attendances" parent="menu_hr_china_attendances" sequence="0" action="hr_china.action_view_hr_china_emp_attendance" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown"/>
             <menuitem id="menu_hr_china_kiosk_mode" name="Kiosk Mode" parent="menu_hr_china_attendances" sequence="1" action="zulu_attendance.zulu_attendance_action_kiosk_mode" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_timekeeper_dropdown,hr_china.group_hr_china_coordinator_dropdown"/>
 
-        <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="103" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="hr_china.open_hr_china_timesheets"/>
-        <menuitem id="menu_hr_china_payroll_root" name="Payroll" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown"/>
+        <menuitem id="menu_hr_china_timesheet" name="Timesheet" parent="menu_hr_china_root" sequence="104" groups="hr_china.group_hr_china_manager_dropdown,hr_china.group_hr_china_coordinator_dropdown" action="hr_china.open_hr_china_timesheets"/>
+        <menuitem id="menu_hr_china_payroll_root" name="Payroll" parent="menu_hr_china_root" sequence="105" groups="hr_china.group_hr_china_manager_dropdown"/>
             <menuitem id="menu_hr_china_payroll" name="Payroll" parent="menu_hr_china_payroll_root" sequence="1" groups="hr_china.group_hr_china_manager_dropdown" action="hr_china.action_hr_china_payslips"/>
             <menuitem id="menu_hr_china_payroll_summary" name="Payroll Summary" parent="menu_hr_china_payroll_root" sequence="2" groups="hr_china.group_hr_china_manager_dropdown" action="hr_china.action_hr_china_payslips_summary"/>
 

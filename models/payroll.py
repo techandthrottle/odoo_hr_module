@@ -627,6 +627,7 @@ class HRChinaPayrollSummary(models.Model):
                     'summary_id': item.id,
                     'name': pay.employee_id.name,
                     'bank_name': pay.employee_id.bank_name.id,
+                    'bank_branch': pay.employee_id.bank_branch,
                     'account_number': pay.employee_id.account_number,
                     'account_name': pay.employee_id.account_name,
                     'net_pay': pay.net_pay,
@@ -648,6 +649,7 @@ class HRChinaPayrollSummaryTrans(models.Model):
     name = fields.Char(string='Name')
     net_pay = fields.Float(string='Net Pay')
     bank_name = fields.Many2one('hr_china.bank_list', string='Bank Name')
+    bank_branch = fields.Char(string='Bank Branch')
     account_number = fields.Char(string='Account Number')
     account_name = fields.Char(string='Account Name')
 

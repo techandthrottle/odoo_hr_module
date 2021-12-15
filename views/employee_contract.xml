@@ -1,6 +1,44 @@
 <odoo>
     <data>
 
+         <record id="view_employee_contract_filter" model="ir.ui.view">
+             <field name="name">hr_china.employee_contract.filter</field>
+             <field name="model">hr_china.employee_contract</field>
+             <field name="arch" type="xml">
+                 <search string="Employee Contracts">
+                     <filter string="Active" name="is_active" domain="[('is_active', '=', True)]"/>
+                     <separator/>
+                     <field name="employee_id"/>
+                     <group expand="0" string="Group By">
+                         <filter string="Employee" name="employee_id" context="{'group_by':'employee_id'}"/>
+                     </group>
+                 </search>
+             </field>
+         </record>
+
+         <record id="action_view_hr_china_contract" model="ir.actions.act_window">
+            <field name="name">Contract</field>
+            <field name="res_model">hr_china.employee_contract</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_hr_china_contract_list"/>
+        </record>
+
+        <record id="view_hr_china_contract_list" model="ir.ui.view">
+            <field name="name">hr_china.contract_list.tree</field>
+            <field name="model">hr_china.employee_contract</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false" edit="false">
+                    <field name="employee_id"/>
+                    <field name="wage_type"/>
+                    <field name="currency_id"/>
+                    <field name="payment_method"/>
+                    <field name="start_date" widget="date"/>
+                    <field name="end_date" widget="date"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="hr_china_employee_contract_tree" model="ir.ui.view">
             <field name="name">view.employee_contracts.tree</field>
             <field name="model">hr_china.contract</field>
